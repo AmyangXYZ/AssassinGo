@@ -16,7 +16,7 @@ Just for learn.
 - [X] Port Scan
 - [X] Crawl the Paramed URLs
 - [X] Basic SQLi Scan
-- [ ] Basic XSS Scan
+- [X] Basic XSS Scan
 - [X] Friendly Interface.
 - [ ] Output Report.pdf
 

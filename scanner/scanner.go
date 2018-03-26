@@ -8,5 +8,8 @@ type Scanner interface {
 
 // Set sets the scanners to use.
 func Set() []Scanner {
-	return []Scanner{NewBasicSQli()}
+	return []Scanner{
+		NewBasicSQli(),
+		NewXSSChecker(),
+	}
 }

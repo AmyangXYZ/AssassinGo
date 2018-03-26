@@ -38,6 +38,9 @@ func (a *Assassin) Shadow() {
 
 	var emails []string
 	emails, a.FuzzableURLs = a.Crawler.Run()
+	if len(emails) == 0 {
+		logger.Green.Println("No Related E-Mails Found.")
+	}
 	logger.Green.Println("Related E-Mails Found:")
 	for _, m := range emails {
 		logger.Blue.Println(m)
@@ -47,7 +50,6 @@ func (a *Assassin) Shadow() {
 // Attack attacks the target.
 // Run Scanners here.
 func (a *Assassin) Attack() {
-
 	for _, scanner := range a.Scanners {
 		scanner.Run(a.FuzzableURLs)
 	}

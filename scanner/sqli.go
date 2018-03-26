@@ -37,7 +37,7 @@ func (bs *BasicSQLi) Run(fuzzableURLs []string) {
 		blockers <- true
 	}
 	if len(bs.InjectableURL) == 0 {
-		logger.Blue.Println("no injectable url found")
+		logger.Blue.Println("no sqli vuls found")
 	}
 }
 
@@ -49,12 +49,11 @@ func (bs *BasicSQLi) check(URL string, blocker chan bool) {
 		logger.Blue.Println(URL)
 		bs.InjectableURL = append(bs.InjectableURL, URL)
 	}
-
 }
 
 func (bs *BasicSQLi) fetch(URL string) string {
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", URL+bs.payload1, nil)
+	req, _ := http.NewRequest("GET", URL, nil)
 	req.Header.Set("user-agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
 	if err != nil {
