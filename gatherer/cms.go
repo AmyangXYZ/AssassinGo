@@ -19,6 +19,11 @@ func NewCMSDetector(target string) *CMSDetector {
 	return &CMSDetector{target: target}
 }
 
+// Report impletements Gatherer interface
+func (c *CMSDetector) Report() interface{} {
+	return c.CMS
+}
+
 // Run imppletements Gatherer interface.
 func (c *CMSDetector) Run() {
 	resp, err := http.Get("https://whatcms.org/?s=" + c.target)

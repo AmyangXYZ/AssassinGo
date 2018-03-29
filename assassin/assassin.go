@@ -1,18 +1,18 @@
-package main
+package assassin
 
 import (
-	"./crawler"
-	"./gatherer"
-	"./logger"
-	"./poc"
-	"./scanner"
+	"../crawler"
+	"../gatherer"
+	"../logger"
+	"../poc"
+	"../scanner"
 )
 
 // Assassin shadow and assassinate the target.
 type Assassin struct {
 	Target       string
 	Crawler      crawler.Crawler
-	Gatherers    []gatherer.Gatherer
+	Gatherers    map[string]gatherer.Gatherer
 	FuzzableURLs []string
 	Scanners     []scanner.Scanner
 	POC          poc.POC
@@ -24,7 +24,7 @@ func New(target string) *Assassin {
 	return &Assassin{
 		Target:    target,
 		Crawler:   crawler.NewCrawler(target, 4),
-		Gatherers: gatherer.Set(target),
+		Gatherers: make(map[string]gatherer.Gatherer),
 		Scanners:  scanner.Set(),
 	}
 }

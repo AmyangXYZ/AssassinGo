@@ -1,0 +1,16 @@
+package web
+
+import (
+	"../assassin"
+	"github.com/AmyangXYZ/sweetygo"
+)
+
+var a *assassin.Assassin
+
+// Run Web GUI.
+func Run() {
+	a = assassin.New("www.sut56.com")
+	app := sweetygo.New("/home/amyang/Projects/AssassinGo/web", nil)
+	SetRouter(app)
+	app.RunServer(":8080")
+}

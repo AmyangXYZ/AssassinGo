@@ -17,8 +17,8 @@ type BasicSQLi struct {
 // NewBasicSQli returns a new basicSQli scanner.
 func NewBasicSQli() *BasicSQLi {
 	return &BasicSQLi{
-		payload0: "%20aNd%200",
-		payload1: "%20aNd%201",
+		payload0: "/**/%26%261%3d2%23",
+		payload1: "/**/%26%261%3d1%23",
 	}
 }
 

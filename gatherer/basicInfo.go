@@ -19,6 +19,11 @@ func NewBasicInfo(target string) *BasicInfo {
 	return &BasicInfo{target: target}
 }
 
+// Report impletements Gatherer interface
+func (bi *BasicInfo) Report() interface{} {
+	return []string{bi.IPAddr, bi.WebServer}
+}
+
 // Run impletements the Gatherer interface.
 func (bi *BasicInfo) Run() {
 	bi.IPAddr = bi.resolveIP()

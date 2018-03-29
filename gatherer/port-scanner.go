@@ -30,6 +30,11 @@ func NewPortScanner(target string) *PortScanner {
 	}
 }
 
+// Report impletements Gatherer interface
+func (ps *PortScanner) Report() interface{} {
+	return ps.OpenPorts
+}
+
 // Run impletements the Gatherer interface.
 func (ps *PortScanner) Run() {
 	logger.Green.Println("Ports Scanning...")

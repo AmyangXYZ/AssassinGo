@@ -36,7 +36,7 @@ func NewCrawler(host string, depth int) Crawler {
 	}
 }
 
-// Run begins crawling and return fuzzable urls.
+// Run begins crawling and return fuzzable urls and emails.
 func (c *Crawler) Run() ([]string, []string) {
 	logger.Green.Println("Fuzzable URLs Crawling...")
 	var fuzzableURLs []string
