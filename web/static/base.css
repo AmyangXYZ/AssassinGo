@@ -1,0 +1,32 @@
+body {
+    background-image: url("/static/bg.png");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: repeat;
+    background-attachment: scroll;
+}
+
+#main {
+    top: 4%;
+    left: 23.5%;
+}
+
+.border-block-top {
+    width: 110px;
+    height: 110px;
+    border-top: 3px solid #ff724c;
+        border-top-color: rgb(255, 114, 76);
+    border-left: 3px solid #ff724c;
+        border-left-color: rgb(255, 114, 76);
+    margin-top:-2.5rem;
+    margin-left:-1rem;
+}
+
+.describe-section {
+    border-radius: 5px;
+    display: inline-block;
+    color: white;
+    background: #ff724c;
+    padding: 0 10px;
+    margin-left: 12rem;
+}

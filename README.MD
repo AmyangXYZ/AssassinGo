@@ -10,7 +10,7 @@ Just for learn.
 
 - [X] Retrieve Server and Powered by Headers
 - [X] Detect CMS Version
-- [X] Gather Related E-Mails 
+- [X] Gather Related E-Mails
 - [ ] DNS Records Dump
 - [ ] Whois Lookup
 - [X] Port Scan

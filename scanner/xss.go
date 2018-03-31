@@ -19,6 +19,11 @@ func NewXSSChecker() *XSSChecker {
 	return &XSSChecker{payload: `<svg/onload=alert(1)>`}
 }
 
+// Report impletements Scanner interface.
+func (x *XSSChecker) Report() interface{} {
+	return x.InjectableURL
+}
+
 // Run impletements Scanner interface.
 func (x *XSSChecker) Run(fuzzableURLs []string) {
 	logger.Green.Println("Basic XSS Checking...")

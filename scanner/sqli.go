@@ -14,12 +14,17 @@ type BasicSQLi struct {
 	InjectableURL []string
 }
 
-// NewBasicSQli returns a new basicSQli scanner.
-func NewBasicSQli() *BasicSQLi {
+// NewBasicSQLi returns a new basicSQli scanner.
+func NewBasicSQLi() *BasicSQLi {
 	return &BasicSQLi{
 		payload0: "/**/%26%261%3d2%23",
 		payload1: "/**/%26%261%3d1%23",
 	}
+}
+
+// Report impletements Scanner interface.
+func (bs *BasicSQLi) Report() interface{} {
+	return bs.InjectableURL
 }
 
 // Run impletements Scanner interface.

@@ -39,19 +39,19 @@ func (ps *PortScanner) Report() interface{} {
 func (ps *PortScanner) Run() {
 	logger.Green.Println("Ports Scanning...")
 
-	blockers := make(chan bool, ps.concurrency)
+	blockers := make(chan struct{}, ps.concurrency)
 	for _, port := range ps.ports {
-		blockers <- true
+		blockers <- struct{}{}
 		go ps.checkPort(port, blockers)
 	}
 
 	// Wait for all goroutines to finish.
 	for i := 0; i < cap(blockers); i++ {
-		blockers <- true
+		blockers <- struct{}{}
 	}
 }
 
-func (ps *PortScanner) checkPort(port string, blocker chan bool) {
+func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	connection, err := net.DialTimeout("tcp", ps.target+":"+port, time.Duration(ps.timeout)*time.Second)
 	if err == nil {

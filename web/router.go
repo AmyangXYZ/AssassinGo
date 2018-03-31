@@ -7,6 +7,12 @@ import (
 // SetRouter sets router.
 func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/", home)
+	app.GET("/seek", seek)
+	app.GET("/shadow", shadow)
+	app.GET("/attack", attack)
+	app.GET("/assassinate", assassinate)
+
+	app.GET("/static/*files", static)
 
 	app.POST("/api/target", newAssassin)
 	app.GET("/api/info/basic", basicInfo)
@@ -16,8 +22,8 @@ func SetRouter(app *sweetygo.SweetyGo) {
 
 	app.GET("/api/crawl", crawl)
 
-	app.GET("/api/vul/sqli", nil)
-	app.GET("/api/vul/xss", nil)
+	app.GET("/api/vul/sqli", checkSQLi)
+	app.GET("/api/vul/xss", checkXSS)
 
 	app.GET("/api/poc/xxx", nil)
 }
