@@ -30,15 +30,18 @@ function router() {
     hash = window.location.hash;
     if (hash == "#") {
         for (var i=0; i<routes.length; i++) {
-            $(routes[i].replace("/", "")).hide();
+            $(routes[i].replace("/", "")).transition('hide');
         }
     }
     for (var i=0; i<routes.length; i++) {
         if (routes[i]!=hash) {
-            $(routes[i].replace("/", "")).hide();
+            $(routes[i].replace("/", "")).transition('hide');
         }
     }
-    $(hash.replace("/","")).show();
+    animates = ["vertical flip", "drop'", "slide down", "slide left", "slide right", "fade up", "fade right", "zoom"]
+    j = Math.floor(Math.random() * Math.floor(animates.length));
+    $(hash.replace("/","")).transition(animates[j], '400ms');
+    
 }
 
 $(window).bind('hashchange', function() {
