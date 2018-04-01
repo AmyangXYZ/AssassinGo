@@ -6,11 +6,17 @@ body {
     background-attachment: scroll;
 }
 
+#home {
+    color: #ff724c;
+    text-align: center;
+    font-size: 88px;
+    margin: 18% 0 10rem 15rem;
+    
+}
+
 #seek, #shadow, #attack, #assassinate {
     top: 6.5%;
     left: 23.5%;
-}
-#shadow, #attack, #assassinate {
     padding-top: 2.7rem;
 }
 

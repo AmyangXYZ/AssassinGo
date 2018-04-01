@@ -4,9 +4,8 @@ String.prototype.format = function(args) {
         return result;
     }
 
-    var data = arguments;       //如果模板参数是数组
+    var data = arguments; 
     if (arguments.length == 1 && typeof (args) == "object") {
-        //如果模板参数是对象
         data = args;
     }
     for (var key in data) {
@@ -26,21 +25,23 @@ html_shadow_port = `
 `
 
 function router() {
-    routes = ["#/seek", "#/shadow", "#/attack", "#/assassinate"]
+    routes = ["#home", "#seek", "#shadow", "#attack", "#assassinate"]
     hash = window.location.hash;
-    if (hash == "#") {
+    if (hash == "") {
         for (var i=0; i<routes.length; i++) {
-            $(routes[i].replace("/", "")).transition('hide');
+            $(routes[i]).transition('hide');
         }
+        $("#home").transition("zoom");
+        return
     }
     for (var i=0; i<routes.length; i++) {
         if (routes[i]!=hash) {
-            $(routes[i].replace("/", "")).transition('hide');
+            $(routes[i]).transition('hide');
         }
     }
-    animates = ["vertical flip", "drop'", "slide down", "slide left", "slide right", "fade up", "fade right", "zoom"]
+    animates = ["horizontal flip", "vertical flip", "drop'", "slide down", "slide up", "slide left", "slide right", "fade up", "fade left","fade down", "fade right", "zoom"]
     j = Math.floor(Math.random() * Math.floor(animates.length));
-    $(hash.replace("/","")).transition(animates[j], '400ms');
+    $(hash).transition(animates[j], '400ms');
     
 }
 
@@ -65,7 +66,7 @@ $(document).ready(function(){
         }).fail(function(result){
             alert("some thing error")
         });
-        $(location).attr('href', '/#/shadow');
+        $(location).attr('href', '/#shadow');
     });
 
     $("#start-shadow").click(function(){
