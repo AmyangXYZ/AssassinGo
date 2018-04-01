@@ -6,9 +6,12 @@ body {
     background-attachment: scroll;
 }
 
-#main {
-    top: 4%;
+#seek, #shadow, #attack, #assassinate {
+    top: 6.5%;
     left: 23.5%;
+}
+#shadow, #attack, #assassinate {
+    padding-top: 2.7rem;
 }
 
 .border-block-top {

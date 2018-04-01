@@ -10,24 +10,8 @@ import (
 	"github.com/AmyangXYZ/sweetygo"
 )
 
-func home(ctx *sweetygo.Context) {
-	ctx.Render(200, "home")
-}
-
-func seek(ctx *sweetygo.Context) {
-	ctx.Render(200, "seek")
-}
-
-func shadow(ctx *sweetygo.Context) {
-	ctx.Render(200, "shadow")
-}
-
-func attack(ctx *sweetygo.Context) {
-	ctx.Render(200, "attack")
-}
-
-func assassinate(ctx *sweetygo.Context) {
-	ctx.Render(200, "assassinate")
+func index(ctx *sweetygo.Context) {
+	ctx.Render(200, "index")
 }
 
 func static(ctx *sweetygo.Context) {
@@ -39,7 +23,7 @@ func static(ctx *sweetygo.Context) {
 func newAssassin(ctx *sweetygo.Context) {
 	target := ctx.Param("target")
 	a = assassin.New(target)
-	ctx.Text(200, target)
+	ctx.JSON(201, map[string]string{"target": target}, "success")
 }
 
 func basicInfo(ctx *sweetygo.Context) {
