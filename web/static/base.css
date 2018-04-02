@@ -6,11 +6,11 @@ body {
     background-attachment: scroll;
 }
 
-#home {
+#home-header {
     color: #ff724c;
     text-align: center;
     font-size: 88px;
-    margin: 18% 0 10rem 15rem;
+    margin: 18% 0 4.5rem 15rem;
     
 }
 

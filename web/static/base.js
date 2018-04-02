@@ -17,40 +17,58 @@ String.prototype.format = function(args) {
     return result;
 }
 
-html_shadow_port = `
-    <tr>
-    <td>{port}</td>
-    <td>{service}</td>
-    </tr>
-`
+var routes = ["#home", "#seek", "#shadow", "#attack", "#assassinate"];
+
+var animates = ["horizontal flip", "vertical flip", "drop", "zoom", 
+        "slide down", "slide up", "slide left", "slide right", 
+        "fade up", "fade left","fade down", "fade right"];
+
+var iconMap = {'#home':'home', 
+            '#seek':'search',
+            '#shadow':'spy',
+            '#attack':'block layout',
+            '#assassinate':'smile'};
+
+var html_shadow_port = `
+        <tr>
+        <td>{port}</td>
+        <td>{service}</td>
+        </tr>
+        `
 
 function router() {
-    routes = ["#home", "#seek", "#shadow", "#attack", "#assassinate"]
     hash = window.location.hash;
     if (hash == "") {
-        for (var i=0; i<routes.length; i++) {
-            $(routes[i]).transition('hide');
-        }
-        $("#home").transition("zoom");
-        return
+        $(location).attr('href', '/#home');
     }
     for (var i=0; i<routes.length; i++) {
         if (routes[i]!=hash) {
             $(routes[i]).transition('hide');
         }
     }
-    animates = ["horizontal flip", "vertical flip", "drop'", "slide down", "slide up", "slide left", "slide right", "fade up", "fade left","fade down", "fade right", "zoom"]
     j = Math.floor(Math.random() * Math.floor(animates.length));
     $(hash).transition(animates[j], '400ms');
+}
+
+function changeColor() {
+    hash = window.location.hash;
+    $(hash+"-sd").attr("class", "orange "+iconMap[hash]+" icon");
+    for (var i=0; i<routes.length; i++) {
+        if (routes[i]!=hash) {
+            $(routes[i]+"-sd").attr("class", "teal "+iconMap[routes[i]]+" icon");
+        }
+    }
     
 }
 
 $(window).bind('hashchange', function() {
     router();
+    changeColor();
 });
 
 $(document).ready(function(){
     router();
+    changeColor();
     $("#bt-set-target").click(function(){
         $.ajax({
             url:" /api/target",

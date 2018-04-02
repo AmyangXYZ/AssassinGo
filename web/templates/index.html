@@ -20,34 +20,47 @@
                 <h2 class="ui orange header" style="font-weight:400;">Assassin Go</h2>
             </a>
             <a class="item" href="/#home">
-                <i class="orange tiny home icon"></i>
+                <i class="orange tiny home icon" id="home-sd"></i>
                 Home
             </a>
             <a class="item" href="/#seek">
-                <i class="teal search icon"></i>
+                <i class="orange search icon" id="seek-sd"></i>
                 Seek
             </a>
             <a class="item" href="/#shadow">
-                <i class="teal spy  icon"></i>
+                <i class="orange spy icon" id="shadow-sd"></i>
                 Shadow
             </a>
             <a class="item" href="/#attack">
-                <i class="teal block layout icon"></i>
+                <i class="orange block layout icon" id="attack-sd"></i>
                 Attack
             </a>
             <a class="item" href="/#assassinate">
-                <i class="orange smile icon"></i>
+                <i class="orange smile icon" id="assassinate-sd"></i>
                 Assassinate
             </a>
         </div>
 
         <!-- home -->
-        <div id="home" class="ui huge header">
-            Assassin Go
-            <div class="sub large header" style="font-size: 22px;">
-                Extensible and Concurrency Pentest Framework in Go.
+        <div id="home" class="ui grid container">
+            <div class="two wide column"></div>
+            <div id="home-header" class="ui huge header">
+                Assassin Go
+                <div class="sub large header" style="font-size: 22px;">
+                    Extensible and Concurrency Pentest Framework in Go.
+                </div>
+            </div>
+            <div class="row">
+                <div class="six wide column"></div>
+                <div class="six wide column">
+                    <div class="ui fluid action input focus">
+                        <input id="target" placeholder="Website URL: www.target.com ..." type="text">
+                        <button id="bt-set-target" class="ui primary button">Set Target</button>
+                    </div>
+                </div>
             </div>
         </div>
+
         <!-- seek -->
         <div id="seek" class="ui raised padded grid container segment">
             <div class="row">
@@ -58,7 +71,7 @@
                     <div class="ui center aligned huge header" style="font-size: 4em; color:#eee">
                         Seek
                         <div class="sub header">
-                            <p class="describe-section">seeks the targets</p>
+                            <p class="describe-section">seek targets using google hacking</p>
                         </div>
                     </div>
                 </div>
@@ -73,15 +86,7 @@
             <div class="row"></div>
             <div class="row"></div>
 
-            <div class="row">
-                <div class="six wide column"></div>
-                <div class="six wide column">
-                    <div class="ui fluid action input focus">
-                        <input id="target" placeholder="Website URL: www.target.com ..." type="text">
-                        <button id="bt-set-target" class="ui primary button">Set Target</button>
-                    </div>
-                </div>
-            </div>
+            
             
             <div class="row"></div>
             <div class="row"></div>
@@ -97,7 +102,7 @@
             <div class="row">
                 <div class="eight wide column"></div>
                 <div class="column">
-                    <a href="/#/shadow"><i class="angle double down large link icon"></i></a>
+                    <a href="/#shadow"><i class="angle double down large link icon"></i></a>
                 </div>
             </div>
         </div>
@@ -218,7 +223,7 @@
             <div class="row">
                 <div class="eight wide column"></div>
                 <div class="column">
-                    <a href="/#/attack"><i class="angle double down large link icon"></i></a>
+                    <a href="/#attack"><i class="angle double down large link icon"></i></a>
                 </div>
             </div>
 
@@ -251,6 +256,12 @@
                 <p>four</p>
                 <p></p>
             </div>
+            <div class="row">
+                    <div class="eight wide column"></div>
+                    <div class="column">
+                        <a href="/#assassinate"><i class="angle double down large link icon"></i></a>
+                    </div>
+                </div>
         </div>
 
         <!-- assassinate -->
