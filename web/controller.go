@@ -16,7 +16,7 @@ func index(ctx *sweetygo.Context) {
 
 func static(ctx *sweetygo.Context) {
 	staticHandle := http.StripPrefix("/static",
-		http.FileServer(http.Dir("/home/amyang/Projects/AssassinGo/web/static")))
+		http.FileServer(http.Dir("./web/static")))
 	staticHandle.ServeHTTP(ctx.Resp, ctx.Req)
 }
 

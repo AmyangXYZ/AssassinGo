@@ -129,14 +129,14 @@
                 <div class="two wide column"></div>
                 
                 <div class="four wide column">
-                    IP Address: 47.94.136.141
+                    <div class="ui small loader" id="ip-loading"></div><p id="ip">IP Address: </p>
                 </div>
                 <div class="four wide column">
-                    Web Server: nginx/1.10.3 (Ubuntu)
+                    <div class="ui small loader" id="server-loading"></div><p id="server">Web Server: </p>
                 </div>
                 <div class="column"></div>
                 <div class="four wide column">
-                    CMS: WordPress
+                    <div class="ui small loader" id="cms-loading"></div><p id="cms">CMS: </p>
                 </div>
             </div>
 
@@ -214,7 +214,7 @@
                             </tr>
                         </thead>
                         <tbody id="port-table">
-                            
+                            <div class="ui loader" id="port-loading" hidden></div>
                         </tbody>
                     </table>
                 </div>

@@ -58,13 +58,66 @@ function changeColor() {
             $(routes[i]+"-sd").attr("class", "teal "+iconMap[routes[i]]+" icon");
         }
     }
-    
 }
 
 $(window).bind('hashchange', function() {
     router();
     changeColor();
 });
+
+function portScan() {
+    $("#port-table").html("")
+    $.ajax({
+        url: "/api/info/port",
+        type: "GET",
+        dataType: "JSON",
+        beforesend: $("#port-loading").show(),
+    }).done(function (result) {
+        $("#port-loading").hide();
+        ports = result.data.sort(function sequence(a,b){
+            return a - b;
+        });
+        if (ports.length>0) {
+            for (var i=0; i<ports.length;i++) {
+                h = html_shadow_port.format({"port":ports[i],"service":"open"})
+                $("#port-table").append(h)
+            }
+        }
+    })
+}
+
+function basicInfo() {
+    $("#ip").html("IP Address: ")
+    $("#server").html("Web Server: ")
+    $.ajax({
+        url: "/api/info/basic",
+        type: "GET",
+        dataType: "JSON",
+        beforesend: $("#ip-loading, #server-loading").show(),
+    }).done(function (result) {
+        $("#ip-loading, #server-loading").hide();
+        ip=result.data[0]; server=result.data[1];
+        $("#ip").html("IP Address: "+ip);
+        $("#server").html("Web Server: "+server);
+    })
+}
+
+function cmsDetect() {
+    $("#cms").html("CMS: ");
+    $.ajax({
+        url: "/api/info/cms",
+        type: "GET",
+        dataType: "JSON",
+        beforesend: $("#cms-loading").show(),
+    }).done(function (result) {
+        $("#cms-loading").hide();
+        cms=result.data["cms"];
+        if (cms.length==0) {
+            cms = "Unknown";
+        }
+        $("#cms").html("CMS: "+cms);
+    })
+}
 
 $(document).ready(function(){
     router();
@@ -88,21 +141,9 @@ $(document).ready(function(){
     });
 
     $("#start-shadow").click(function(){
-        $.ajax({
-            url: "/api/info/port",
-            type: "GET",
-            dataType: "JSON",
-        }).done(function (result) {
-            ports = result.data.sort(function sequence(a,b){
-                return a - b;
-            });
-            if (ports.length>0) {
-                for (var i=0; i<ports.length;i++) {
-                    h = html_shadow_port.format({"port":ports[i],"service":"open"})
-                    $("#port-table").append(h)
-                }
-            }
-        })
+        basicInfo();
+        portScan();
+        cmsDetect();
     })
 
 });

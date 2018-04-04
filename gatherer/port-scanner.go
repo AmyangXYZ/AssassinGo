@@ -24,7 +24,7 @@ type PortScanner struct {
 func NewPortScanner(target string) *PortScanner {
 	return &PortScanner{
 		target:      target,
-		ports:       readPortsFromFile("/home/amyang/Projects/AssassinGo/gatherer/Top100ports.txt"),
+		ports:       readPortsFromFile("./gatherer/Top100ports.txt"),
 		concurrency: 100,
 		timeout:     2,
 	}
