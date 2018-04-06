@@ -8,18 +8,24 @@ Just for learn.
 
 ## Features
 
-- [X] Retrieve Server and Powered by Headers
-- [X] Detect CMS Version
-- [X] Gather Related E-Mails
+- [x] Retrieve Server and Powered by Headers
+- [x] Detect CMS Version
 - [ ] DNS Records Dump
 - [ ] Whois Lookup
-- [X] Port Scan
-- [X] Crawl the Paramed URLs
-- [X] Basic SQLi Scan
-- [X] Basic XSS Scan
-- [X] Friendly Interface.
-- [ ] Output Report.pdf
+- [x] Port Scan
+- [x] Crawl the Paramed URLs
+- [x] Basic SQLi Scan
+- [x] Basic XSS Scan
+- [ ] Google Hacking
+- [ ] Brute Force
+- [x] Friendly API.
+- [ ] POC Lib
+- [ ] Web GUI(using WebSocket)
 
 ## State
 
 developing...
+
+## Demo
+
+![](./demo.png)

@@ -74,6 +74,7 @@ func wsCrawl(ctx *sweetygo.Context) {
 		fmt.Println(err)
 	}
 	for url := range results {
+		a.FuzzableURLs = append(a.FuzzableURLs, url)
 		if err = conn.WriteJSON(url); err != nil {
 			fmt.Println(err)
 		}
@@ -81,23 +82,15 @@ func wsCrawl(ctx *sweetygo.Context) {
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 4096, 4096)
 	S := scanner.NewBasicSQLi()
-	S.Run(a.FuzzableURLs)
-	urls := S.Report().([]string)
-	ret := map[string][]string{
-		"sqli_urls": urls,
-	}
-	ctx.JSON(200, ret, "success")
+	S.Run(a.FuzzableURLs, conn)
 }
 
 func checkXSS(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 4096, 4096)
 	X := scanner.NewXSSChecker()
-	X.Run(a.FuzzableURLs)
-	urls := X.Report().([]string)
-	ret := map[string][]string{
-		"xss_urls": urls,
-	}
-	ctx.JSON(200, ret, "success")
+	X.Run(a.FuzzableURLs, conn)
 }
 
 func intrude(ctx *sweetygo.Context) {

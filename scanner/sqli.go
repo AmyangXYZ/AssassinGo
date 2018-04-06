@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"../logger"
+	"github.com/gorilla/websocket"
 )
 
 // BasicSQLi checks basic sqli vuls.
@@ -28,13 +29,13 @@ func (bs *BasicSQLi) Report() interface{} {
 }
 
 // Run impletements Scanner interface.
-func (bs *BasicSQLi) Run(fuzzableURLs []string) {
+func (bs *BasicSQLi) Run(fuzzableURLs []string, conn *websocket.Conn) {
 	logger.Green.Println("Basic SQLi Checking...")
 
 	blockers := make(chan bool, len(fuzzableURLs))
 	for _, URL := range fuzzableURLs {
 		blockers <- true
-		go bs.check(URL, blockers)
+		go bs.check(URL, blockers, conn)
 	}
 
 	// Wait for all goroutines to finish.
@@ -46,12 +47,13 @@ func (bs *BasicSQLi) Run(fuzzableURLs []string) {
 	}
 }
 
-func (bs *BasicSQLi) check(URL string, blocker chan bool) {
+func (bs *BasicSQLi) check(URL string, blocker chan bool, conn *websocket.Conn) {
 	defer func() { <-blocker }()
 	body0 := bs.fetch(URL + bs.payload0)
 	body1 := bs.fetch(URL + bs.payload1)
 	if len(body0) != len(body1) {
 		logger.Blue.Println(URL)
+		conn.WriteJSON(URL)
 		bs.InjectableURL = append(bs.InjectableURL, URL)
 	}
 }

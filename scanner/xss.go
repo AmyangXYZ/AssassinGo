@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"../logger"
+	"github.com/gorilla/websocket"
 )
 
 // XSSChecker checks XSS vuls.
@@ -25,13 +26,13 @@ func (x *XSSChecker) Report() interface{} {
 }
 
 // Run impletements Scanner interface.
-func (x *XSSChecker) Run(fuzzableURLs []string) {
+func (x *XSSChecker) Run(fuzzableURLs []string, conn *websocket.Conn) {
 	logger.Green.Println("Basic XSS Checking...")
 
 	blockers := make(chan bool, len(fuzzableURLs))
 	for _, URL := range fuzzableURLs {
 		blockers <- true
-		go x.check(URL, blockers)
+		go x.check(URL, blockers, conn)
 	}
 
 	// Wait for all goroutines to finish.
@@ -44,11 +45,12 @@ func (x *XSSChecker) Run(fuzzableURLs []string) {
 	}
 }
 
-func (x *XSSChecker) check(URL string, blocker chan bool) {
+func (x *XSSChecker) check(URL string, blocker chan bool, conn *websocket.Conn) {
 	defer func() { <-blocker }()
 	body := x.fetch(URL + x.payload)
 	if strings.Contains(body, x.payload) {
 		logger.Blue.Println(URL + x.payload)
+		conn.WriteJSON(URL)
 		x.InjectableURL = append(x.InjectableURL, URL)
 	}
 }

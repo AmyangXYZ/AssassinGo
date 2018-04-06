@@ -158,13 +158,13 @@ function cmsDetect() {
 function crawl() {
     $("#url-table").html("");
     $("#email-table").html("");
-    var socket = new WebSocket("ws://localhost:8080/api/ws/crawl")
+    var socket = new WebSocket("ws://localhost:8080/ws/crawl")
     // socket.onopen = function() {
     //     container.append("<p>Socket is open</p>");
     // };
     socket.onmessage = function (e) {
-        hu = html_shadow_url.format({"url": e.data})
-        $("#url-table").append(hu);
+        h = html_shadow_url.format({"url": e.data})
+        $("#url-table").append(h);
     }
     // socket.onclose = function () {
     //     container.append("<p>Socket closed</p>");
@@ -174,40 +174,20 @@ function crawl() {
 
 function sqliCheck() {
     $("#sqli-url-table").html("")
-    $.ajax({
-        url: "/api/vul/sqli",
-        type: "GET",
-        dataType: "JSON",
-        beforesend: $("#sqli-url-loading").show(),
-    }).done(function (result) {
-        $("#sqli-url-loading").hide();
-        sqli_urls = result.data.sqli_urls;
-        if (sqli_urls.length>0) {
-            for (var i=0; i<sqli_urls.length;i++) {
-                h = html_attack_sqli_url.format({"url":sqli_urls[i]})
-                $("#sqli-url-table").append(h)
-            }
-        }
-    })
+    var socket = new WebSocket("ws://localhost:8080/ws/vul/sqli")
+    socket.onmessage = function (e) {
+        h = html_attack_sqli_url.format({"url":e.data})
+        $("#sqli-url-table").append(h)
+    }
 }
 
 function xssCheck() {
     $("#xss-url-table").html("")
-    $.ajax({
-        url: "/api/vul/xss",
-        type: "GET",
-        dataType: "JSON",
-        beforesend: $("#xss-url-loading").show(),
-    }).done(function (result) {
-        $("#xss-url-loading").hide();
-        xss_urls = result.data.xss_urls;
-        if (xss_urls.length>0) {
-            for (var i=0; i<xss_urls.length;i++) {
-                h = html_attack_xss_url.format({"url":xss_urls[i]})
-                $("#xss-url-table").append(h)
-            }
-        }
-    })
+    var socket = new WebSocket("ws://localhost:8080/ws/vul/xss")
+    socket.onmessage = function (e) {
+        h = html_attack_sqli_url.format({"url":e.data})
+        $("#xss-url-table").append(h)
+    }
 }
 
 $(document).ready(function(){

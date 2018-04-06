@@ -16,16 +16,16 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/api/info/basic", basicInfo)
 	app.GET("/api/info/cms", cmsDetect)
 	app.GET("/api/info/port", portScan)
-	app.GET("/api/info/goohack", nil)
+	app.GET("/ws/info/goohack", nil)
 
-	app.GET("/api/ws/crawl", wsCrawl)
-	app.GET("/api/ws/intrude", intrude)
+	app.GET("/ws/crawl", wsCrawl)
+	app.GET("/ws/intrude", intrude)
 
-	app.GET("/api/vul/sqli", checkSQLi)
-	app.GET("/api/vul/xss", checkXSS)
+	app.GET("/ws/vul/sqli", checkSQLi)
+	app.GET("/ws/vul/xss", checkXSS)
 
 	app.GET("/api/poc", getPOCs)
 	app.POST("/api/poc", setPOC)
-	app.GET("/api/poc/run", runPOC)
+	app.GET("/ws/poc/run", runPOC)
 
 }
