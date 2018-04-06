@@ -23,10 +23,6 @@
                 <i class="orange tiny home icon" id="home-sd"></i>
                 Home
             </a>
-            <a class="item" href="/#seek">
-                <i class="orange search icon" id="seek-sd"></i>
-                Seek
-            </a>
             <a class="item" href="/#shadow">
                 <i class="orange spy icon" id="shadow-sd"></i>
                 Shadow
@@ -34,6 +30,10 @@
             <a class="item" href="/#attack">
                 <i class="orange block layout icon" id="attack-sd"></i>
                 Attack
+            </a>
+            <a class="item" href="/#seek">
+                <i class="orange search icon" id="seek-sd"></i>
+                Seek
             </a>
             <a class="item" href="/#assassinate">
                 <i class="orange smile icon" id="assassinate-sd"></i>
@@ -59,6 +59,138 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- shadow -->
+        <div id="shadow" class="ui raised padded grid container segment">
+            <div class="row">
+                <div class="column">
+                    <div class="border-block-top"></div>
+                </div>
+                <div class="fourteen wide column">
+                    <div class="ui center aligned huge header" id="start-shadow" style="font-size: 4em; color:#eee">
+                        Shadow
+                        <div class="sub header">
+                            <p class="describe-section">gather information</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- webserver -->
+            <div class="row">
+                <div class="two wide column"></div>
+                
+                <div class="four wide column">
+                    <div class="ui small loader" id="ip-loading"></div><p id="ip">IP Address: </p>
+                </div>
+                <div class="four wide column">
+                    <div class="ui small loader" id="server-loading"></div><p id="server">Web Server: </p>
+                </div>
+                <div class="column"></div>
+                <div class="four wide column">
+                    <div class="ui small loader" id="cms-loading"></div><p id="cms">CMS: </p>
+                </div>
+            </div>
+
+            <div class="row"></div>
+
+            <div class="row">
+                <div class="column"></div>
+                
+                <div class="five wide column">
+                    <!-- fuzzableURLs -->
+                    <table class="ui single line table">
+                        <thead><th>FuzzableURLs</th></thead>
+                        <tbody id="url-table">
+                            <div class="ui loader" id="url-loading" hidden></div>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column"></div>
+                
+                <div class="four wide column">
+                    <!-- emails -->
+                    <table class="ui single line table">
+                        <thead><th>Related E-Mails</th></thead>
+                        <tbody id="email-table">
+                            <div class="ui loader" id="email-loading" hidden></div>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column"></div>
+                
+                <div class="two wide column">
+                    <!-- port -->
+                    <table class="ui very basic small celled table">
+                        <thead>
+                            <tr>
+                                <th>Port</th>
+                                <th>Service</th>
+                            </tr>
+                        </thead>
+                        <tbody id="port-table">
+                            <div class="ui loader" id="port-loading" hidden></div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row"></div>
+            <div class="row">
+                <div class="eight wide column"></div>
+                <div class="column">
+                    <a href="/#attack"><i class="angle double down large link icon"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- attack -->
+        <div id="attack" class="ui raised padded grid container segment">
+            <div class="row">
+                <div class="column">
+                    <div class="border-block-top"></div>
+                </div>
+                <div class="fourteen wide column">
+                    <div id="start-attack" class="ui center aligned huge header" style="font-size: 4em; color:#eee">
+                        Attack
+                        <div class="sub header">
+                            <p class="describe-section">scan and fuzz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column"></div>
+                
+                <div class="five wide column">
+                    <!-- SQLICheck -->
+                    <table class="ui single line table">
+                        <thead><th>SQLI-URLs</th></thead>
+                        <tbody id="sqli-url-table">
+                            <div class="ui loader" id="sqli-url-loading" hidden></div>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column"></div>
+
+                <div class="five wide column">
+                    <!-- XSSCheck -->
+                    <table class="ui single line table">
+                        <thead><th>XSS-URLs</th></thead>
+                        <tbody id="xss-url-table">
+                            <div class="ui loader" id="xss-url-loading" hidden></div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                    <div class="eight wide column"></div>
+                    <div class="column">
+                        <a href="/#assassinate"><i class="angle double down large link icon"></i></a>
+                    </div>
+                </div>
         </div>
 
         <!-- seek -->
@@ -105,163 +237,6 @@
                     <a href="/#shadow"><i class="angle double down large link icon"></i></a>
                 </div>
             </div>
-        </div>
-
-        <!-- shadow -->
-        <div id="shadow" class="ui raised padded grid container segment">
-            <div class="row">
-                <div class="column">
-                    <div class="border-block-top"></div>
-                </div>
-                <div class="fourteen wide column">
-                    <div class="ui center aligned huge header" id="start-shadow" style="font-size: 4em; color:#eee">
-                        Shadow
-                        <div class="sub header">
-                            <p class="describe-section">gather information</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- <div class="row"></div> -->
-
-            <!-- webserver -->
-            <div class="row">
-                <div class="two wide column"></div>
-                
-                <div class="four wide column">
-                    <div class="ui small loader" id="ip-loading"></div><p id="ip">IP Address: </p>
-                </div>
-                <div class="four wide column">
-                    <div class="ui small loader" id="server-loading"></div><p id="server">Web Server: </p>
-                </div>
-                <div class="column"></div>
-                <div class="four wide column">
-                    <div class="ui small loader" id="cms-loading"></div><p id="cms">CMS: </p>
-                </div>
-            </div>
-
-            <div class="row"></div>
-
-            <div class="row">
-                <div class="column"></div>
-                
-                <div class="five wide column">
-                    <!-- fuzzableURLs -->
-                    <table class="ui single line table">
-                        <thead><th>FuzzableURLs</th></thead>
-                        <tbody>
-                            <tr>
-                                <td>http://www.sut56.com/wangdian2.php?class=140</td>
-                            </tr>
-                            <tr>
-                                <td>http://www.sut56.com/wangdian2.php?class=140</td>
-                            </tr>
-                            <tr>
-                                <td>http://www.sut56.com/join.php?id=4</td>
-                            </tr>
-                            <tr>
-                                <td>http://www.sut56.com/wangdian2.php?class=140</td>
-                            </tr>
-                            <tr>
-                                <td>http://www.sut56.com/newslist.php?bid=5&page=1</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="column"></div>
-                
-                <div class="four wide column">
-                    <!-- emails -->
-                    <table class="ui single line table">
-                        <thead><th>Related E-Mails</th></thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <i class="mail icon"></i>
-                                    <a href="mailto:jack@semantic-ui.com">jack@semantic-ui.com</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <i class="mail icon"></i>
-                                    <a href="mailto:jack@semantic-ui.com">jack@semantic-ui.com</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <i class="mail icon"></i>
-                                    <a href="mailto:jack@semantic-ui.com">jack@semantic-ui.com</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <i class="mail icon"></i>
-                                    <a href="mailto:jack@semantic-ui.com">jack@semantic-ui.com</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="column"></div>
-                
-                <div class="two wide column">
-                    <!-- port -->
-                    <table class="ui very basic small celled table">
-                        <thead>
-                            <tr>
-                                <th>Port</th>
-                                <th>Service</th>
-                            </tr>
-                        </thead>
-                        <tbody id="port-table">
-                            <div class="ui loader" id="port-loading" hidden></div>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="eight wide column"></div>
-                <div class="column">
-                    <a href="/#attack"><i class="angle double down large link icon"></i></a>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- attack -->
-        <div id="attack" class="ui raised padded grid container segment">
-            <div class="row">
-                <div class="column">
-                    <div class="border-block-top"></div>
-                </div>
-                <div class="fourteen wide column">
-                    <div class="ui center aligned huge header" style="font-size: 4em; color:#eee">
-                        Attack
-                        <div class="sub header">
-                            <p class="describe-section">scan and fuzz</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-
-            </div>
-
-            <div class="column">
-                <p>three</p>
-                <p></p>
-            </div>
-            <div class="column">
-                <p>four</p>
-                <p></p>
-            </div>
-            <div class="row">
-                    <div class="eight wide column"></div>
-                    <div class="column">
-                        <a href="/#assassinate"><i class="angle double down large link icon"></i></a>
-                    </div>
-                </div>
         </div>
 
         <!-- assassinate -->

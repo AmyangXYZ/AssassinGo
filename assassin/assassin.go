@@ -2,12 +2,14 @@ package assassin
 
 import (
 	"../logger"
+	"../poc"
 )
 
 // Assassin shadow and assassinate the target.
 type Assassin struct {
 	Target       string
 	FuzzableURLs []string
+	POC          poc.POC
 }
 
 // New returns a new Assassin.

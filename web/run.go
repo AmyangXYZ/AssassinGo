@@ -6,6 +6,7 @@ import (
 )
 
 var a *assassin.Assassin
+var ateam []*assassin.Assassin
 
 // Run Web GUI.
 func Run() {

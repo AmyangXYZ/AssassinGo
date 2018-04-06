@@ -36,6 +36,31 @@ var html_shadow_port = `
         </tr>
         `
 
+var html_shadow_url = `
+        <tr>
+        <td>{url}</td>
+        </tr>
+`
+
+var html_shadow_email = `
+        <tr>
+            <td>
+                <i class="mail icon"></i>
+                {email}
+            </td>
+        </tr>
+`
+var html_attack_sqli_url = `
+        <tr>
+        <td>{url}</td>
+        </tr>
+`
+
+var html_attack_xss_url = `
+        <tr>
+        <td>{url}</td>
+        </tr>
+`
 function router() {
     hash = window.location.hash;
     if (hash == "") {
@@ -65,8 +90,19 @@ $(window).bind('hashchange', function() {
     changeColor();
 });
 
+function reset() {
+    $("#port-table").html("");
+    $("#ip").html("IP Address: ");
+    $("#server").html("Web Server: ");
+    $("#cms").html("CMS: ");
+    $("#url-table").html("");
+    $("#email-table").html("");
+    $("#sqli-url-table").html("");
+    $("#xss-url-table").html("");
+}
+
 function portScan() {
-    $("#port-table").html("")
+    $("#port-table").html("");
     $.ajax({
         url: "/api/info/port",
         type: "GET",
@@ -74,7 +110,7 @@ function portScan() {
         beforesend: $("#port-loading").show(),
     }).done(function (result) {
         $("#port-loading").hide();
-        ports = result.data.sort(function sequence(a,b){
+        ports = result.data.ports.sort(function sequence(a,b){
             return a - b;
         });
         if (ports.length>0) {
@@ -96,7 +132,7 @@ function basicInfo() {
         beforesend: $("#ip-loading, #server-loading").show(),
     }).done(function (result) {
         $("#ip-loading, #server-loading").hide();
-        ip=result.data[0]; server=result.data[1];
+        ip=result.data.ip; server=result.webServer;
         $("#ip").html("IP Address: "+ip);
         $("#server").html("Web Server: "+server);
     })
@@ -111,7 +147,7 @@ function cmsDetect() {
         beforesend: $("#cms-loading").show(),
     }).done(function (result) {
         $("#cms-loading").hide();
-        cms=result.data["cms"];
+        cms=result.data.cms;
         if (cms.length==0) {
             cms = "Unknown";
         }
@@ -119,10 +155,76 @@ function cmsDetect() {
     })
 }
 
+function crawl() {
+    $("#url-table").html("");
+    $("#email-table").html("");
+    $.ajax({
+        url: "/api/crawl",
+        type: "GET",
+        dataType: "JSON",
+        beforesend: $("#url-loading, #email-loading").show(),
+    }).done(function (result) {
+        $("#url-loading, #email-loading").hide();
+        emails = result.data.emails;
+        urls = result.data.fuzzableURLs;
+        if (emails.length>0) {
+            for (var i=0; i<emails.length;i++) {
+                he = html_shadow_email.format({"email":emails[i]})
+                $("#email-table").append(he)
+            }
+        }
+        if (urls.length>0) {
+            for (var i=0; i<urls.length;i++) {
+                hu = html_shadow_url.format({"url":urls[i]})
+                $("#url-table").append(hu)
+            }
+        }
+    })
+}
+
+function sqliCheck() {
+    $("#sqli-url-table").html("")
+    $.ajax({
+        url: "/api/vul/sqli",
+        type: "GET",
+        dataType: "JSON",
+        beforesend: $("#sqli-url-loading").show(),
+    }).done(function (result) {
+        $("#sqli-url-loading").hide();
+        sqli_urls = result.data.sqli_urls;
+        if (sqli_urls.length>0) {
+            for (var i=0; i<sqli_urls.length;i++) {
+                h = html_attack_sqli_url.format({"url":sqli_urls[i]})
+                $("#sqli-url-table").append(h)
+            }
+        }
+    })
+}
+
+function xssCheck() {
+    $("#xss-url-table").html("")
+    $.ajax({
+        url: "/api/vul/xss",
+        type: "GET",
+        dataType: "JSON",
+        beforesend: $("#xss-url-loading").show(),
+    }).done(function (result) {
+        $("#xss-url-loading").hide();
+        xss_urls = result.data.xss_urls;
+        if (xss_urls.length>0) {
+            for (var i=0; i<xss_urls.length;i++) {
+                h = html_attack_xss_url.format({"url":xss_urls[i]})
+                $("#xss-url-table").append(h)
+            }
+        }
+    })
+}
+
 $(document).ready(function(){
     router();
     changeColor();
     $("#bt-set-target").click(function(){
+        reset();
         $.ajax({
             url:" /api/target",
             type: "POST",
@@ -144,6 +246,11 @@ $(document).ready(function(){
         basicInfo();
         portScan();
         cmsDetect();
-    })
+        crawl();
+    });
 
+    $("#start-attack").click(function(){
+        sqliCheck();
+        xssCheck();
+    })
 });

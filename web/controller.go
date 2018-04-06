@@ -2,10 +2,12 @@ package web
 
 import (
 	"net/http"
+	"strings"
 
 	"../assassin"
 	"../crawler"
 	"../gatherer"
+	"../poc"
 	"../scanner"
 	"github.com/AmyangXYZ/sweetygo"
 )
@@ -23,28 +25,41 @@ func static(ctx *sweetygo.Context) {
 func newAssassin(ctx *sweetygo.Context) {
 	target := ctx.Param("target")
 	a = assassin.New(target)
-	ctx.JSON(201, map[string]string{"target": target}, "success")
+	ret := map[string]string{
+		"target": target,
+	}
+	ctx.JSON(201, ret, "success")
 }
 
 func basicInfo(ctx *sweetygo.Context) {
 	B := gatherer.NewBasicInfo(a.Target)
 	B.Run()
 	bi := B.Report().([]string)
-	ctx.JSON(200, bi, "success")
+	ret := map[string]string{
+		"ip":        bi[0],
+		"webServer": bi[1],
+	}
+	ctx.JSON(200, ret, "success")
 }
 
 func cmsDetect(ctx *sweetygo.Context) {
 	C := gatherer.NewCMSDetector(a.Target)
 	C.Run()
 	cms := C.Report().(string)
-	ctx.JSON(200, map[string]string{"cms": cms}, "success")
+	ret := map[string]string{
+		"cms": cms,
+	}
+	ctx.JSON(200, ret, "success")
 }
 
 func portScan(ctx *sweetygo.Context) {
 	P := gatherer.NewPortScanner(a.Target)
 	P.Run()
 	ports := P.Report().([]string)
-	ctx.JSON(200, ports, "success")
+	ret := map[string][]string{
+		"ports": ports,
+	}
+	ctx.JSON(200, ret, "success")
 }
 
 func crawl(ctx *sweetygo.Context) {
@@ -62,12 +77,83 @@ func checkSQLi(ctx *sweetygo.Context) {
 	S := scanner.NewBasicSQLi()
 	S.Run(a.FuzzableURLs)
 	urls := S.Report().([]string)
-	ctx.JSON(200, urls, "success")
+	ret := map[string][]string{
+		"sqli_urls": urls,
+	}
+	ctx.JSON(200, ret, "success")
 }
 
 func checkXSS(ctx *sweetygo.Context) {
 	X := scanner.NewXSSChecker()
 	X.Run(a.FuzzableURLs)
 	urls := X.Report().([]string)
-	ctx.JSON(200, urls, "success")
+	ret := map[string][]string{
+		"xss_urls": urls,
+	}
+	ctx.JSON(200, ret, "success")
+}
+
+// POST -d "targets=t1,t2,t3..."
+func setTargets(ctx *sweetygo.Context) {
+	params := ctx.Params()
+	ts := params["targets"][0]
+	targets := strings.Split(ts, ",")
+	for _, t := range targets {
+		ateam = append(ateam, assassin.New(t))
+	}
+
+	ret := map[string][]string{
+		"targets": targets,
+	}
+	ctx.JSON(201, ret, "success")
+}
+
+func getPOCs(ctx *sweetygo.Context) {
+	var pocList []string
+	for pocNames := range poc.POCMap {
+		pocList = append(pocList, pocNames)
+	}
+
+	ret := map[string][]string{
+		"poclist": pocList,
+	}
+	ctx.JSON(200, ret, "success")
+}
+
+// POST -d "poc=xxx"
+func setPOC(ctx *sweetygo.Context) {
+	pocName := ctx.Param("poc")
+	for _, aa := range ateam {
+		aa.POC = poc.POCMap[pocName]
+	}
+
+	ret := map[string]string{
+		"poc": pocName,
+	}
+	ctx.JSON(201, ret, "success")
+}
+
+func runPOC(ctx *sweetygo.Context) {
+	concurrency := 2
+	blockers := make(chan struct{}, concurrency)
+	var existedList []string
+
+	for _, aa := range ateam {
+		blockers <- struct{}{}
+		go func(a *assassin.Assassin, blocker chan struct{}) {
+			defer func() { <-blocker }()
+			a.POC.Run(a.Target)
+			if result := a.POC.Report().(string); result == "true" {
+				existedList = append(existedList, a.Target)
+			}
+		}(aa, blockers)
+	}
+	for i := 0; i < cap(blockers); i++ {
+		blockers <- struct{}{}
+	}
+
+	ret := map[string][]string{
+		"existed": existedList,
+	}
+	ctx.JSON(200, ret, "success")
 }
