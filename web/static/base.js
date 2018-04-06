@@ -166,9 +166,9 @@ function crawl() {
         h = html_shadow_url.format({"url": e.data})
         $("#url-table").append(h);
     }
-    // socket.onclose = function () {
-    //     container.append("<p>Socket closed</p>");
-    // }
+    socket.onclose = function () {
+        $("#url-table").append("Finished");
+    }
     return socket;
 }
 
@@ -179,6 +179,9 @@ function sqliCheck() {
         h = html_attack_sqli_url.format({"url":e.data})
         $("#sqli-url-table").append(h)
     }
+    socket.onclose = function () {
+        $("#sqli-url-table").append("Finished");
+    }
 }
 
 function xssCheck() {
@@ -187,6 +190,9 @@ function xssCheck() {
     socket.onmessage = function (e) {
         h = html_attack_sqli_url.format({"url":e.data})
         $("#xss-url-table").append(h)
+    }
+    socket.onclose = function () {
+        $("#xss-url-table").append("Finished");
     }
 }
 

@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"../logger"
+	"github.com/gorilla/websocket"
 )
 
 // Crawler crawls the website.
@@ -36,7 +37,7 @@ func NewCrawler(host string, depth int) Crawler {
 }
 
 // Run begins crawling and return fuzzable urls.
-func (c *Crawler) Run() []string {
+func (c *Crawler) Run(conn *websocket.Conn) []string {
 	logger.Green.Println("Fuzzable URLs Crawling...")
 	var fuzzableURLs []string
 	results := make(chan string)
@@ -44,6 +45,7 @@ func (c *Crawler) Run() []string {
 	go c.Crawl(c.host, c.maxDepth, results)
 	for url := range results {
 		logger.Blue.Println(url)
+		conn.WriteJSON(url)
 		fuzzableURLs = append(fuzzableURLs, url)
 	}
 

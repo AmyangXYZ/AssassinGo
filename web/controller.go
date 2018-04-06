@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -64,33 +63,26 @@ func portScan(ctx *sweetygo.Context) {
 	ctx.JSON(200, ret, "success")
 }
 
-func wsCrawl(ctx *sweetygo.Context) {
+func crawl(ctx *sweetygo.Context) {
 	C := crawler.NewCrawler(a.Target, 4)
-	results := make(chan string)
-	go C.Crawl("http://"+a.Target, 4, results)
-
-	conn, err := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 4096, 4096)
-	if err != nil {
-		fmt.Println(err)
-	}
-	for url := range results {
-		a.FuzzableURLs = append(a.FuzzableURLs, url)
-		if err = conn.WriteJSON(url); err != nil {
-			fmt.Println(err)
-		}
-	}
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	urls := C.Run(conn)
+	a.FuzzableURLs = urls
+	conn.Close()
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
-	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 4096, 4096)
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	S := scanner.NewBasicSQLi()
 	S.Run(a.FuzzableURLs, conn)
+	conn.Close()
 }
 
 func checkXSS(ctx *sweetygo.Context) {
-	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 4096, 4096)
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	X := scanner.NewXSSChecker()
 	X.Run(a.FuzzableURLs, conn)
+	conn.Close()
 }
 
 func intrude(ctx *sweetygo.Context) {
