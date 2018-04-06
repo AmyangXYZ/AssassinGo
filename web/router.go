@@ -18,7 +18,8 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/api/info/port", portScan)
 	app.GET("/api/info/goohack", nil)
 
-	app.GET("/api/crawl", crawl)
+	app.GET("/api/ws/crawl", wsCrawl)
+	app.GET("/api/ws/intrude", intrude)
 
 	app.GET("/api/vul/sqli", checkSQLi)
 	app.GET("/api/vul/xss", checkXSS)
@@ -26,4 +27,5 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/api/poc", getPOCs)
 	app.POST("/api/poc", setPOC)
 	app.GET("/api/poc/run", runPOC)
+
 }

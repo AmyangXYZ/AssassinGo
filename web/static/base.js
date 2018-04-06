@@ -132,7 +132,7 @@ function basicInfo() {
         beforesend: $("#ip-loading, #server-loading").show(),
     }).done(function (result) {
         $("#ip-loading, #server-loading").hide();
-        ip=result.data.ip; server=result.webServer;
+        ip=result.data.ip; server=result.data.webServer;
         $("#ip").html("IP Address: "+ip);
         $("#server").html("Web Server: "+server);
     })
@@ -158,28 +158,18 @@ function cmsDetect() {
 function crawl() {
     $("#url-table").html("");
     $("#email-table").html("");
-    $.ajax({
-        url: "/api/crawl",
-        type: "GET",
-        dataType: "JSON",
-        beforesend: $("#url-loading, #email-loading").show(),
-    }).done(function (result) {
-        $("#url-loading, #email-loading").hide();
-        emails = result.data.emails;
-        urls = result.data.fuzzableURLs;
-        if (emails.length>0) {
-            for (var i=0; i<emails.length;i++) {
-                he = html_shadow_email.format({"email":emails[i]})
-                $("#email-table").append(he)
-            }
-        }
-        if (urls.length>0) {
-            for (var i=0; i<urls.length;i++) {
-                hu = html_shadow_url.format({"url":urls[i]})
-                $("#url-table").append(hu)
-            }
-        }
-    })
+    var socket = new WebSocket("ws://localhost:8080/api/ws/crawl")
+    // socket.onopen = function() {
+    //     container.append("<p>Socket is open</p>");
+    // };
+    socket.onmessage = function (e) {
+        hu = html_shadow_url.format({"url": e.data})
+        $("#url-table").append(hu);
+    }
+    // socket.onclose = function () {
+    //     container.append("<p>Socket closed</p>");
+    // }
+    return socket;
 }
 
 function sqliCheck() {

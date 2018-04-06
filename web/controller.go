@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 	"../poc"
 	"../scanner"
 	"github.com/AmyangXYZ/sweetygo"
+	"github.com/gorilla/websocket"
 )
 
 func index(ctx *sweetygo.Context) {
@@ -62,15 +64,20 @@ func portScan(ctx *sweetygo.Context) {
 	ctx.JSON(200, ret, "success")
 }
 
-func crawl(ctx *sweetygo.Context) {
+func wsCrawl(ctx *sweetygo.Context) {
 	C := crawler.NewCrawler(a.Target, 4)
-	emails, urls := C.Run()
-	a.FuzzableURLs = urls
-	ret := map[string][]string{
-		"emails":       emails,
-		"fuzzableURLs": urls,
+	results := make(chan string)
+	go C.Crawl("http://"+a.Target, 4, results)
+
+	conn, err := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 4096, 4096)
+	if err != nil {
+		fmt.Println(err)
 	}
-	ctx.JSON(200, ret, "success")
+	for url := range results {
+		if err = conn.WriteJSON(url); err != nil {
+			fmt.Println(err)
+		}
+	}
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
@@ -93,7 +100,12 @@ func checkXSS(ctx *sweetygo.Context) {
 	ctx.JSON(200, ret, "success")
 }
 
+func intrude(ctx *sweetygo.Context) {
+
+}
+
 // POST -d "targets=t1,t2,t3..."
+// batch scan is only for poc.
 func setTargets(ctx *sweetygo.Context) {
 	params := ctx.Params()
 	ts := params["targets"][0]

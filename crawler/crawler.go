@@ -30,18 +30,15 @@ func NewCrawler(host string, depth int) Crawler {
 	return Crawler{
 		host:               "http://" + host,
 		extractURLsRe:      regexp.MustCompile(`(?s)<a[ t]+.*?href="(.*?)".*?>`),
-		extractEmailsRe:    regexp.MustCompile(`\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`),
 		replaceGETValuesRe: regexp.MustCompile(`(\?|\&)([^=]+)\=([^&]+)`),
 		maxDepth:           depth,
 	}
 }
 
-// Run begins crawling and return fuzzable urls and emails.
-func (c *Crawler) Run() ([]string, []string) {
+// Run begins crawling and return fuzzable urls.
+func (c *Crawler) Run() []string {
 	logger.Green.Println("Fuzzable URLs Crawling...")
 	var fuzzableURLs []string
-	var emails []string
-	emailsMap := make(map[interface{}]interface{})
 	results := make(chan string)
 
 	go c.Crawl(c.host, c.maxDepth, results)
@@ -54,14 +51,7 @@ func (c *Crawler) Run() ([]string, []string) {
 		logger.Blue.Println("no fuzzable urls found")
 	}
 
-	c.emails.Range(func(k, v interface{}) bool {
-		emailsMap[k] = v
-		return true
-	})
-	for m := range emailsMap {
-		emails = append(emails, m.(string))
-	}
-	return emails, fuzzableURLs
+	return fuzzableURLs
 }
 
 // Crawl crawls the target.
@@ -85,11 +75,7 @@ func (c *Crawler) Crawl(URL string, depth int, ret chan string) {
 		ret <- URL
 	}
 
-	emails, nextURLsMap := c.fetch(URL)
-
-	for _, m := range emails {
-		c.emails.Store(m, true)
-	}
+	nextURLsMap := c.fetch(URL)
 
 	var nextURLs []string
 	for _, nextURL := range nextURLsMap {
@@ -112,21 +98,20 @@ func (c *Crawler) Crawl(URL string, depth int, ret chan string) {
 }
 
 // fetch the page and extract emails and next urls.
-func (c *Crawler) fetch(URL string) ([]string, map[string]string) {
+func (c *Crawler) fetch(URL string) map[string]string {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", URL, nil)
 	req.Header.Set("user-agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, map[string]string{}
+		return map[string]string{}
 	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
 	nextURLsMap := c.extractURLs(URL, string(body))
-	mails := c.extractEmails(string(body))
-	return mails, nextURLsMap
+	return nextURLsMap
 }
 
 func (c *Crawler) extractURLs(URL, body string) map[string]string {
@@ -153,7 +138,6 @@ func (c *Crawler) extractURLs(URL, body string) map[string]string {
 				} else {
 					u = URL + u
 				}
-
 				if strings.Contains(u, c.host) {
 					URLs[c.replaceGETValuesRe.ReplaceAllString(u, `$2`)] = u
 				}
@@ -161,13 +145,4 @@ func (c *Crawler) extractURLs(URL, body string) map[string]string {
 		}
 	}
 	return URLs
-}
-
-func (c *Crawler) extractEmails(body string) []string {
-	var emails []string
-	s := c.extractEmailsRe.FindAllString(body, -1)
-	for _, m := range s {
-		emails = append(emails, m)
-	}
-	return emails
 }
