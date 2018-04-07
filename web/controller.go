@@ -7,6 +7,7 @@ import (
 	"../assassin"
 	"../crawler"
 	"../gatherer"
+	"../intruder"
 	"../poc"
 	"../scanner"
 	"github.com/AmyangXYZ/sweetygo"
@@ -86,8 +87,8 @@ func checkXSS(ctx *sweetygo.Context) {
 
 func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	header := ctx.Param("header")
-	I := intruder.NewIntruder(header)
+	rawHeader := ctx.Param("rawHeader")
+	I := intruder.NewIntruder(a.Target, rawHeader)
 	I.Run(conn)
 	conn.Close()
 }

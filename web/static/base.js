@@ -42,14 +42,6 @@ var html_shadow_url = `
         </tr>
 `
 
-var html_shadow_email = `
-        <tr>
-            <td>
-                <i class="mail icon"></i>
-                {email}
-            </td>
-        </tr>
-`
 var html_attack_sqli_url = `
         <tr>
         <td>{url}</td>
@@ -61,6 +53,15 @@ var html_attack_xss_url = `
         <td>{url}</td>
         </tr>
 `
+
+var html_attack_inturder = `
+        <tr>
+        <td>{payload}</td>
+        <td>{resp_status}</td>
+        <td>{resp_len}</td>
+        </tr>
+`
+
 function router() {
     hash = window.location.hash;
     if (hash == "") {
@@ -188,11 +189,26 @@ function xssCheck() {
     $("#xss-url-table").html("")
     var socket = new WebSocket("ws://localhost:8080/ws/vul/xss")
     socket.onmessage = function (e) {
-        h = html_attack_sqli_url.format({"url":e.data})
+        h = html_attack_xss_url.format({"url":e.data})
         $("#xss-url-table").append(h)
     }
     socket.onclose = function () {
         $("#xss-url-table").append("Finished");
+    }
+}
+
+function intruder() {
+    $("#intruder-table").html("")
+    var socket = new WebSocket("ws://localhost:8080/ws/intrude")
+    socket.onmessage = function (e) {
+        ret = JSON.parse(e.data);
+        h = html_attack_inturder.format({"payload": ret.payload,
+                                        "resp_status": ret.resp_status,
+                                        "resp_len": ret.resp_len})
+        $("#intruder-table").append(h)
+    }
+    socket.onclose = function () {
+        $("#intruder-table").append("Finished");
     }
 }
 
@@ -228,5 +244,6 @@ $(document).ready(function(){
     $("#start-attack").click(function(){
         sqliCheck();
         xssCheck();
+        intruder();
     })
 });

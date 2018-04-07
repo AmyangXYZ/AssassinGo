@@ -46,7 +46,10 @@ func (c *Crawler) Run(conn *websocket.Conn) []string {
 	go c.Crawl(c.host, c.maxDepth, results)
 	for url := range results {
 		logger.Blue.Println(url)
-		conn.WriteJSON(url)
+		ret := map[string]string{
+			"url": url,
+		}
+		conn.WriteJSON(ret)
 		fuzzableURLs = append(fuzzableURLs, url)
 	}
 
@@ -104,7 +107,7 @@ func (c *Crawler) Crawl(URL string, depth int, ret chan string) {
 func (c *Crawler) fetch(URL string) map[string]string {
 	client := &http.Client{Timeout: 5 * time.Second}
 	req, _ := http.NewRequest("GET", URL, nil)
-	req.Header.Set("user-agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
 	if err != nil {
 		return map[string]string{}

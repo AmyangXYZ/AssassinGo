@@ -50,7 +50,10 @@ func (x *XSSChecker) check(URL string, blocker chan bool, conn *websocket.Conn) 
 	body := x.fetch(URL + x.payload)
 	if strings.Contains(body, x.payload) {
 		logger.Blue.Println(URL + x.payload)
-		conn.WriteJSON(URL)
+		ret := map[string]string{
+			"url": URL,
+		}
+		conn.WriteJSON(ret)
 		x.InjectableURL = append(x.InjectableURL, URL)
 	}
 }
@@ -58,7 +61,7 @@ func (x *XSSChecker) check(URL string, blocker chan bool, conn *websocket.Conn) 
 func (x *XSSChecker) fetch(URL string) string {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", URL, nil)
-	req.Header.Set("user-agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
 	if err != nil {
 		return ""
