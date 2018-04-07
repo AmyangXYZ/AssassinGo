@@ -30,7 +30,7 @@ Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
 /api/target | POST | set a target | target=xxx | nil
 /api/targets | POST | set targets | targets=t1,t2... | nil
-/api/info/basic | GET | get ip and webserver | nil | {"ip": ip, "webServer":webServer}
+/api/info/basic | GET | get ip and webserver | nil | {"ip": ip, "webServer": webServer}
 /api/info/cms | GET | detect cms | nil | {"cms": cms}
 /api/info/port | GET | ports scan | nil | {"ports": ports}
 /api/poc | GET | get poc list | nil | {"pocs": pocs}
