@@ -39,7 +39,7 @@ func basicInfo(ctx *sweetygo.Context) {
 	bi := B.Report().([]string)
 	ret := map[string]string{
 		"ip":        bi[0],
-		"webServer": bi[1],
+		"webserver": bi[1],
 	}
 	ctx.JSON(200, ret, "success")
 }

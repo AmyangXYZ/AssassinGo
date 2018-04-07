@@ -133,7 +133,7 @@ function basicInfo() {
         beforesend: $("#ip-loading, #server-loading").show(),
     }).done(function (result) {
         $("#ip-loading, #server-loading").hide();
-        ip=result.data.ip; server=result.data.webServer;
+        ip=result.data.ip; server=result.data.webserver;
         $("#ip").html("IP Address: "+ip);
         $("#server").html("Web Server: "+server);
     })
