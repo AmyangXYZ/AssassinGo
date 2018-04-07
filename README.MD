@@ -2,7 +2,7 @@
 
 # AssassinGo
 
-AssassinGo is a scalable information gathering and vulnerability scanning framework.
+AssassinGo is an extensible and concurrency information gathering and vulnerability scanning framework.
 
 Just for learn.
 
@@ -51,4 +51,4 @@ developing...
 
 ## Demo
 
-<!-- ![](./demo.png) -->
+![](./demo.png)
