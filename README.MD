@@ -20,7 +20,7 @@ Just for learn.
 - [ ] Brute Force
 - [x] Friendly API.
 - [ ] POC Lib
-- [ ] Web GUI(using WebSocket)
+- [x] Web GUI(using WebSocket)
 
 ## API
 
