@@ -164,7 +164,8 @@ function crawl() {
     //     container.append("<p>Socket is open</p>");
     // };
     socket.onmessage = function (e) {
-        h = html_shadow_url.format({"url": e.data})
+        ret = JSON.parse(e.data);
+        h = html_shadow_url.format({"url": ret.url})
         $("#url-table").append(h);
     }
     socket.onclose = function () {
@@ -177,7 +178,8 @@ function sqliCheck() {
     $("#sqli-url-table").html("")
     var socket = new WebSocket("ws://localhost:8080/ws/vul/sqli")
     socket.onmessage = function (e) {
-        h = html_attack_sqli_url.format({"url":e.data})
+        ret = JSON.parse(e.data);
+        h = html_attack_sqli_url.format({"url":ret.url})
         $("#sqli-url-table").append(h)
     }
     socket.onclose = function () {
@@ -189,7 +191,8 @@ function xssCheck() {
     $("#xss-url-table").html("")
     var socket = new WebSocket("ws://localhost:8080/ws/vul/xss")
     socket.onmessage = function (e) {
-        h = html_attack_xss_url.format({"url":e.data})
+        ret = JSON.parse(e.data);
+        h = html_attack_xss_url.format({"url":ret.url})
         $("#xss-url-table").append(h)
     }
     socket.onclose = function () {
