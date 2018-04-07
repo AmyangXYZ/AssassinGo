@@ -10,7 +10,7 @@ func NewExamplePOC() *ExamplePOC {
 	return &ExamplePOC{}
 }
 
-// Run impletements POC interface.
+// Run implements POC interface.
 func (e *ExamplePOC) Run(target string) {
 	e.target = target
 }

@@ -1,6 +1,6 @@
 package poc
 
-// POC just need to impletements Run().
+// POC just need to implements Run().
 type POC interface {
 	Run(target string)
 	Report() interface{}

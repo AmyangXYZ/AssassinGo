@@ -1,6 +1,6 @@
 package gatherer
 
-// Gatherer should impletement ...
+// Gatherer should implement ...
 type Gatherer interface {
 	Run()
 	Report() interface{}

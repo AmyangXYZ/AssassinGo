@@ -23,12 +23,12 @@ func NewBasicSQLi() *BasicSQLi {
 	}
 }
 
-// Report impletements Scanner interface.
+// Report implements Scanner interface.
 func (bs *BasicSQLi) Report() interface{} {
 	return bs.InjectableURL
 }
 
-// Run impletements Scanner interface.
+// Run implements Scanner interface.
 func (bs *BasicSQLi) Run(fuzzableURLs []string, conn *websocket.Conn) {
 	logger.Green.Println("Basic SQLi Checking...")
 

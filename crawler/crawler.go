@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"../logger"
 	"github.com/gorilla/websocket"
@@ -101,7 +102,7 @@ func (c *Crawler) Crawl(URL string, depth int, ret chan string) {
 
 // fetch the page and extract emails and next urls.
 func (c *Crawler) fetch(URL string) map[string]string {
-	client := &http.Client{}
+	client := &http.Client{Timeout: 5 * time.Second}
 	req, _ := http.NewRequest("GET", URL, nil)
 	req.Header.Set("user-agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
@@ -119,7 +120,6 @@ func (c *Crawler) fetch(URL string) map[string]string {
 func (c *Crawler) extractURLs(URL, body string) map[string]string {
 	extractedURLs := c.extractURLsRe.FindAllStringSubmatch(body, -1)
 	u := ""
-	// filtered_url : raw_url
 	URLs := make(map[string]string)
 	baseURL, _ := url.Parse(URL)
 	if extractedURLs != nil {

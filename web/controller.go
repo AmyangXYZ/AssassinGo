@@ -64,10 +64,9 @@ func portScan(ctx *sweetygo.Context) {
 }
 
 func crawl(ctx *sweetygo.Context) {
-	C := crawler.NewCrawler(a.Target, 4)
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	urls := C.Run(conn)
-	a.FuzzableURLs = urls
+	C := crawler.NewCrawler(a.Target, 4)
+	a.FuzzableURLs = C.Run(conn)
 	conn.Close()
 }
 
@@ -86,7 +85,11 @@ func checkXSS(ctx *sweetygo.Context) {
 }
 
 func intrude(ctx *sweetygo.Context) {
-
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	header := ctx.Param("header")
+	I := intruder.NewIntruder(header)
+	I.Run(conn)
+	conn.Close()
 }
 
 // POST -d "targets=t1,t2,t3..."
