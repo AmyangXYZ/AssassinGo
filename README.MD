@@ -43,7 +43,7 @@ Path | Func | Params | Return
 /ws/crawl | crawl paramed urls | nil | {"url": url}
 /ws/vul/sqli | check sqli | nil | {"url": url}
 /ws/vul/xss | check xss | nil | {"url": url}
-/ws/intrude/ | brute force | header=xxx&payload=xxx | {"payload": payload, "resp_status": status, "resp_len": len}
+/ws/intrude | brute force | header=xxx&payload=xxx | {"payload": payload, "resp_status": status, "resp_len": len}
 
 ## State
 
