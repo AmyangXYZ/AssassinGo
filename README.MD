@@ -39,7 +39,7 @@ Path | Method | Func | Params | Return
 ### WebSocket
 
 Path | Func | Params | Return
------ | ----- | ----- | ----- | -----
+----- | ----- | ----- | -----
 /ws/crawl | crawl the site for paramed urls | nil | {"url":url}
 /ws/vul/sqli | check sqli | nil | {"url":url}
 /ws/vul/xss | check xss | nil | {"url":url}
