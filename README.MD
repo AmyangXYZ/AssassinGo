@@ -44,6 +44,7 @@ Path | Func | Params | Return
 /ws/vul/sqli | check sqli | nil | {"url": url}
 /ws/vul/xss | check xss | nil | {"url": url}
 /ws/intrude | brute force | header=xxx&payload=xxx | {"payload": payload, "resp_status": status, "resp_len": len}
+/ws/poc/run | run poc | nil | {"host": host}
 
 ## State
 
