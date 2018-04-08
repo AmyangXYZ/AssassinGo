@@ -13,19 +13,23 @@ import (
 
 // Intruder intrudes the target.
 type Intruder struct {
-	target      string
-	header      string
-	intrudeType string
-	re          *regexp.Regexp
-	payload     []string
+	target          string
+	header          string
+	intrudeType     string
+	re              *regexp.Regexp
+	payload         []string
+	goroutinesCount int
 }
 
 // NewIntruder returns a new intruder.
-func NewIntruder(target, header string) *Intruder {
+func NewIntruder(target, header, payload, goroutinesCount string) *Intruder {
+	count, _ := strconv.Atoi(goroutinesCount)
 	return &Intruder{
-		target: target,
-		header: header,
-		re:     regexp.MustCompile(`\$\$(.*?)\$\$`),
+		target:          target,
+		header:          header,
+		payload:         strings.Split(payload, ","),
+		goroutinesCount: count,
+		re:              regexp.MustCompile(`\$\$(.*?)\$\$`),
 	}
 }
 
@@ -39,19 +43,30 @@ func (i *Intruder) Run(conn *websocket.Conn) {
 	// Accept-Encoding: gzip, deflate
 	// Connection: close
 	// Upgrade-Insecure-Requests: 1`
-	payload := []string{"1", "2", "3"}
-	for _, p := range payload {
-		resp := i.fetch(p)
-		body, _ := ioutil.ReadAll(resp.Body)
-		resp.Body.Close()
-
-		ret := map[string]string{
-			"payload":     p,
-			"resp_status": strconv.Itoa(resp.StatusCode),
-			"resp_len":    strconv.Itoa(len(string(body))),
-		}
-		conn.WriteJSON(ret)
+	blockers := make(chan struct{}, i.goroutinesCount)
+	for _, p := range i.payload {
+		blockers <- struct{}{}
+		go i.attack(conn, p, blockers)
 	}
+
+	for i := 0; i < cap(blockers); i++ {
+		blockers <- struct{}{}
+	}
+}
+
+func (i *Intruder) attack(conn *websocket.Conn, payload string, blocker chan struct{}) {
+	defer func() { <-blocker }()
+	resp := i.fetch(payload)
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	ret := map[string]string{
+		"payload":     payload,
+		"resp_status": strconv.Itoa(resp.StatusCode),
+		"resp_len":    strconv.Itoa(len(string(body))),
+	}
+	conn.WriteJSON(ret)
+
 }
 
 func (i *Intruder) fetch(payload string) *http.Response {

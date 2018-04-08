@@ -87,8 +87,10 @@ func checkXSS(ctx *sweetygo.Context) {
 
 func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	rawHeader := ctx.Param("rawHeader")
-	I := intruder.NewIntruder(a.Target, rawHeader)
+	header := ctx.Param("header")
+	payload := ctx.Param("payload")
+	goroutineCount := ctx.Param("gort_count")
+	I := intruder.NewIntruder(a.Target, header, payload, goroutineCount)
 	I.Run(conn)
 	conn.Close()
 }
