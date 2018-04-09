@@ -50,7 +50,6 @@ func (i *Intruder) attack(conn *websocket.Conn, payload string, blocker chan str
 	defer func() { <-blocker }()
 	resp := i.fetch(payload)
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
 	resp.Body.Close()
 
 	ret := map[string]string{
