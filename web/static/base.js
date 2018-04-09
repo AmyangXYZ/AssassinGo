@@ -159,7 +159,7 @@ function cmsDetect() {
 function crawl() {
     $("#url-table").html("");
     $("#email-table").html("");
-    var socket = new WebSocket("ws://localhost:8080/ws/crawl")
+    var socket = new WebSocket("ws://localhost:8000/ws/crawl")
     // socket.onopen = function() {
     //     container.append("<p>Socket is open</p>");
     // };
@@ -176,7 +176,7 @@ function crawl() {
 
 function sqliCheck() {
     $("#sqli-url-table").html("")
-    var socket = new WebSocket("ws://localhost:8080/ws/vul/sqli")
+    var socket = new WebSocket("ws://localhost:8000/ws/vul/sqli")
     socket.onmessage = function (e) {
         ret = JSON.parse(e.data);
         h = html_attack_sqli_url.format({"url":ret.url})
@@ -189,7 +189,7 @@ function sqliCheck() {
 
 function xssCheck() {
     $("#xss-url-table").html("")
-    var socket = new WebSocket("ws://localhost:8080/ws/vul/xss")
+    var socket = new WebSocket("ws://localhost:8000/ws/vul/xss")
     socket.onmessage = function (e) {
         ret = JSON.parse(e.data);
         h = html_attack_xss_url.format({"url":ret.url})
@@ -200,9 +200,27 @@ function xssCheck() {
     }
 }
 
+
 function intruder() {
     $("#intruder-table").html("")
-    var socket = new WebSocket("ws://localhost:8080/ws/intrude")
+    var socket = new WebSocket("ws://localhost:8000/ws/intrude")
+    socket.onopen = function(e) {
+        var msg = {
+            header: `POST /1.php HTTP/1.1
+Host: sweety-birdsong-recg.cc:8888
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Content-Type: application/x-www-form-urlencoded
+
+user=$$1$$&passwd=2`,
+            payload: "1,22,333",
+            gort_count: "2",
+        }
+        var a = JSON.stringify(msg);
+        
+        socket.send(a)
+    }
     socket.onmessage = function (e) {
         ret = JSON.parse(e.data);
         h = html_attack_inturder.format({"payload": ret.payload,

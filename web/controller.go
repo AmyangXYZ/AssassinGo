@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -85,12 +86,20 @@ func checkXSS(ctx *sweetygo.Context) {
 	conn.Close()
 }
 
+type intruderMsg struct {
+	Header    string `json:"header"`
+	Payload   string `json:"payload"`
+	GortCount string `json:"gort_count"`
+}
+
 func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	header := ctx.Param("header")
-	payload := ctx.Param("payload")
-	goroutineCount := ctx.Param("gort_count")
-	I := intruder.NewIntruder(a.Target, header, payload, goroutineCount)
+	m := intruderMsg{}
+	err := conn.ReadJSON(&m)
+	if err != nil {
+		fmt.Println(err)
+	}
+	I := intruder.NewIntruder(a.Target, m.Header, m.Payload, m.GortCount)
 	I.Run(conn)
 	conn.Close()
 }

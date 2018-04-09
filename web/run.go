@@ -12,5 +12,5 @@ var ateam []*assassin.Assassin
 func Run() {
 	app := sweetygo.New("/home/amyang/Projects/AssassinGo/web", nil)
 	SetRouter(app)
-	app.RunServer(":8080")
+	app.RunServer(":8000")
 }
