@@ -11,6 +11,7 @@ import (
 	"../intruder"
 	"../poc"
 	"../scanner"
+	"../seeker"
 	"github.com/AmyangXYZ/sweetygo"
 	"github.com/gorilla/websocket"
 )
@@ -101,6 +102,23 @@ func intrude(ctx *sweetygo.Context) {
 	}
 	I := intruder.NewIntruder(a.Target, m.Header, m.Payload, m.GortCount)
 	I.Run(conn)
+	conn.Close()
+}
+
+type seekerMsg struct {
+	Query   string `json:"query"`
+	SE      string `json:"se"`
+	MaxPage int    `json:"max_page"`
+}
+
+func seek(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	m := seekerMsg{}
+	err := conn.ReadJSON(&m)
+	if err != nil {
+		fmt.Println(err)
+	}
+	seeker.Run(m.Query, m.SE, m.MaxPage, conn)
 	conn.Close()
 }
 

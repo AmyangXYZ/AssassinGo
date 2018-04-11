@@ -24,6 +24,8 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/ws/vul/sqli", checkSQLi)
 	app.GET("/ws/vul/xss", checkXSS)
 
+	app.GET("/ws/seek", seek)
+
 	app.GET("/api/poc", getPOCs)
 	app.POST("/api/poc", setPOC)
 	app.GET("/ws/poc/run", runPOC)

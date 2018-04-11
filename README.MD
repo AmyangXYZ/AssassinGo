@@ -44,6 +44,7 @@ Path | Func | Params | Return
 /ws/vul/sqli | check sqli | nil | {"url": url}
 /ws/vul/xss | check xss | nil | {"url": url}
 /ws/intrude | brute force | {header:"xxx", payload:"p1,p2...", gort_count="10"} | {"payload": payload, "resp_status": status, "resp_len": len}
+/ws/seek | seek targets | {query:"", se:"bing|google", max_page: 10} | {"urls": urls}
 /ws/poc/run | run poc | nil | {"host": host}
 
 ## State
