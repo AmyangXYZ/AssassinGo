@@ -1,16 +1,14 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
 	"../assassin"
+	"../attacker"
 	"../crawler"
 	"../gatherer"
-	"../intruder"
 	"../poc"
-	"../scanner"
 	"../seeker"
 	"github.com/AmyangXYZ/sweetygo"
 	"github.com/gorilla/websocket"
@@ -75,14 +73,14 @@ func crawl(ctx *sweetygo.Context) {
 
 func checkSQLi(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	S := scanner.NewBasicSQLi()
+	S := attacker.NewBasicSQLi()
 	S.Run(a.FuzzableURLs, conn)
 	conn.Close()
 }
 
 func checkXSS(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	X := scanner.NewXSSChecker()
+	X := attacker.NewXSSChecker()
 	X.Run(a.FuzzableURLs, conn)
 	conn.Close()
 }
@@ -96,11 +94,8 @@ type intruderMsg struct {
 func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := intruderMsg{}
-	err := conn.ReadJSON(&m)
-	if err != nil {
-		fmt.Println(err)
-	}
-	I := intruder.NewIntruder(a.Target, m.Header, m.Payload, m.GortCount)
+	conn.ReadJSON(&m)
+	I := attacker.NewIntruder(a.Target, m.Header, m.Payload, m.GortCount)
 	I.Run(conn)
 	conn.Close()
 }
@@ -114,11 +109,9 @@ type seekerMsg struct {
 func seek(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := seekerMsg{}
-	err := conn.ReadJSON(&m)
-	if err != nil {
-		fmt.Println(err)
-	}
-	seeker.Run(m.Query, m.SE, m.MaxPage, conn)
+	conn.ReadJSON(&m)
+	S := seeker.NewSeeker(m.Query, m.SE, m.MaxPage)
+	S.Run(conn)
 	conn.Close()
 }
 

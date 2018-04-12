@@ -1,10 +1,10 @@
-package scanner
+package attacker
 
 import "github.com/gorilla/websocket"
 
-// Scanner should implement ...
+// Attacker should implement ...
 // Add your url-based scanner here.
-type Scanner interface {
+type Attacker interface {
 	Run(fuzzableURLs []string, conn *websocket.Conn)
 	Report() interface{}
 }

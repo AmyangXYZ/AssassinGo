@@ -1,4 +1,4 @@
-package scanner
+package attacker
 
 import (
 	"io/ioutil"
@@ -15,7 +15,7 @@ type BasicSQLi struct {
 	InjectableURL []string
 }
 
-// NewBasicSQLi returns a new basicSQli scanner.
+// NewBasicSQLi returns a new basicSQli Attacker.
 func NewBasicSQLi() *BasicSQLi {
 	return &BasicSQLi{
 		payload0: "/**/%26%261%3d2%23",
@@ -23,12 +23,12 @@ func NewBasicSQLi() *BasicSQLi {
 	}
 }
 
-// Report implements Scanner interface.
+// Report implements Attacker interface.
 func (bs *BasicSQLi) Report() interface{} {
 	return bs.InjectableURL
 }
 
-// Run implements Scanner interface.
+// Run implements Attacker interface.
 func (bs *BasicSQLi) Run(fuzzableURLs []string, conn *websocket.Conn) {
 	logger.Green.Println("Basic SQLi Checking...")
 

@@ -1,13 +1,13 @@
-package intruder
+package attacker
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"../logger"
 	"github.com/gorilla/websocket"
 )
 
@@ -33,8 +33,9 @@ func NewIntruder(target, header, payload, goroutinesCount string) *Intruder {
 	}
 }
 
-// Run the inturder.
+// Run implements attacker interface.
 func (i *Intruder) Run(conn *websocket.Conn) {
+	logger.Green.Println("Start Intruder...")
 	blockers := make(chan struct{}, i.goroutinesCount)
 	for _, p := range i.payload {
 		blockers <- struct{}{}
@@ -52,6 +53,7 @@ func (i *Intruder) attack(conn *websocket.Conn, payload string, blocker chan str
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
+	logger.Blue.Println("Payload:", payload, "Status:", resp.StatusCode, "len:", len(string(body)))
 	ret := map[string]string{
 		"payload":     payload,
 		"resp_status": strconv.Itoa(resp.StatusCode),
@@ -66,7 +68,7 @@ func (i *Intruder) fetch(payload string) *http.Response {
 	req := i.parse(payload)
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Red.Println(err)
 	}
 	return resp
 }

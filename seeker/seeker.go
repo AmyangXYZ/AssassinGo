@@ -2,20 +2,40 @@ package seeker
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
 	"time"
 
+	"../logger"
+
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
-	"github.com/chromedp/chromedp/client"
 	"github.com/gorilla/websocket"
 )
 
-// Run starts seek target using search engine.
-func Run(q, se string, maxPage int, conn *websocket.Conn) {
+// Seeker seeks targets with search engine.
+type Seeker struct {
+	query   string
+	se      string
+	maxPage int
+	Results []string
+}
+
+// NewSeeker returns a new Seeker.
+func NewSeeker(q, se string, maxPage int) *Seeker {
+	return &Seeker{
+		query:   q,
+		se:      se,
+		maxPage: maxPage,
+	}
+}
+
+// Run starts seeker.
+func (s *Seeker) Run(conn *websocket.Conn) {
+	logger.Green.Println("Seeking Targets...")
+	logger.Blue.Println("Search Engine:", s.se)
+	logger.Blue.Println("Keyword:", s.query)
 	var err error
 	if err != nil {
 
@@ -25,17 +45,18 @@ func Run(q, se string, maxPage int, conn *websocket.Conn) {
 	defer cancel()
 
 	// create chrome instance
-	// c, err := chromedp.New(ctxt)
-	c, err := chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)))
-
-	urls := []string{}
-	if se == "google" {
-		err = c.Run(ctxt, searchGoogle(q, &urls, maxPage, conn))
-	} else if se == "bing" {
-		err = c.Run(ctxt, searchBing(q, &urls, maxPage, conn))
+	c, err := chromedp.New(ctxt)
+	// c, err := chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)))
+	if err != nil {
+		logger.Red.Println(err)
 	}
 
-	// fmt.Println(urls)
+	if s.se == "google" {
+		err = c.Run(ctxt, s.searchGoogle(conn))
+	} else if s.se == "bing" {
+		err = c.Run(ctxt, s.searchBing(conn))
+	}
+
 	// shutdown chrome
 	err = c.Shutdown(ctxt)
 
@@ -43,24 +64,23 @@ func Run(q, se string, maxPage int, conn *websocket.Conn) {
 	err = c.Wait()
 }
 
-func searchBing(q string, urls *[]string, page int, conn *websocket.Conn) chromedp.Tasks {
-	var res []string
+func (s *Seeker) searchBing(conn *websocket.Conn) chromedp.Tasks {
+	var urls []string
 	return chromedp.Tasks{
 		chromedp.Navigate(`https://www.bing.com`),
 		chromedp.Sleep(2 * time.Second),
-		chromedp.SendKeys(`#sb_form_q`, q+"\n", chromedp.ByID),
-		chromedp.Sleep(2 * time.Second),
+		chromedp.SendKeys(`#sb_form_q`, s.query+"\n", chromedp.ByID),
+		chromedp.WaitVisible(`.sb_count`, chromedp.ByQuery),
 		chromedp.ActionFunc(func(c context.Context, e cdp.Executor) error {
 			var resCount string
 			chromedp.Text(`.sb_count`, &resCount, chromedp.ByQuery).Do(c, e)
-			fmt.Println(resCount)
 			n := strings.Replace(strings.Split(resCount, " ")[0], ",", "", -1)
 			count, _ := strconv.Atoi(n)
 			p := int(math.Floor(float64(count / 10)))
-			if p < page {
-				page = p
+			if p < s.maxPage {
+				s.maxPage = p
 			}
-			for i := 0; i <= page; i++ {
+			for i := 0; i <= s.maxPage; i++ {
 				chromedp.Sleep(1*time.Second).Do(c, e)
 				chromedp.EvaluateAsDevTools(`
 					var h2 = document.getElementsByTagName('h2');
@@ -69,15 +89,17 @@ func searchBing(q string, urls *[]string, page int, conn *websocket.Conn) chrome
 						var a = h2[i].getElementsByTagName('a');
 						urls.push(a[0].href);
 					}
-					urls`, &res).Do(c, e)
-
+					urls`, &urls).Do(c, e)
+				for _, u := range urls {
+					logger.Blue.Println(u)
+				}
 				ret := map[string][]string{
-					"urls": res,
+					"urls": urls,
 				}
 				conn.WriteJSON(ret)
 
-				*urls = append(*urls, res...)
-				if i != page {
+				s.Results = append(s.Results, urls...)
+				if i != s.maxPage {
 					chromedp.Click(`//*[@title="Next page"]`, chromedp.BySearch).Do(c, e)
 				}
 			}
@@ -86,30 +108,30 @@ func searchBing(q string, urls *[]string, page int, conn *websocket.Conn) chrome
 	}
 }
 
-func searchGoogle(q string, urls *[]string, page int, conn *websocket.Conn) chromedp.Tasks {
-	res := []string{}
+func (s *Seeker) searchGoogle(conn *websocket.Conn) chromedp.Tasks {
+	urls := []string{}
 	return chromedp.Tasks{
 		chromedp.Navigate(`https://www.google.com`),
 		chromedp.Sleep(2 * time.Second),
-		chromedp.SendKeys(`#lst-ib`, q+"\n", chromedp.ByID),
+		chromedp.SendKeys(`#lst-ib`, s.query+"\n", chromedp.ByID),
 		chromedp.WaitVisible(`#res`, chromedp.ByID),
 		chromedp.ActionFunc(func(c context.Context, e cdp.Executor) error {
 			var resCount string
-			var ss string
+			var xx string
 			chromedp.Text(`#resultStats`, &resCount, chromedp.ByID).Do(c, e)
-			s := strings.Split(resCount, " ")
-			if s[1] == "results" {
-				ss = s[0]
+			x := strings.Split(resCount, " ")
+			if x[1] == "results" {
+				xx = x[0]
 			} else {
-				ss = s[1]
+				xx = x[1]
 			}
-			n := strings.Replace(ss, ",", "", -1)
+			n := strings.Replace(xx, ",", "", -1)
 			count, _ := strconv.Atoi(n)
 			p := int(math.Floor(float64(count / 10)))
-			if p < page {
-				page = p
+			if p < s.maxPage {
+				s.maxPage = p
 			}
-			for i := 0; i <= page; i++ {
+			for i := 0; i <= s.maxPage; i++ {
 				chromedp.Sleep(2*time.Second).Do(c, e)
 				chromedp.EvaluateAsDevTools(`
 					var h3 = document.getElementsByTagName('h3');
@@ -122,15 +144,17 @@ func searchGoogle(q string, urls *[]string, page int, conn *websocket.Conn) chro
 						var a = h3[i].getElementsByTagName('a');
 						urls.push(a[0].href);
 					}
-					urls`, &res).Do(c, e)
-
+					urls`, &urls).Do(c, e)
+				for _, u := range urls {
+					logger.Blue.Println(u)
+				}
 				ret := map[string][]string{
-					"urls": res,
+					"urls": urls,
 				}
 				conn.WriteJSON(ret)
 
-				*urls = append(*urls, res...)
-				if i != page {
+				s.Results = append(s.Results, urls...)
+				if i != s.maxPage {
 					chromedp.Click(`#pnnext`, chromedp.NodeVisible).Do(c, e)
 				}
 			}

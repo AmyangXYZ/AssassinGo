@@ -1,12 +1,13 @@
 package poc
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"../logger"
 )
 
 // SeaCMSv654 search.php code injection.
@@ -52,7 +53,7 @@ func (s *SeaCMSv654) check() {
 	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Red.Println(err)
 		s.Existed = "false"
 		return
 	}
@@ -60,9 +61,8 @@ func (s *SeaCMSv654) check() {
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if strings.Contains(string(body), "AssassinGooo") {
-		fmt.Println(s.target, "POC Worked!")
+		logger.Blue.Println(s.target)
 		s.Existed = "true"
 		return
 	}
-	fmt.Println(s.target, "not work")
 }

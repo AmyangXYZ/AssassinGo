@@ -1,4 +1,4 @@
-package scanner
+package attacker
 
 import (
 	"io/ioutil"
@@ -20,12 +20,12 @@ func NewXSSChecker() *XSSChecker {
 	return &XSSChecker{payload: `<svg/onload=alert(1)>`}
 }
 
-// Report implements Scanner interface.
+// Report implements Attacker interface.
 func (x *XSSChecker) Report() interface{} {
 	return x.InjectableURL
 }
 
-// Run implements Scanner interface.
+// Run implements Attacker interface.
 func (x *XSSChecker) Run(fuzzableURLs []string, conn *websocket.Conn) {
 	logger.Green.Println("Basic XSS Checking...")
 
