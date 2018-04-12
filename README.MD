@@ -10,16 +10,16 @@ Just for learn.
 
 - [x] Retrieve Server and Powered by Headers
 - [x] Detect CMS Version
-- [ ] DNS Records Dump
+- [ ] Subdomain Scan
+- [ ] Dir Scan
 - [ ] Whois Lookup
 - [x] Port Scan
 - [x] Crawl the Paramed URLs
-- [x] Basic SQLi Scan
-- [x] Basic XSS Scan
-- [ ] Google Hacking
-- [ ] Brute Force
-- [x] Friendly API.
-- [ ] POC Lib
+- [x] Basic SQLi Check
+- [x] Basic XSS Check
+- [x] Google Hacking
+- [x] Brute Force
+- [x] POC Interface
 - [x] Web GUI(using WebSocket)
 
 ## API
@@ -44,7 +44,7 @@ Path | Func | Params | Return
 /ws/vul/sqli | check sqli | nil | {"url": url}
 /ws/vul/xss | check xss | nil | {"url": url}
 /ws/intrude | brute force | {header:"xxx", payload:"p1,p2...", gort_count="10"} | {"payload": payload, "resp_status": status, "resp_len": len}
-/ws/seek | seek targets | {query:"", se:"bing|google", max_page: 10} | {"urls": urls}
+/ws/seek | seek targets | {query:"", se:"bing/google", max_page: 10} | {"urls": urls}
 /ws/poc/run | run poc | nil | {"host": host}
 
 ## State
