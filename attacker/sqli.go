@@ -10,6 +10,7 @@ import (
 
 // BasicSQLi checks basic sqli vuls.
 type BasicSQLi struct {
+	fuzzableURLs  []string
 	payload0      string
 	payload1      string
 	InjectableURL []string
@@ -23,17 +24,23 @@ func NewBasicSQLi() *BasicSQLi {
 	}
 }
 
+// Set implements Attacker interface.
+// Params should be {fuzzableURLs []string}
+func (bs *BasicSQLi) Set(v ...interface{}) {
+	bs.fuzzableURLs = v[0].([]string)
+}
+
 // Report implements Attacker interface.
 func (bs *BasicSQLi) Report() interface{} {
 	return bs.InjectableURL
 }
 
 // Run implements Attacker interface.
-func (bs *BasicSQLi) Run(fuzzableURLs []string, conn *websocket.Conn) {
+func (bs *BasicSQLi) Run(conn *websocket.Conn) {
 	logger.Green.Println("Basic SQLi Checking...")
 
-	blockers := make(chan bool, len(fuzzableURLs))
-	for _, URL := range fuzzableURLs {
+	blockers := make(chan bool, len(bs.fuzzableURLs))
+	for _, URL := range bs.fuzzableURLs {
 		blockers <- true
 		go bs.check(URL, blockers, conn)
 	}

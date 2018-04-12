@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"../logger"
+	"github.com/gorilla/websocket"
 )
 
 // CMSDetector detects CMS with whatcms.org api.
@@ -15,8 +16,14 @@ type CMSDetector struct {
 }
 
 // NewCMSDetector returns a new CMS detector.
-func NewCMSDetector(target string) *CMSDetector {
-	return &CMSDetector{target: target}
+func NewCMSDetector() *CMSDetector {
+	return &CMSDetector{}
+}
+
+// Set implements Gatherer interface.
+// Params should be {target string}
+func (c *CMSDetector) Set(v ...interface{}) {
+	c.target = v[0].(string)
 }
 
 // Report implements Gatherer interface
@@ -25,7 +32,7 @@ func (c *CMSDetector) Report() interface{} {
 }
 
 // Run impplements Gatherer interface.
-func (c *CMSDetector) Run() {
+func (c *CMSDetector) Run(conn *websocket.Conn) {
 	resp, err := http.Get("https://whatcms.org/?s=" + c.target)
 	if err != nil {
 		logger.Red.Println(err)

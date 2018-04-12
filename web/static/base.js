@@ -108,59 +108,59 @@ function reset() {
     $("#xss-url-table").html("");
 }
 
-function portScan() {
-    $("#port-table").html("");
-    $.ajax({
-        url: "/api/info/port",
-        type: "GET",
-        dataType: "JSON",
-        beforesend: $("#port-loading").show(),
-    }).done(function (result) {
-        $("#port-loading").hide();
-        ports = result.data.ports.sort(function sequence(a,b){
-            return a - b;
-        });
-        if (ports.length>0) {
-            for (var i=0; i<ports.length;i++) {
-                h = html_shadow_port.format({"port":ports[i],"service":"open"})
-                $("#port-table").append(h)
-            }
-        }
-    })
-}
+// function portScan() {
+//     $("#port-table").html("");
+//     $.ajax({
+//         url: "/api/info/port",
+//         type: "GET",
+//         dataType: "JSON",
+//         beforesend: $("#port-loading").show(),
+//     }).done(function (result) {
+//         $("#port-loading").hide();
+//         ports = result.data.ports.sort(function sequence(a,b){
+//             return a - b;
+//         });
+//         if (ports.length>0) {
+//             for (var i=0; i<ports.length;i++) {
+//                 h = html_shadow_port.format({"port":ports[i],"service":"open"})
+//                 $("#port-table").append(h)
+//             }
+//         }
+//     })
+// }
 
-function basicInfo() {
-    $("#ip").html("IP Address: ")
-    $("#server").html("Web Server: ")
-    $.ajax({
-        url: "/api/info/basic",
-        type: "GET",
-        dataType: "JSON",
-        beforesend: $("#ip-loading, #server-loading").show(),
-    }).done(function (result) {
-        $("#ip-loading, #server-loading").hide();
-        ip=result.data.ip; server=result.data.webserver;
-        $("#ip").html("IP Address: "+ip);
-        $("#server").html("Web Server: "+server);
-    })
-}
+// function basicInfo() {
+//     $("#ip").html("IP Address: ")
+//     $("#server").html("Web Server: ")
+//     $.ajax({
+//         url: "/api/info/basic",
+//         type: "GET",
+//         dataType: "JSON",
+//         beforesend: $("#ip-loading, #server-loading").show(),
+//     }).done(function (result) {
+//         $("#ip-loading, #server-loading").hide();
+//         ip=result.data.ip; server=result.data.webserver;
+//         $("#ip").html("IP Address: "+ip);
+//         $("#server").html("Web Server: "+server);
+//     })
+// }
 
-function cmsDetect() {
-    $("#cms").html("CMS: ");
-    $.ajax({
-        url: "/api/info/cms",
-        type: "GET",
-        dataType: "JSON",
-        beforesend: $("#cms-loading").show(),
-    }).done(function (result) {
-        $("#cms-loading").hide();
-        cms=result.data.cms;
-        if (cms.length==0) {
-            cms = "Unknown";
-        }
-        $("#cms").html("CMS: "+cms);
-    })
-}
+// function cmsDetect() {
+//     $("#cms").html("CMS: ");
+//     $.ajax({
+//         url: "/api/info/cms",
+//         type: "GET",
+//         dataType: "JSON",
+//         beforesend: $("#cms-loading").show(),
+//     }).done(function (result) {
+//         $("#cms-loading").hide();
+//         cms=result.data.cms;
+//         if (cms.length==0) {
+//             cms = "Unknown";
+//         }
+//         $("#cms").html("CMS: "+cms);
+//     })
+// }
 
 function crawl() {
     $("#url-table").html("");
@@ -221,7 +221,7 @@ Content-Type: application/x-www-form-urlencoded
 
 user=$$1$$&passwd=2`,
             payload: "1,22,333",
-            gort_count: "2",
+            gort_count: 2,
         }
         var a = JSON.stringify(msg);
         

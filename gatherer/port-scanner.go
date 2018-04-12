@@ -9,25 +9,34 @@ import (
 	"time"
 
 	"../logger"
+	"github.com/gorilla/websocket"
 )
 
 // PortScanner scans common used ports.
 type PortScanner struct {
-	target      string
-	ports       []string
-	concurrency int
-	timeout     int
-	OpenPorts   []string
+	target string
+	// tcp, syn ...
+	method          string
+	ports           []string
+	goroutinesCount int
+	timeout         int
+	OpenPorts       []string
 }
 
 // NewPortScanner returns a PortScanner.
-func NewPortScanner(target string) *PortScanner {
+func NewPortScanner() *PortScanner {
 	return &PortScanner{
-		target:      target,
-		ports:       readPortsFromFile("./gatherer/Top100ports.txt"),
-		concurrency: 100,
-		timeout:     2,
+		ports:           readPortsFromFile("./gatherer/Top100ports.txt"),
+		goroutinesCount: 100,
+		timeout:         2,
 	}
+}
+
+// Set implements Gatherer interface.
+// Params should be {target, method string}
+func (ps *PortScanner) Set(v ...interface{}) {
+	ps.target = v[0].(string)
+	ps.method = v[1].(string)
 }
 
 // Report implements Gatherer interface
@@ -36,10 +45,10 @@ func (ps *PortScanner) Report() interface{} {
 }
 
 // Run implements the Gatherer interface.
-func (ps *PortScanner) Run() {
+func (ps *PortScanner) Run(conn *websocket.Conn) {
 	logger.Green.Println("Ports Scanning...")
 
-	blockers := make(chan struct{}, ps.concurrency)
+	blockers := make(chan struct{}, ps.goroutinesCount)
 	for _, port := range ps.ports {
 		blockers <- struct{}{}
 		go ps.checkPort(port, blockers)

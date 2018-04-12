@@ -22,15 +22,22 @@ type Intruder struct {
 }
 
 // NewIntruder returns a new intruder.
-func NewIntruder(target, header, payload, goroutinesCount string) *Intruder {
-	count, _ := strconv.Atoi(goroutinesCount)
-	return &Intruder{
-		target:          target,
-		header:          header,
-		payload:         strings.Split(payload, ","),
-		goroutinesCount: count,
-		re:              regexp.MustCompile(`\$\$(.*?)\$\$`),
-	}
+func NewIntruder() *Intruder {
+	return &Intruder{re: regexp.MustCompile(`\$\$(.*?)\$\$`)}
+}
+
+// Set sets params for intruder.
+// Params should be {target, header, payload string, goroutinesCount int}
+func (i *Intruder) Set(v ...interface{}) {
+	i.target = v[0].(string)
+	i.header = v[1].(string)
+	i.payload = strings.Split(v[2].(string), ",")
+	i.goroutinesCount = v[3].(int)
+}
+
+// Report implements attacker interface.
+func (i *Intruder) Report() interface{} {
+	return ""
 }
 
 // Run implements attacker interface.
@@ -60,7 +67,6 @@ func (i *Intruder) attack(conn *websocket.Conn, payload string, blocker chan str
 		"resp_len":    strconv.Itoa(len(string(body))),
 	}
 	conn.WriteJSON(ret)
-
 }
 
 func (i *Intruder) fetch(payload string) *http.Response {

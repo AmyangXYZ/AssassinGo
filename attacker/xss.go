@@ -11,6 +11,7 @@ import (
 
 // XSSChecker checks XSS vuls.
 type XSSChecker struct {
+	fuzzableURLs  []string
 	payload       string
 	InjectableURL []string
 }
@@ -20,17 +21,23 @@ func NewXSSChecker() *XSSChecker {
 	return &XSSChecker{payload: `<svg/onload=alert(1)>`}
 }
 
+// Set implements Attacker interface.
+// Params should be {fuzzableURLs []string}
+func (x *XSSChecker) Set(v ...interface{}) {
+	x.fuzzableURLs = v[0].([]string)
+}
+
 // Report implements Attacker interface.
 func (x *XSSChecker) Report() interface{} {
 	return x.InjectableURL
 }
 
 // Run implements Attacker interface.
-func (x *XSSChecker) Run(fuzzableURLs []string, conn *websocket.Conn) {
+func (x *XSSChecker) Run(conn *websocket.Conn) {
 	logger.Green.Println("Basic XSS Checking...")
 
-	blockers := make(chan bool, len(fuzzableURLs))
-	for _, URL := range fuzzableURLs {
+	blockers := make(chan bool, len(x.fuzzableURLs))
+	for _, URL := range x.fuzzableURLs {
 		blockers <- true
 		go x.check(URL, blockers, conn)
 	}

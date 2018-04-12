@@ -5,9 +5,6 @@ import (
 	"strings"
 
 	"../assassin"
-	"../attacker"
-	"../crawler"
-	"../gatherer"
 	"../poc"
 	"../seeker"
 	"github.com/AmyangXYZ/sweetygo"
@@ -26,77 +23,79 @@ func static(ctx *sweetygo.Context) {
 
 func newAssassin(ctx *sweetygo.Context) {
 	target := ctx.Param("target")
-	a = assassin.New(target)
-	ret := map[string]string{
-		"target": target,
+	if strings.Contains(target, ",") == false {
+		a = assassin.New(target)
+		ret := map[string]string{
+			"target": target,
+		}
+		ctx.JSON(201, ret, "success")
+		return
+	}
+	targets := strings.Split(target, ",")
+	for _, t := range targets {
+		ateam = append(ateam, assassin.New(t))
+	}
+
+	ret := map[string][]string{
+		"targets": targets,
 	}
 	ctx.JSON(201, ret, "success")
 }
 
 func basicInfo(ctx *sweetygo.Context) {
-	B := gatherer.NewBasicInfo(a.Target)
-	B.Run()
-	bi := B.Report().([]string)
-	ret := map[string]string{
-		"ip":        bi[0],
-		"webserver": bi[1],
-	}
-	ctx.JSON(200, ret, "success")
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	a.Gatherers["basicInfo"].Set(a.Target)
+	a.Gatherers["basicInfo"].Run(conn)
+	conn.Close()
 }
 
 func cmsDetect(ctx *sweetygo.Context) {
-	C := gatherer.NewCMSDetector(a.Target)
-	C.Run()
-	cms := C.Report().(string)
-	ret := map[string]string{
-		"cms": cms,
-	}
-	ctx.JSON(200, ret, "success")
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	a.Gatherers["cms"].Set(a.Target)
+	a.Gatherers["cms"].Run(conn)
+	conn.Close()
 }
 
 func portScan(ctx *sweetygo.Context) {
-	P := gatherer.NewPortScanner(a.Target)
-	P.Run()
-	ports := P.Report().([]string)
-	ret := map[string][]string{
-		"ports": ports,
-	}
-	ctx.JSON(200, ret, "success")
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	a.Gatherers["port"].Set(a.Target, "tcp")
+	a.Gatherers["port"].Run(conn)
+	conn.Close()
 }
 
 func crawl(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	C := crawler.NewCrawler(a.Target, 4)
-	a.FuzzableURLs = C.Run(conn)
-	conn.Close()
+	a.Gatherers["crawl"].Set(a.Target, 4)
+	a.Gatherers["crawl"].Run(conn)
+	a.FuzzableURLs = a.Gatherers["crawl"].Report().([]string)
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	S := attacker.NewBasicSQLi()
-	S.Run(a.FuzzableURLs, conn)
+	a.Attackers["sqli"].Set(a.FuzzableURLs)
+	a.Attackers["sqli"].Run(conn)
 	conn.Close()
 }
 
 func checkXSS(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	X := attacker.NewXSSChecker()
-	X.Run(a.FuzzableURLs, conn)
+	a.Attackers["xss"].Set(a.FuzzableURLs)
+	a.Attackers["xss"].Run(conn)
 	conn.Close()
 }
 
 type intruderMsg struct {
 	Header    string `json:"header"`
 	Payload   string `json:"payload"`
-	GortCount string `json:"gort_count"`
+	GortCount int    `json:"gort_count"`
 }
 
 func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := intruderMsg{}
 	conn.ReadJSON(&m)
-	I := attacker.NewIntruder(a.Target, m.Header, m.Payload, m.GortCount)
-	I.Run(conn)
+	a.Attackers["intruder"].Set(a.Target, m.Header, m.Payload, m.GortCount)
+	a.Attackers["intruder"].Run(conn)
 	conn.Close()
 }
 
@@ -113,22 +112,6 @@ func seek(ctx *sweetygo.Context) {
 	S := seeker.NewSeeker(m.Query, m.SE, m.MaxPage)
 	S.Run(conn)
 	conn.Close()
-}
-
-// POST -d "targets=t1,t2,t3..."
-// batch scan is only for poc.
-func setTargets(ctx *sweetygo.Context) {
-	params := ctx.Params()
-	ts := params["targets"][0]
-	targets := strings.Split(ts, ",")
-	for _, t := range targets {
-		ateam = append(ateam, assassin.New(t))
-	}
-
-	ret := map[string][]string{
-		"targets": targets,
-	}
-	ctx.JSON(201, ret, "success")
 }
 
 func getPOCs(ctx *sweetygo.Context) {

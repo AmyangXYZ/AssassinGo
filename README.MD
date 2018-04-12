@@ -28,11 +28,7 @@ Just for learn.
 
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
-/api/target | POST | set a target | target=xxx | nil
-/api/targets | POST | set targets | targets=t1,t2... | nil
-/api/info/basic | GET | get ip and webserver | nil | {"ip": ip, "webserver": webserver}
-/api/info/cms | GET | detect cms | nil | {"cms": cms}
-/api/info/port | GET | ports scan | nil | {"ports": ports}
+/api/target | POST | set a target | target=xxx / target=t1,t2... | nil
 /api/poc | GET | get poc list | nil | {"pocs": pocs}
 /api/poc | POST | set poc | poc=xxx | nil
 
@@ -40,7 +36,10 @@ Path | Method | Func | Params | Return
 
 Path | Func | Params | Return
 ----- | ----- | ----- | -----
-/ws/crawl | crawl paramed urls | nil | {"url": url}
+/ws/info/basic | get ip and webserver | nil | {"ip": ip, "webserver": webserver}
+/ws/info/cms | detect cms | nil | {"cms": cms}
+/ws/info/port | ports scan | {method:"tcp"/"syn"} | {"ports": ports}
+/ws/info/crawl | crawl paramed urls | {max_depth: 4} | {"url": url}
 /ws/vul/sqli | check sqli | nil | {"url": url}
 /ws/vul/xss | check xss | nil | {"url": url}
 /ws/intrude | brute force | {header:"xxx", payload:"p1,p2...", gort_count="10"} | {"payload": payload, "resp_status": status, "resp_len": len}

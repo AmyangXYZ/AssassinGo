@@ -1,8 +1,11 @@
 package poc
 
+import "github.com/gorilla/websocket"
+
 // POC just need to implements Run().
 type POC interface {
-	Run(target string)
+	Set(...interface{})
+	Run(conn *websocket.Conn)
 	Report() interface{}
 }
 

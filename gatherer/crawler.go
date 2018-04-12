@@ -1,4 +1,4 @@
-package crawler
+package gatherer
 
 import (
 	"io/ioutil"
@@ -25,39 +25,48 @@ type Crawler struct {
 	// replaceRe relace params value in url.
 	replaceGETValuesRe *regexp.Regexp
 	maxDepth           int
+	results            []string
 }
 
 // NewCrawler returns a new crawler.
-func NewCrawler(host string, depth int) Crawler {
-	return Crawler{
-		host:               "http://" + host,
+func NewCrawler() *Crawler {
+	return &Crawler{
 		extractURLsRe:      regexp.MustCompile(`(?s)<a[ t]+.*?href="(.*?)".*?>`),
 		replaceGETValuesRe: regexp.MustCompile(`(\?|\&)([^=]+)\=([^&]+)`),
-		maxDepth:           depth,
 	}
 }
 
-// Run begins crawling and return fuzzable urls.
-func (c *Crawler) Run(conn *websocket.Conn) []string {
-	logger.Green.Println("Fuzzable URLs Crawling...")
-	var fuzzableURLs []string
-	results := make(chan string)
+// Set implements Gatherer interface.
+// Params should be {host string, depth int}
+func (c *Crawler) Set(v ...interface{}) {
+	c.host = "http://" + v[0].(string)
+	c.maxDepth = v[1].(int)
+}
 
+// Report implements Gatherer interface
+func (c *Crawler) Report() interface{} {
+	return c.results
+}
+
+// Run implements Gatherer interface.
+func (c *Crawler) Run(conn *websocket.Conn) {
+	logger.Green.Println("Fuzzable URLs Crawling...")
+
+	results := make(chan string)
 	go c.Crawl(c.host, c.maxDepth, results)
+
 	for url := range results {
 		logger.Blue.Println(url)
 		ret := map[string]string{
 			"url": url,
 		}
 		conn.WriteJSON(ret)
-		fuzzableURLs = append(fuzzableURLs, url)
+		c.results = append(c.results, url)
 	}
 
-	if len(fuzzableURLs) == 0 {
+	if len(c.results) == 0 {
 		logger.Blue.Println("no fuzzable urls found")
 	}
-
-	return fuzzableURLs
 }
 
 // Crawl crawls the target.
