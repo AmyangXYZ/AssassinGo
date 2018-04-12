@@ -140,26 +140,27 @@ func setPOC(ctx *sweetygo.Context) {
 }
 
 func runPOC(ctx *sweetygo.Context) {
-	concurrency := 2
-	blockers := make(chan struct{}, concurrency)
-	var existedList []string
+	// conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	// concurrency := 2
+	// blockers := make(chan struct{}, concurrency)
+	// var existedList []string
 
-	for _, aa := range ateam {
-		blockers <- struct{}{}
-		go func(a *assassin.Assassin, blocker chan struct{}) {
-			defer func() { <-blocker }()
-			a.POC.Run(a.Target)
-			if result := a.POC.Report().(string); result == "true" {
-				existedList = append(existedList, a.Target)
-			}
-		}(aa, blockers)
-	}
-	for i := 0; i < cap(blockers); i++ {
-		blockers <- struct{}{}
-	}
+	// for _, aa := range ateam {
+	// 	blockers <- struct{}{}
+	// 	go func(a *assassin.Assassin, blocker chan struct{}) {
+	// 		defer func() { <-blocker }()
+	// 		a.POC.Run(conn)
+	// 		if result := a.POC.Report().(string); result == "true" {
+	// 			existedList = append(existedList, a.Target)
+	// 		}
+	// 	}(aa, blockers)
+	// }
+	// for i := 0; i < cap(blockers); i++ {
+	// 	blockers <- struct{}{}
+	// }
 
-	ret := map[string][]string{
-		"existed": existedList,
-	}
-	ctx.JSON(200, ret, "success")
+	// ret := map[string][]string{
+	// 	"existed": existedList,
+	// }
+	// ctx.JSON(200, ret, "success")
 }
