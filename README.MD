@@ -11,6 +11,7 @@ Just for learn.
 - [x] Retrieve Server and Powered by Headers
 - [x] Detect CMS Version
 - [ ] Subdomain Scan
+- [ ] Google Map
 - [ ] Dir Scan
 - [ ] Whois Lookup
 - [x] Port Scan
