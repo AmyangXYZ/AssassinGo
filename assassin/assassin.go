@@ -15,6 +15,7 @@ type Assassin struct {
 	Gatherers    map[string]gatherer.Gatherer
 	Attackers    map[string]attacker.Attacker
 	Seeker       seeker.Seeker
+	seekerResult []string
 	POC          poc.POC
 }
 

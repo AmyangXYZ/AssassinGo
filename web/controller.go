@@ -49,6 +49,13 @@ func basicInfo(ctx *sweetygo.Context) {
 	conn.Close()
 }
 
+func tracert(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	a.Gatherers["tracert"].Set(a.Target)
+	a.Gatherers["tracert"].Run(conn)
+	conn.Close()
+}
+
 func cmsDetect(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Gatherers["cms"].Set(a.Target)

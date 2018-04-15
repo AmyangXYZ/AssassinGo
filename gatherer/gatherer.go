@@ -13,6 +13,7 @@ type Gatherer interface {
 func Init() map[string]Gatherer {
 	return map[string]Gatherer{
 		"basicInfo": NewBasicInfo(),
+		"tracert":   NewTracer(),
 		"cms":       NewCMSDetector(),
 		"port":      NewPortScanner(),
 		"crawl":     NewCrawler(),

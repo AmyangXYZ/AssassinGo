@@ -10,8 +10,8 @@ Just for learn.
 
 - [x] Retrieve Server and Powered by Headers
 - [x] Detect CMS Version
+- [x] Trace Route and Mark on Google Map
 - [ ] Subdomain Scan
-- [ ] Google Map
 - [ ] Dir Scan
 - [ ] Whois Lookup
 - [x] Port Scan
@@ -40,6 +40,7 @@ Path | Func | Params | Return
 /ws/info/basic | get ip and webserver | nil | {"ip": ip, "webserver": webserver}
 /ws/info/cms | detect cms | nil | {"cms": cms}
 /ws/info/port | ports scan | {method:"tcp"/"syn"} | {"ports": ports}
+/ws/info/tracert | trace route and mark on google map | nil | {"ttl": ttl, "addr": addr, "elapsed_time": elapsed_time, "country": country, "lat": lat,"long": long}
 /ws/info/crawl | crawl paramed urls | {max_depth: 4} | {"url": url}
 /ws/vul/sqli | check sqli | nil | {"url": url}
 /ws/vul/xss | check xss | nil | {"url": url}

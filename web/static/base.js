@@ -162,10 +162,22 @@ function reset() {
 //     })
 // }
 
+function tracert() {
+    $("#xss-url-table").html("")
+    var socket = new WebSocket("ws://localhost:8000/ws/info/tracert")
+    socket.onmessage = function (e) {
+        ret = JSON.parse(e.data);
+        console.log(e.data)
+    }
+    socket.onclose = function () {
+        $("#xss-url-table").append("Finished");
+    }
+}
+
 function crawl() {
     $("#url-table").html("");
     $("#email-table").html("");
-    var socket = new WebSocket("ws://localhost:8000/ws/crawl")
+    var socket = new WebSocket("ws://localhost:8000/ws/info/crawl")
     // socket.onopen = function() {
     //     container.append("<p>Socket is open</p>");
     // };
