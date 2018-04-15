@@ -51,7 +51,7 @@ func (ps *PortScanner) Run(conn *websocket.Conn) {
 	blockers := make(chan struct{}, ps.goroutinesCount)
 	for _, port := range ps.ports {
 		blockers <- struct{}{}
-		go ps.checkPort(port, blockers)
+		go ps.checkPort(port, conn, blockers)
 	}
 
 	// Wait for all goroutines to finish.
@@ -60,12 +60,17 @@ func (ps *PortScanner) Run(conn *websocket.Conn) {
 	}
 }
 
-func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
+func (ps *PortScanner) checkPort(port string, conn *websocket.Conn, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	connection, err := net.DialTimeout("tcp", ps.target+":"+port, time.Duration(ps.timeout)*time.Second)
 	if err == nil {
 		logger.Blue.Printf("%-5s -  open \n", port)
 		connection.Close()
+		ret := map[string]interface{}{
+			"port":    port,
+			"service": "http",
+		}
+		conn.WriteJSON(ret)
 		ps.OpenPorts = append(ps.OpenPorts, port)
 	}
 }

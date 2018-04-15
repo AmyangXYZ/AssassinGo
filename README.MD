@@ -30,23 +30,23 @@ Just for learn.
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
 /api/target | POST | set a target | target=xxx / target=t1,t2... | nil
-/api/poc | GET | get poc list | nil | {"pocs": pocs}
+/api/poc | GET | get poc list | nil | {"pocs": ["seacmsv654", "struct056"...]}
 /api/poc | POST | set poc | poc=xxx | nil
 
 ### WebSocket
 
 Path | Func | Params | Return
 ----- | ----- | ----- | -----
-/ws/info/basic | get ip and webserver | nil | {"ip": ip, "webserver": webserver}
-/ws/info/cms | detect cms | nil | {"cms": cms}
-/ws/info/port | ports scan | {method:"tcp"/"syn"} | {"ports": ports}
-/ws/info/tracert | trace route and mark on google map | nil | {"ttl": ttl, "addr": addr, "elapsed_time": elapsed_time, "country": country, "lat": lat,"long": long}
-/ws/info/crawl | crawl paramed urls | {max_depth: 4} | {"url": url}
-/ws/vul/sqli | check sqli | nil | {"url": url}
-/ws/vul/xss | check xss | nil | {"url": url}
-/ws/intrude | brute force | {header:"xxx", payload:"p1,p2...", gort_count="10"} | {"payload": payload, "resp_status": status, "resp_len": len}
-/ws/seek | seek targets | {query:"", se:"bing/google", max_page: 10} | {"urls": urls}
-/ws/poc/run | run poc | nil | {"host": host}
+/ws/info/basic | get ip and webserver | nil | {"ip": "192.168.1.1", "webserver": "nginx"}
+/ws/info/cms | detect cms | nil | {"cms": "wordpress"}
+/ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
+/ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
+/ws/info/crawl | crawl paramed urls | {"max_depth": 4} | {"url": "example.com/?id=1"}
+/ws/vul/sqli | check sqli | nil | {"url": "example.com/?id=1}
+/ws/vul/xss | check xss | nil | {"url": "example.com/?id=1}
+/ws/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"} | {"payload": 1, "resp_status": 200, "resp_len": 110}
+/ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
+/ws/poc/run | run poc | nil | {"host": "example.com"}
 
 ## State
 
