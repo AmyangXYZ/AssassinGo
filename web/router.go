@@ -13,6 +13,7 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.POST("/api/target", newAssassin)
 
 	app.GET("/ws/info/basic", basicInfo)
+	app.GET("/ws/info/whois", whois)
 	app.GET("/ws/info/tracert", tracert)
 	app.GET("/wx/info/cms", cmsDetect)
 	app.GET("/wx/info/port", portScan)

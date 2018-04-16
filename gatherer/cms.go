@@ -47,5 +47,9 @@ func (c *CMSDetector) Run(conn *websocket.Conn) {
 		return
 	}
 	c.CMS = cms[0][1]
+	ret := map[string]string{
+		"cms": c.CMS,
+	}
+	conn.WriteJSON(ret)
 	logger.Green.Println("CMS Detected:", c.CMS)
 }

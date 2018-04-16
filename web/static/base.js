@@ -258,7 +258,7 @@ function seeker() {
         var msg = {
             query: `inurl:".php?id=1" 教育局`,
             se: "bing",
-            max_page:10,
+            max_page: 10,
         }
         var a = JSON.stringify(msg);
         socket.send(a)
@@ -266,6 +266,7 @@ function seeker() {
     socket.onmessage = function (e) {
         ret = JSON.parse(e.data);
         for(var i=0;i<ret.urls.length;i++) {
+            console.log(ret.urls[i])
             h = html_seeker.format({"url":ret.urls[i]})
             $("#seeker-table").append(h)
         }

@@ -49,6 +49,13 @@ func basicInfo(ctx *sweetygo.Context) {
 	conn.Close()
 }
 
+func whois(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	a.Gatherers["whois"].Set(a.Target)
+	a.Gatherers["whois"].Run(conn)
+	conn.Close()
+}
+
 func tracert(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Gatherers["tracert"].Set(a.Target)

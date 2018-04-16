@@ -38,6 +38,7 @@ Path | Method | Func | Params | Return
 Path | Func | Params | Return
 ----- | ----- | ----- | -----
 /ws/info/basic | get ip and webserver | nil | {"ip": "192.168.1.1", "webserver": "nginx"}
+/ws/info/whois | whois | nil | {"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}
 /ws/info/cms | detect cms | nil | {"cms": "wordpress"}
 /ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
