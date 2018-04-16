@@ -11,6 +11,7 @@ import (
 
 // CMSDetector detects CMS with whatcms.org api.
 type CMSDetector struct {
+	mconn  *muxConn
 	target string
 	CMS    string
 }
@@ -21,9 +22,10 @@ func NewCMSDetector() *CMSDetector {
 }
 
 // Set implements Gatherer interface.
-// Params should be {target string}
+// Params should be {conn *websocket.Conn, target string}
 func (c *CMSDetector) Set(v ...interface{}) {
-	c.target = v[0].(string)
+	c.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	c.target = v[1].(string)
 }
 
 // Report implements Gatherer interface
@@ -32,7 +34,7 @@ func (c *CMSDetector) Report() interface{} {
 }
 
 // Run impplements Gatherer interface.
-func (c *CMSDetector) Run(conn *websocket.Conn) {
+func (c *CMSDetector) Run() {
 	resp, err := http.Get("https://whatcms.org/?s=" + c.target)
 	if err != nil {
 		logger.Red.Println(err)
@@ -50,6 +52,6 @@ func (c *CMSDetector) Run(conn *websocket.Conn) {
 	ret := map[string]string{
 		"cms": c.CMS,
 	}
-	conn.WriteJSON(ret)
+	c.mconn.send(ret)
 	logger.Green.Println("CMS Detected:", c.CMS)
 }

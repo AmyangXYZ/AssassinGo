@@ -11,6 +11,7 @@ import (
 
 // Whois queries the domain information.
 type Whois struct {
+	mconn  *muxConn
 	domain string
 	raw    string
 	info   map[string]string
@@ -22,14 +23,15 @@ func NewWhois() *Whois {
 }
 
 // Set implements Gatherer interface.
-// Params should be {target string}.
+// Params should be {conn *websocket.Conn, target string}.
 func (w *Whois) Set(v ...interface{}) {
-	if strings.Count(v[0].(string), ".") == 2 {
+	w.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	if strings.Count(v[1].(string), ".") == 2 {
 		d := strings.Split(v[0].(string), ".")
 		w.domain = d[1] + "." + d[2]
 		return
 	}
-	w.domain = v[0].(string)
+	w.domain = v[1].(string)
 }
 
 // Report implements Gatherer interface.
@@ -38,7 +40,7 @@ func (w *Whois) Report() interface{} {
 }
 
 // Run implements Gatherer interface.
-func (w *Whois) Run(conn *websocket.Conn) {
+func (w *Whois) Run() {
 	logger.Green.Println("Whois Information")
 	whoisRaw, err := whois.Whois(w.domain)
 	if err != nil {
@@ -59,5 +61,5 @@ func (w *Whois) Run(conn *websocket.Conn) {
 		"state":           strings.Split(result.Registrar.DomainStatus, " ")[0],
 	}
 	w.info = ret
-	conn.WriteJSON(ret)
+	w.mconn.send(ret)
 }

@@ -10,6 +10,7 @@ import (
 
 // BasicInfo gathers basic information of the target.
 type BasicInfo struct {
+	mconn     *muxConn
 	target    string
 	IPAddr    string
 	WebServer string
@@ -21,9 +22,10 @@ func NewBasicInfo() *BasicInfo {
 }
 
 // Set implements Gatherer interface.
-// Params should be {target string}
+// Params should be {conn *websocket.Conn, target string}
 func (bi *BasicInfo) Set(v ...interface{}) {
-	bi.target = v[0].(string)
+	bi.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	bi.target = v[1].(string)
 }
 
 // Report implements Gatherer interface
@@ -32,43 +34,36 @@ func (bi *BasicInfo) Report() interface{} {
 }
 
 // Run implements the Gatherer interface.
-func (bi *BasicInfo) Run(conn *websocket.Conn) {
-	err := bi.resolveIP()
-	if err != nil {
-		conn.Close()
-	}
+func (bi *BasicInfo) Run() {
+	bi.resolveIP()
+
 	logger.Green.Println("IP Address:", bi.IPAddr)
 
-	err = bi.getWebServer()
+	bi.getWebServer()
 	logger.Green.Println("Web Server:", bi.WebServer)
 
 	ret := map[string]string{
 		"ip":        bi.IPAddr,
 		"webserver": bi.WebServer,
 	}
-	conn.WriteJSON(ret)
+	bi.mconn.send(ret)
 }
 
-func (bi *BasicInfo) resolveIP() error {
+func (bi *BasicInfo) resolveIP() {
 	remoteAddr, err := net.ResolveIPAddr("ip", bi.target)
 	if err != nil {
 		logger.Red.Println(err)
-		return err
-
 	}
 	bi.IPAddr = remoteAddr.String()
-	return nil
 }
 
-func (bi *BasicInfo) getWebServer() error {
+func (bi *BasicInfo) getWebServer() {
 	resp, err := http.Head("http://" + bi.target)
 	if err != nil {
 		resp, err = http.Get("http://" + bi.target)
 		if err != nil {
 			logger.Red.Println(err)
-			return err
 		}
 	}
 	bi.WebServer = resp.Header["Server"][0]
-	return nil
 }

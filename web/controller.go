@@ -44,57 +44,57 @@ func newAssassin(ctx *sweetygo.Context) {
 
 func basicInfo(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["basicInfo"].Set(a.Target)
-	a.Gatherers["basicInfo"].Run(conn)
+	a.Gatherers["basicInfo"].Set(conn, a.Target)
+	a.Gatherers["basicInfo"].Run()
 	conn.Close()
 }
 
 func whois(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["whois"].Set(a.Target)
-	a.Gatherers["whois"].Run(conn)
+	a.Gatherers["whois"].Set(conn, a.Target)
+	a.Gatherers["whois"].Run()
 	conn.Close()
 }
 
 func tracert(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["tracert"].Set(a.Target)
-	a.Gatherers["tracert"].Run(conn)
+	a.Gatherers["tracert"].Set(conn, a.Target)
+	a.Gatherers["tracert"].Run()
 	conn.Close()
 }
 
 func cmsDetect(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["cms"].Set(a.Target)
-	a.Gatherers["cms"].Run(conn)
+	a.Gatherers["cms"].Set(conn, a.Target)
+	a.Gatherers["cms"].Run()
 	conn.Close()
 }
 
 func portScan(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["port"].Set(a.Target, "tcp")
-	a.Gatherers["port"].Run(conn)
+	a.Gatherers["port"].Set(conn, a.Target, "tcp")
+	a.Gatherers["port"].Run()
 	conn.Close()
 }
 
 func crawl(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["crawl"].Set(a.Target, 4)
-	a.Gatherers["crawl"].Run(conn)
+	a.Gatherers["crawl"].Set(conn, a.Target, 4)
+	a.Gatherers["crawl"].Run()
 	a.FuzzableURLs = a.Gatherers["crawl"].Report().([]string)
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Attackers["sqli"].Set(a.FuzzableURLs)
-	a.Attackers["sqli"].Run(conn)
+	a.Attackers["sqli"].Set(conn, a.FuzzableURLs)
+	a.Attackers["sqli"].Run()
 	conn.Close()
 }
 
 func checkXSS(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Attackers["xss"].Set(a.FuzzableURLs)
-	a.Attackers["xss"].Run(conn)
+	a.Attackers["xss"].Set(conn, a.FuzzableURLs)
+	a.Attackers["xss"].Run()
 	conn.Close()
 }
 
@@ -108,8 +108,8 @@ func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := intruderMsg{}
 	conn.ReadJSON(&m)
-	a.Attackers["intruder"].Set(a.Target, m.Header, m.Payload, m.GortCount)
-	a.Attackers["intruder"].Run(conn)
+	a.Attackers["intruder"].Set(conn, a.Target, m.Header, m.Payload, m.GortCount)
+	a.Attackers["intruder"].Run()
 	conn.Close()
 }
 

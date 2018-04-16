@@ -10,6 +10,7 @@ import (
 
 // BasicSQLi checks basic sqli vuls.
 type BasicSQLi struct {
+	mconn         *muxConn
 	fuzzableURLs  []string
 	payload0      string
 	payload1      string
@@ -25,9 +26,10 @@ func NewBasicSQLi() *BasicSQLi {
 }
 
 // Set implements Attacker interface.
-// Params should be {fuzzableURLs []string}
+// Params should be {conn *websocket.Conn, fuzzableURLs []string}
 func (bs *BasicSQLi) Set(v ...interface{}) {
-	bs.fuzzableURLs = v[0].([]string)
+	bs.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	bs.fuzzableURLs = v[1].([]string)
 }
 
 // Report implements Attacker interface.
@@ -36,13 +38,13 @@ func (bs *BasicSQLi) Report() interface{} {
 }
 
 // Run implements Attacker interface.
-func (bs *BasicSQLi) Run(conn *websocket.Conn) {
+func (bs *BasicSQLi) Run() {
 	logger.Green.Println("Basic SQLi Checking...")
 
 	blockers := make(chan bool, len(bs.fuzzableURLs))
 	for _, URL := range bs.fuzzableURLs {
 		blockers <- true
-		go bs.check(URL, blockers, conn)
+		go bs.check(URL, blockers)
 	}
 
 	// Wait for all goroutines to finish.
@@ -54,7 +56,7 @@ func (bs *BasicSQLi) Run(conn *websocket.Conn) {
 	}
 }
 
-func (bs *BasicSQLi) check(URL string, blocker chan bool, conn *websocket.Conn) {
+func (bs *BasicSQLi) check(URL string, blocker chan bool) {
 	defer func() { <-blocker }()
 	body0 := bs.fetch(URL + bs.payload0)
 	body1 := bs.fetch(URL + bs.payload1)
@@ -63,7 +65,7 @@ func (bs *BasicSQLi) check(URL string, blocker chan bool, conn *websocket.Conn) 
 		ret := map[string]string{
 			"url": URL,
 		}
-		conn.WriteJSON(ret)
+		bs.mconn.send(ret)
 		bs.InjectableURL = append(bs.InjectableURL, URL)
 	}
 }

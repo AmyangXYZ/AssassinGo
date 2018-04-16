@@ -14,6 +14,7 @@ import (
 
 // PortScanner scans common used ports.
 type PortScanner struct {
+	mconn  *muxConn
 	target string
 	// tcp, syn ...
 	method          string
@@ -33,10 +34,11 @@ func NewPortScanner() *PortScanner {
 }
 
 // Set implements Gatherer interface.
-// Params should be {target, method string}
+// Params should be {conn *websocket.Conn, target, method string}
 func (ps *PortScanner) Set(v ...interface{}) {
-	ps.target = v[0].(string)
-	ps.method = v[1].(string)
+	ps.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	ps.target = v[1].(string)
+	ps.method = v[2].(string)
 }
 
 // Report implements Gatherer interface
@@ -45,13 +47,13 @@ func (ps *PortScanner) Report() interface{} {
 }
 
 // Run implements the Gatherer interface.
-func (ps *PortScanner) Run(conn *websocket.Conn) {
+func (ps *PortScanner) Run() {
 	logger.Green.Println("Ports Scanning...")
 
 	blockers := make(chan struct{}, ps.goroutinesCount)
 	for _, port := range ps.ports {
 		blockers <- struct{}{}
-		go ps.checkPort(port, conn, blockers)
+		go ps.checkPort(port, blockers)
 	}
 
 	// Wait for all goroutines to finish.
@@ -60,7 +62,7 @@ func (ps *PortScanner) Run(conn *websocket.Conn) {
 	}
 }
 
-func (ps *PortScanner) checkPort(port string, conn *websocket.Conn, blocker chan struct{}) {
+func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	connection, err := net.DialTimeout("tcp", ps.target+":"+port, time.Duration(ps.timeout)*time.Second)
 	if err == nil {
@@ -70,7 +72,7 @@ func (ps *PortScanner) checkPort(port string, conn *websocket.Conn, blocker chan
 			"port":    port,
 			"service": "http",
 		}
-		conn.WriteJSON(ret)
+		ps.mconn.send(ret)
 		ps.OpenPorts = append(ps.OpenPorts, port)
 	}
 }

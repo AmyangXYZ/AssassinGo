@@ -22,6 +22,7 @@ type node struct {
 
 // Tracer trace route to the target.
 type Tracer struct {
+	mconn *muxConn
 	host  string
 	route []node
 }
@@ -32,9 +33,10 @@ func NewTracer() *Tracer {
 }
 
 // Set implements Gatherer interface.
-// Params should be {}
+// Params should be {conn *websocket.Conn, target string}
 func (t *Tracer) Set(v ...interface{}) {
-	t.host = v[0].(string)
+	t.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	t.host = v[1].(string)
 }
 
 // Report implements Gatherer interface.
@@ -43,7 +45,7 @@ func (t *Tracer) Report() interface{} {
 }
 
 // Run implements Gatherer interface.
-func (t *Tracer) Run(conn *websocket.Conn) {
+func (t *Tracer) Run() {
 	logger.Green.Println("Trace Route and GeoIP")
 
 	ch := make(chan traceroute.TracerouteHop, 0)
@@ -53,7 +55,7 @@ func (t *Tracer) Run(conn *websocket.Conn) {
 			if !ok {
 				return
 			}
-			t.printHop(hop, conn)
+			t.printHop(hop)
 		}
 	}()
 
@@ -66,7 +68,7 @@ func (t *Tracer) Run(conn *websocket.Conn) {
 	time.Sleep(1 * time.Second)
 }
 
-func (t *Tracer) printHop(hop traceroute.TracerouteHop, conn *websocket.Conn) {
+func (t *Tracer) printHop(hop traceroute.TracerouteHop) {
 	addr := fmt.Sprintf("%v.%v.%v.%v", hop.Address[0], hop.Address[1], hop.Address[2], hop.Address[3])
 	if hop.Success {
 		n := node{
@@ -87,7 +89,7 @@ func (t *Tracer) printHop(hop traceroute.TracerouteHop, conn *websocket.Conn) {
 			"lat":          n.lat,
 			"long":         n.long,
 		}
-		conn.WriteJSON(ret)
+		t.mconn.send(ret)
 		return
 	}
 
@@ -104,7 +106,7 @@ func (t *Tracer) printHop(hop traceroute.TracerouteHop, conn *websocket.Conn) {
 		"lat":          n.lat,
 		"long":         n.long,
 	}
-	conn.WriteJSON(ret)
+	t.mconn.send(ret)
 }
 
 func (n *node) geoip() {

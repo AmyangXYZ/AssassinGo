@@ -11,6 +11,7 @@ import (
 
 // XSSChecker checks XSS vuls.
 type XSSChecker struct {
+	mconn         *muxConn
 	fuzzableURLs  []string
 	payload       string
 	InjectableURL []string
@@ -22,9 +23,10 @@ func NewXSSChecker() *XSSChecker {
 }
 
 // Set implements Attacker interface.
-// Params should be {fuzzableURLs []string}
+// Params should be {conn *websocket.Conn, fuzzableURLs []string}
 func (x *XSSChecker) Set(v ...interface{}) {
-	x.fuzzableURLs = v[0].([]string)
+	x.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	x.fuzzableURLs = v[1].([]string)
 }
 
 // Report implements Attacker interface.
@@ -33,13 +35,13 @@ func (x *XSSChecker) Report() interface{} {
 }
 
 // Run implements Attacker interface.
-func (x *XSSChecker) Run(conn *websocket.Conn) {
+func (x *XSSChecker) Run() {
 	logger.Green.Println("Basic XSS Checking...")
 
 	blockers := make(chan bool, len(x.fuzzableURLs))
 	for _, URL := range x.fuzzableURLs {
 		blockers <- true
-		go x.check(URL, blockers, conn)
+		go x.check(URL, blockers)
 	}
 
 	// Wait for all goroutines to finish.
@@ -52,7 +54,7 @@ func (x *XSSChecker) Run(conn *websocket.Conn) {
 	}
 }
 
-func (x *XSSChecker) check(URL string, blocker chan bool, conn *websocket.Conn) {
+func (x *XSSChecker) check(URL string, blocker chan bool) {
 	defer func() { <-blocker }()
 	body := x.fetch(URL + x.payload)
 	if strings.Contains(body, x.payload) {
@@ -60,7 +62,7 @@ func (x *XSSChecker) check(URL string, blocker chan bool, conn *websocket.Conn) 
 		ret := map[string]string{
 			"url": URL,
 		}
-		conn.WriteJSON(ret)
+		x.mconn.send(ret)
 		x.InjectableURL = append(x.InjectableURL, URL)
 	}
 }

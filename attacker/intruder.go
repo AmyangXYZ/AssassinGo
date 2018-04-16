@@ -13,6 +13,7 @@ import (
 
 // Intruder intrudes the target.
 type Intruder struct {
+	mconn           *muxConn
 	target          string
 	header          string
 	intrudeType     string
@@ -27,12 +28,13 @@ func NewIntruder() *Intruder {
 }
 
 // Set sets params for intruder.
-// Params should be {target, header, payload string, goroutinesCount int}
+// Params should be {conn *websocket.Conn, target, header, payload string, goroutinesCount int}
 func (i *Intruder) Set(v ...interface{}) {
-	i.target = v[0].(string)
-	i.header = v[1].(string)
-	i.payload = strings.Split(v[2].(string), ",")
-	i.goroutinesCount = v[3].(int)
+	i.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	i.target = v[1].(string)
+	i.header = v[2].(string)
+	i.payload = strings.Split(v[3].(string), ",")
+	i.goroutinesCount = v[4].(int)
 }
 
 // Report implements attacker interface.
@@ -41,12 +43,27 @@ func (i *Intruder) Report() interface{} {
 }
 
 // Run implements attacker interface.
-func (i *Intruder) Run(conn *websocket.Conn) {
+func (i *Intruder) Run() {
 	logger.Green.Println("Start Intruder...")
+	var s signal
+	stop := make(chan struct{}, 0)
 	blockers := make(chan struct{}, i.goroutinesCount)
+	go func() {
+		i.mconn.conn.ReadJSON(&s)
+		if s.Stop == 1 {
+			stop <- struct{}{}
+		}
+	}()
+
+loop:
 	for _, p := range i.payload {
-		blockers <- struct{}{}
-		go i.attack(conn, p, blockers)
+		select {
+		default:
+			blockers <- struct{}{}
+			go i.attack(p, blockers)
+		case <-stop:
+			break loop
+		}
 	}
 
 	for i := 0; i < cap(blockers); i++ {
@@ -54,7 +71,7 @@ func (i *Intruder) Run(conn *websocket.Conn) {
 	}
 }
 
-func (i *Intruder) attack(conn *websocket.Conn, payload string, blocker chan struct{}) {
+func (i *Intruder) attack(payload string, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	resp := i.fetch(payload)
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -66,7 +83,7 @@ func (i *Intruder) attack(conn *websocket.Conn, payload string, blocker chan str
 		"resp_status": strconv.Itoa(resp.StatusCode),
 		"resp_len":    strconv.Itoa(len(string(body))),
 	}
-	conn.WriteJSON(ret)
+	i.mconn.send(ret)
 }
 
 func (i *Intruder) fetch(payload string) *http.Response {

@@ -1,4 +1,4 @@
-package gatherer
+package attacker
 
 import (
 	"io/ioutil"
@@ -15,6 +15,7 @@ import (
 
 // Crawler crawls the website.
 type Crawler struct {
+	mconn       *muxConn
 	host        string
 	visitedURLs sync.Map
 	emails      sync.Map
@@ -36,20 +37,21 @@ func NewCrawler() *Crawler {
 	}
 }
 
-// Set implements Gatherer interface.
-// Params should be {host string, depth int}
+// Set implements Attacker interface.
+// Params should be {conn *websocket.Conn, host string, depth int}
 func (c *Crawler) Set(v ...interface{}) {
-	c.host = "http://" + v[0].(string)
-	c.maxDepth = v[1].(int)
+	c.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	c.host = "http://" + v[1].(string)
+	c.maxDepth = v[2].(int)
 }
 
-// Report implements Gatherer interface
+// Report implements Attacker interface
 func (c *Crawler) Report() interface{} {
 	return c.results
 }
 
-// Run implements Gatherer interface.
-func (c *Crawler) Run(conn *websocket.Conn) {
+// Run implements Attacker interface.
+func (c *Crawler) Run() {
 	logger.Green.Println("Fuzzable URLs Crawling...")
 
 	results := make(chan string)
@@ -60,7 +62,7 @@ func (c *Crawler) Run(conn *websocket.Conn) {
 		ret := map[string]string{
 			"url": url,
 		}
-		conn.WriteJSON(ret)
+		c.mconn.send(ret)
 		c.results = append(c.results, url)
 	}
 

@@ -1,11 +1,15 @@
 package gatherer
 
-import "github.com/gorilla/websocket"
+import (
+	"sync"
+
+	"github.com/gorilla/websocket"
+)
 
 // Gatherer should implement ...
 type Gatherer interface {
 	Set(...interface{})
-	Run(conn *websocket.Conn)
+	Run()
 	Report() interface{}
 }
 
@@ -17,6 +21,20 @@ func Init() map[string]Gatherer {
 		"tracert":   NewTracer(),
 		"cms":       NewCMSDetector(),
 		"port":      NewPortScanner(),
-		"crawl":     NewCrawler(),
 	}
+}
+
+type muxConn struct {
+	conn *websocket.Conn
+	mu   sync.Mutex
+}
+
+func (m *muxConn) send(v interface{}) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.conn.WriteJSON(v)
+}
+
+type signal struct {
+	Stop int
 }
