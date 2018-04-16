@@ -19,8 +19,8 @@ Just for learn.
 - [x] Crawl the Paramed URLs
 - [x] Basic SQLi Check
 - [x] Basic XSS Check
-- [x] Google Hacking
-- [x] Brute Force
+- [x] Intruder
+- [x] Seek Targets by Google
 - [x] POC Interface
 - [x] Web GUI(using WebSocket)
 
