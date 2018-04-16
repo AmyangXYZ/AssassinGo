@@ -1,6 +1,8 @@
 package gatherer
 
 import (
+	"io/ioutil"
+	"strings"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -18,9 +20,10 @@ func Init() map[string]Gatherer {
 	return map[string]Gatherer{
 		"basicInfo": NewBasicInfo(),
 		"whois":     NewWhois(),
-		"tracert":   NewTracer(),
 		"cms":       NewCMSDetector(),
 		"port":      NewPortScanner(),
+		"tracert":   NewTracer(),
+		"dirb":      NewDirBruter(),
 	}
 }
 
@@ -37,4 +40,10 @@ func (m *muxConn) send(v interface{}) error {
 
 type signal struct {
 	Stop int
+}
+
+func readPayloadsFromFile(file string) []string {
+	buf, _ := ioutil.ReadFile(file)
+	p := strings.Split(string(buf), "\n")
+	return p
 }

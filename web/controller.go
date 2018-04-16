@@ -77,6 +77,20 @@ func portScan(ctx *sweetygo.Context) {
 	conn.Close()
 }
 
+type dirbMsg struct {
+	// Payload   string `json:"payload"`
+	GortCount int `json:"gort_count"`
+}
+
+func dirBrute(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	m := dirbMsg{}
+	conn.ReadJSON(&m)
+	a.Gatherers["dirb"].Set(conn, a.Target, m.GortCount)
+	a.Gatherers["dirb"].Run()
+	conn.Close()
+}
+
 func crawl(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Gatherers["crawl"].Set(conn, a.Target, 4)

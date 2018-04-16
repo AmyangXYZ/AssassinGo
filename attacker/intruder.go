@@ -18,7 +18,7 @@ type Intruder struct {
 	header          string
 	intrudeType     string
 	re              *regexp.Regexp
-	payload         []string
+	payloads        []string
 	goroutinesCount int
 }
 
@@ -33,16 +33,16 @@ func (i *Intruder) Set(v ...interface{}) {
 	i.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
 	i.target = v[1].(string)
 	i.header = v[2].(string)
-	i.payload = strings.Split(v[3].(string), ",")
+	i.payloads = strings.Split(v[3].(string), "\n")
 	i.goroutinesCount = v[4].(int)
 }
 
-// Report implements attacker interface.
+// Report implements Attacker interface.
 func (i *Intruder) Report() interface{} {
 	return ""
 }
 
-// Run implements attacker interface.
+// Run implements Attacker interface.
 func (i *Intruder) Run() {
 	logger.Green.Println("Start Intruder...")
 	var s signal
@@ -56,7 +56,7 @@ func (i *Intruder) Run() {
 	}()
 
 loop:
-	for _, p := range i.payload {
+	for _, p := range i.payloads {
 		select {
 		default:
 			blockers <- struct{}{}

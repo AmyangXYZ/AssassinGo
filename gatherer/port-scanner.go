@@ -3,9 +3,7 @@
 package gatherer
 
 import (
-	"io/ioutil"
 	"net"
-	"strings"
 	"time"
 
 	"../logger"
@@ -27,7 +25,7 @@ type PortScanner struct {
 // NewPortScanner returns a PortScanner.
 func NewPortScanner() *PortScanner {
 	return &PortScanner{
-		ports:           readPortsFromFile("./gatherer/Top100ports.txt"),
+		ports:           readPayloadsFromFile("./gatherer/dict/Top100ports.txt"),
 		goroutinesCount: 100,
 		timeout:         2,
 	}
@@ -75,10 +73,4 @@ func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
 		ps.mconn.send(ret)
 		ps.OpenPorts = append(ps.OpenPorts, port)
 	}
-}
-
-func readPortsFromFile(file string) []string {
-	buf, _ := ioutil.ReadFile(file)
-	ports := strings.Split(string(buf), "\n")
-	return ports
 }

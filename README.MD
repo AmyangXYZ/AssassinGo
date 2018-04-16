@@ -12,8 +12,9 @@ Just for learn.
 - [x] Detect CMS Version
 - [x] Trace Route and Mark on Google Map
 - [ ] Subdomain Scan
-- [ ] Dir Scan
-- [ ] Whois Lookup
+- [x] Dir Scan
+- [ ] Site Map
+- [x] Whois Lookup
 - [x] Port Scan
 - [x] Crawl the Paramed URLs
 - [x] Basic SQLi Check
@@ -42,10 +43,11 @@ Path | Func | Params | Return
 /ws/info/cms | detect cms | nil | {"cms": "wordpress"}
 /ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
+/ws/info/dirb | brute force dir | {"gort_count":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}
 /ws/info/crawl | crawl paramed urls | {"max_depth": 4} | {"url": "example.com/?id=1"}
 /ws/vul/sqli | check sqli | nil | {"url": "example.com/?id=1}
 /ws/vul/xss | check xss | nil | {"url": "example.com/?id=1}
-/ws/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"} | {"payload": 1, "resp_status": 200, "resp_len": 110}
+/ws/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
 /ws/poc/run | run poc | nil | {"host": "example.com"}
 
