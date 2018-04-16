@@ -10,12 +10,12 @@ Just for learn.
 
 - [x] Retrieve Server and Powered by Headers
 - [x] Detect CMS Version
+- [x] Port Scan
 - [x] Trace Route and Mark on Google Map
 - [ ] Subdomain Scan
 - [x] Dir Scan
 - [ ] Site Map
 - [x] Whois Lookup
-- [x] Port Scan
 - [x] Crawl the Paramed URLs
 - [x] Basic SQLi Check
 - [x] Basic XSS Check
