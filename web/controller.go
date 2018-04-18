@@ -142,9 +142,9 @@ func seek(ctx *sweetygo.Context) {
 	conn.Close()
 }
 
-func getPOCs(ctx *sweetygo.Context) {
+func getPoCs(ctx *sweetygo.Context) {
 	var pocList []string
-	for pocNames := range poc.POCMap {
+	for pocNames := range poc.PoCMap {
 		pocList = append(pocList, pocNames)
 	}
 
@@ -155,10 +155,10 @@ func getPOCs(ctx *sweetygo.Context) {
 }
 
 // POST -d "poc=xxx"
-func setPOC(ctx *sweetygo.Context) {
+func setPoC(ctx *sweetygo.Context) {
 	pocName := ctx.Param("poc")
 	for _, aa := range ateam {
-		aa.POC = poc.POCMap[pocName]
+		aa.PoC = poc.PoCMap[pocName]
 	}
 
 	ret := map[string]string{
@@ -167,7 +167,7 @@ func setPOC(ctx *sweetygo.Context) {
 	ctx.JSON(201, ret, "success")
 }
 
-func runPOC(ctx *sweetygo.Context) {
+func runPoC(ctx *sweetygo.Context) {
 	// conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	// concurrency := 2
 	// blockers := make(chan struct{}, concurrency)

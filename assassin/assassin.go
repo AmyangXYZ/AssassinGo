@@ -16,7 +16,7 @@ type Assassin struct {
 	Attackers    map[string]attacker.Attacker
 	Seeker       seeker.Seeker
 	seekerResult []string
-	POC          poc.POC
+	PoC          poc.PoC
 }
 
 // New returns a new Assassin.
