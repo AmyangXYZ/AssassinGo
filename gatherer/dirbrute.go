@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"../logger"
@@ -11,6 +12,7 @@ import (
 )
 
 // DirBruter brute force the dir.
+// WebSocket API.
 type DirBruter struct {
 	mconn           *muxConn
 	target          string
@@ -32,8 +34,8 @@ func (d *DirBruter) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface.
-func (d *DirBruter) Report() interface{} {
-	return ""
+func (d *DirBruter) Report() map[string]interface{} {
+	return nil
 }
 
 // Run implements Gatherer interface,
@@ -86,4 +88,10 @@ func (d *DirBruter) fetch(path string, blocker chan struct{}) {
 		"len":    strconv.Itoa(len(string(body))),
 	}
 	d.mconn.send(ret)
+}
+
+func readPayloadsFromFile(file string) []string {
+	buf, _ := ioutil.ReadFile(file)
+	p := strings.Split(string(buf), "\n")
+	return p
 }

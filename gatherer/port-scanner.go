@@ -3,7 +3,9 @@
 package gatherer
 
 import (
+	"io/ioutil"
 	"net"
+	"strings"
 	"time"
 
 	"../logger"
@@ -11,12 +13,13 @@ import (
 )
 
 // PortScanner scans common used ports.
+// WebSocket API.
 type PortScanner struct {
 	mconn  *muxConn
 	target string
 	// tcp, syn ...
 	method          string
-	ports           []string
+	ports           map[string]string
 	goroutinesCount int
 	timeout         int
 	OpenPorts       []string
@@ -25,9 +28,9 @@ type PortScanner struct {
 // NewPortScanner returns a PortScanner.
 func NewPortScanner() *PortScanner {
 	return &PortScanner{
-		ports:           readPayloadsFromFile("./gatherer/dict/Top100ports.txt"),
+		ports:           makePortsMap("./gatherer/dict/Top100ports.txt"),
 		goroutinesCount: 100,
-		timeout:         2,
+		timeout:         3,
 	}
 }
 
@@ -40,16 +43,19 @@ func (ps *PortScanner) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface
-func (ps *PortScanner) Report() interface{} {
-	return ps.OpenPorts
+func (ps *PortScanner) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"ports": ps.OpenPorts,
+	}
 }
 
 // Run implements the Gatherer interface.
 func (ps *PortScanner) Run() {
 	logger.Green.Println("Ports Scanning...")
+	ps.OpenPorts = []string{}
 
 	blockers := make(chan struct{}, ps.goroutinesCount)
-	for _, port := range ps.ports {
+	for port := range ps.ports {
 		blockers <- struct{}{}
 		go ps.checkPort(port, blockers)
 	}
@@ -64,13 +70,24 @@ func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	connection, err := net.DialTimeout("tcp", ps.target+":"+port, time.Duration(ps.timeout)*time.Second)
 	if err == nil {
-		logger.Blue.Printf("%-5s -  open \n", port)
+		logger.Blue.Printf("%-5s -  %s \n", port, ps.ports[port])
 		connection.Close()
 		ret := map[string]interface{}{
 			"port":    port,
-			"service": "http",
+			"service": ps.ports[port],
 		}
 		ps.mconn.send(ret)
 		ps.OpenPorts = append(ps.OpenPorts, port)
 	}
+}
+
+func makePortsMap(file string) map[string]string {
+	portsMap := map[string]string{}
+	buf, _ := ioutil.ReadFile(file)
+	rows := strings.Split(string(buf), "\n")
+	for _, row := range rows {
+		x := strings.Split(row, " ")
+		portsMap[x[0]] = x[1]
+	}
+	return portsMap
 }

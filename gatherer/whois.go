@@ -13,7 +13,7 @@ type Whois struct {
 	mconn  *muxConn
 	domain string
 	raw    string
-	info   map[string]string
+	info   map[string]interface{}
 }
 
 // NewWhois returns a new Whois.
@@ -33,7 +33,7 @@ func (w *Whois) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface.
-func (w *Whois) Report() interface{} {
+func (w *Whois) Report() map[string]interface{} {
 	return w.info
 }
 
@@ -47,7 +47,7 @@ func (w *Whois) Run() {
 	w.raw = whoisRaw
 	result, _ := whois_parser.Parse(w.raw)
 
-	w.info = map[string]string{
+	w.info = map[string]interface{}{
 		"domain":          w.domain,
 		"registrar_name":  result.Registrar.RegistrarName,
 		"admin_name":      result.Admin.Name,
@@ -59,6 +59,6 @@ func (w *Whois) Run() {
 		"state":           strings.Split(result.Registrar.DomainStatus, " ")[0],
 	}
 	for k, v := range w.info {
-		logger.Blue.Println(k + ": " + v)
+		logger.Blue.Println(k + ": " + v.(string))
 	}
 }

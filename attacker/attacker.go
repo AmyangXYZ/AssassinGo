@@ -11,7 +11,7 @@ import (
 type Attacker interface {
 	Set(...interface{})
 	Run()
-	Report() interface{}
+	Report() map[string]interface{}
 }
 
 // Init Attackers.

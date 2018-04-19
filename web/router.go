@@ -18,7 +18,7 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/api/info/honeypot", honeypot)
 
 	app.GET("/ws/info/tracert", tracert)
-	app.GET("/wx/info/port", portScan)
+	app.GET("/ws/info/port", portScan)
 	app.GET("/ws/info/dirb", dirBrute)
 
 	app.GET("/ws/info/crawl", crawl)

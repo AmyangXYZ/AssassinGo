@@ -27,8 +27,11 @@ func (bi *BasicInfo) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface
-func (bi *BasicInfo) Report() interface{} {
-	return []string{bi.IPAddr, bi.WebServer}
+func (bi *BasicInfo) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"ip":        bi.IPAddr,
+		"webserver": bi.WebServer,
+	}
 }
 
 // Run implements the Gatherer interface.

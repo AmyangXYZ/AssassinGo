@@ -10,6 +10,7 @@ import (
 )
 
 // XSSChecker checks XSS vuls.
+// WebSocket API.
 type XSSChecker struct {
 	mconn         *muxConn
 	fuzzableURLs  []string
@@ -30,13 +31,16 @@ func (x *XSSChecker) Set(v ...interface{}) {
 }
 
 // Report implements Attacker interface.
-func (x *XSSChecker) Report() interface{} {
-	return x.InjectableURL
+func (x *XSSChecker) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"xss_urls": x.InjectableURL,
+	}
 }
 
 // Run implements Attacker interface.
 func (x *XSSChecker) Run() {
 	logger.Green.Println("Basic XSS Checking...")
+	x.InjectableURL = []string{}
 
 	blockers := make(chan bool, len(x.fuzzableURLs))
 	for _, URL := range x.fuzzableURLs {
@@ -60,7 +64,7 @@ func (x *XSSChecker) check(URL string, blocker chan bool) {
 	if strings.Contains(body, x.payload) {
 		logger.Blue.Println(URL + x.payload)
 		ret := map[string]string{
-			"url": URL,
+			"xss_url": URL,
 		}
 		x.mconn.send(ret)
 		x.InjectableURL = append(x.InjectableURL, URL)

@@ -27,8 +27,10 @@ func (c *CMSDetector) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface
-func (c *CMSDetector) Report() interface{} {
-	return c.CMS
+func (c *CMSDetector) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"cms": c.CMS,
+	}
 }
 
 // Run impplements Gatherer interface.

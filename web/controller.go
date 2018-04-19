@@ -45,38 +45,29 @@ func newAssassin(ctx *sweetygo.Context) {
 func basicInfo(ctx *sweetygo.Context) {
 	a.Gatherers["basicInfo"].Set(a.Target)
 	a.Gatherers["basicInfo"].Run()
-	bi := a.Gatherers["basicInfo"].Report().([]string)
-	ret := map[string]string{
-		"ip":        bi[0],
-		"webserver": bi[1],
-	}
+	ret := a.Gatherers["basicInfo"].Report()
+
 	ctx.JSON(200, ret, "success")
 }
 
 func cmsDetect(ctx *sweetygo.Context) {
 	a.Gatherers["cms"].Set(a.Target)
 	a.Gatherers["cms"].Run()
-	cms := a.Gatherers["cms"].Report().(string)
-	ret := map[string]string{
-		"cms": cms,
-	}
+	ret := a.Gatherers["cms"].Report()
 	ctx.JSON(200, ret, "success")
 }
 
 func whois(ctx *sweetygo.Context) {
 	a.Gatherers["whois"].Set(a.Target)
 	a.Gatherers["whois"].Run()
-	ret := a.Gatherers["whois"].Report().(map[string]string)
+	ret := a.Gatherers["whois"].Report()
 	ctx.JSON(200, ret, "success")
 }
 
 func honeypot(ctx *sweetygo.Context) {
 	a.Gatherers["honeypot"].Set(a.Target)
 	a.Gatherers["honeypot"].Run()
-	score := a.Gatherers["honeypot"].Report().(string)
-	ret := map[string]string{
-		"score": score,
-	}
+	ret := a.Gatherers["honeypot"].Report()
 	ctx.JSON(200, ret, "success")
 }
 
@@ -110,9 +101,9 @@ func dirBrute(ctx *sweetygo.Context) {
 
 func crawl(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["crawl"].Set(conn, a.Target, 4)
-	a.Gatherers["crawl"].Run()
-	a.FuzzableURLs = a.Gatherers["crawl"].Report().([]string)
+	a.Attackers["crawl"].Set(conn, a.Target, 4)
+	a.Attackers["crawl"].Run()
+	a.FuzzableURLs = a.Attackers["crawl"].Report()["fuzzableURLs"].([]string)
 }
 
 func checkSQLi(ctx *sweetygo.Context) {

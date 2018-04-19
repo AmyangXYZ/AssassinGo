@@ -1,100 +1,100 @@
-7
-9
-13
-21
-22
-23
-25
-26
-37
-53
-79
-80
-81
-88
-106
-110
-111
-113
-119
-135
-139
-143
-144
-179
-199
-389
-427
-443
-445
-465
-513
-515
-543
-544
-548
-554
-587
-631
-646
-873
-990
-993
-995
-1025
-1026
-1027
-1028
-1029
-1110
-1433
-1720
-1723
-1755
-1900
-2000
-2001
-2049
-2121
-2717
-3000
-3128
-3306
-3389
-3986
-4899
-5000
-5009
-5051
-5060
-5101
-5190
-5357
-5432
-5631
-5666
-5800
-5900
-6000
-6001
-6443
-6646
-7001
-7070
-8000
-8008
-8009
-8080
-8081
-8443
-8888
-9100
-9999
-10000
-32768
-49152
-49153
-49154
-49155
-49156
-49157
+7 echo
+9 discard
+13 daytime
+21 ftp
+22 ssh
+23 telnet
+25 smtp
+26 rsftp
+37 time
+53 domain
+79 finger
+80 http
+81 hosts2-ns
+88 kerberos-sec
+106 pop3pw
+110 pop3
+111 rpcbind
+113 ident
+119 nntp
+135 msrpc
+139 netbios-ssn
+143 imap
+144 news
+179 bgp
+199 smux
+389 ldap
+427 svrloc
+443 https
+445 microsoft-ds
+465 smtps
+513 who
+515 printer
+543 klogin
+544 kshell
+548 afp
+554 rtsp
+587 submission
+631 ipp
+646 ldp
+873 rsync
+990 ftps
+993 imaps
+995 pop3s
+1025 blackjack
+1026 win-rpc
+1027 IIS
+1028 trojan
+1029 trojan
+1110 nfsd-status
+1433 ies-lm
+1720 h323q931
+1723 pptp
+1755 ms-streaming
+1900 upnp
+2000 cisco-sccp
+2001 dc
+2049 nfs
+2121 ccproxy-ftp
+2717 pn-requester
+3000 ppp
+3128 squid-http
+3306 mysql
+3389 ms-wbt-server
+3986 mapper-ws_ethd
+4899 radmin-port
+5000 upnp
+5009 airport-admin
+5051 ida-agent
+5060 sip
+5101 admdog
+5190 aol
+5357 wsdapi
+5432 postgresql
+5631 pcanywheredata
+5666 nrpe
+5800 vnc
+5900 vnc
+6000 X11
+6001 X11:1
+6443 sun-sr-https
+6646 intercloud
+7001 weblogic
+7070 realserver
+8000 irdmi
+8008 http
+8009 ajp13
+8080 http-proxy
+8081 blackice-icecap
+8443 https-alt
+8888 sun-answerbook
+9100 jetdirect
+9999 abyss
+10000 ndmp
+32768 omad
+49152 ipmi
+49153 unknown
+49154 unknown
+49155 unknown
+49156 unknown
+49157 unknown

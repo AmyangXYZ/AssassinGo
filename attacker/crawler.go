@@ -14,6 +14,7 @@ import (
 )
 
 // Crawler crawls the website.
+// WebSocket API.
 type Crawler struct {
 	mconn       *muxConn
 	host        string
@@ -46,13 +47,16 @@ func (c *Crawler) Set(v ...interface{}) {
 }
 
 // Report implements Attacker interface
-func (c *Crawler) Report() interface{} {
-	return c.results
+func (c *Crawler) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"fuzzableURLs": c.results,
+	}
 }
 
 // Run implements Attacker interface.
 func (c *Crawler) Run() {
 	logger.Green.Println("Fuzzable URLs Crawling...")
+	c.results = []string{}
 
 	results := make(chan string)
 	go c.Crawl(c.host, c.maxDepth, results)

@@ -21,6 +21,7 @@ type node struct {
 }
 
 // Tracer trace route to the target.
+// WebSocket API.
 type Tracer struct {
 	mconn *muxConn
 	host  string
@@ -40,13 +41,14 @@ func (t *Tracer) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface.
-func (t *Tracer) Report() interface{} {
-	return ""
+func (t *Tracer) Report() map[string]interface{} {
+	return nil
 }
 
 // Run implements Gatherer interface.
 func (t *Tracer) Run() {
 	logger.Green.Println("Trace Route and GeoIP")
+	t.route = []node{}
 
 	ch := make(chan traceroute.TracerouteHop, 0)
 	go func() {

@@ -9,6 +9,7 @@ import (
 )
 
 // BasicSQLi checks basic sqli vuls.
+// WebSocket API.
 type BasicSQLi struct {
 	mconn         *muxConn
 	fuzzableURLs  []string
@@ -33,13 +34,16 @@ func (bs *BasicSQLi) Set(v ...interface{}) {
 }
 
 // Report implements Attacker interface.
-func (bs *BasicSQLi) Report() interface{} {
-	return bs.InjectableURL
+func (bs *BasicSQLi) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"sqli_urls": bs.InjectableURL,
+	}
 }
 
 // Run implements Attacker interface.
 func (bs *BasicSQLi) Run() {
 	logger.Green.Println("Basic SQLi Checking...")
+	bs.InjectableURL = []string{}
 
 	blockers := make(chan bool, len(bs.fuzzableURLs))
 	for _, URL := range bs.fuzzableURLs {
@@ -63,7 +67,7 @@ func (bs *BasicSQLi) check(URL string, blocker chan bool) {
 	if len(body0) != len(body1) {
 		logger.Blue.Println(URL)
 		ret := map[string]string{
-			"url": URL,
+			"sqli_url": URL,
 		}
 		bs.mconn.send(ret)
 		bs.InjectableURL = append(bs.InjectableURL, URL)

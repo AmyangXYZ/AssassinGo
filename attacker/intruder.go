@@ -12,6 +12,7 @@ import (
 )
 
 // Intruder intrudes the target.
+// WebSocket API.
 type Intruder struct {
 	mconn           *muxConn
 	target          string
@@ -38,8 +39,8 @@ func (i *Intruder) Set(v ...interface{}) {
 }
 
 // Report implements Attacker interface.
-func (i *Intruder) Report() interface{} {
-	return ""
+func (i *Intruder) Report() map[string]interface{} {
+	return nil
 }
 
 // Run implements Attacker interface.

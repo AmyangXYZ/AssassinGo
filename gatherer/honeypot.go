@@ -28,8 +28,10 @@ func (h *Honeypot) Set(v ...interface{}) {
 }
 
 // Report implements Gatherer interface.
-func (h *Honeypot) Report() interface{} {
-	return h.Score
+func (h *Honeypot) Report() map[string]interface{} {
+	return map[string]interface{}{
+		"score": h.Score,
+	}
 }
 
 // Run implements Gatherer interface.
