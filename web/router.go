@@ -12,10 +12,12 @@ func SetRouter(app *sweetygo.SweetyGo) {
 
 	app.POST("/api/target", newAssassin)
 
-	app.GET("/ws/info/basic", basicInfo)
-	app.GET("/ws/info/whois", whois)
+	app.GET("/api/info/basic", basicInfo)
+	app.GET("/api/info/whois", whois)
+	app.GET("/api/info/cms", cmsDetect)
+	app.GET("/api/info/honeypot", honeypot)
+
 	app.GET("/ws/info/tracert", tracert)
-	app.GET("/wx/info/cms", cmsDetect)
 	app.GET("/wx/info/port", portScan)
 	app.GET("/ws/info/dirb", dirBrute)
 
@@ -27,7 +29,6 @@ func SetRouter(app *sweetygo.SweetyGo) {
 
 	app.GET("/ws/seek", seek)
 
-	app.GET("/api/poc", getPoCs)
 	app.POST("/api/poc", setPoC)
 	app.GET("/ws/poc/run", runPoC)
 }

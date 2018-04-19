@@ -46,7 +46,7 @@ func (s *Seeker) Run(conn *websocket.Conn) {
 	defer cancel()
 
 	options := chromedp.WithRunnerOptions(
-		runner.Flag("headless", true),
+		// runner.Flag("headless", true),
 		runner.Flag("no-sandbox", true),
 		runner.Flag("disable-gpu", true),
 	)
@@ -87,7 +87,7 @@ func (s *Seeker) searchBing(conn *websocket.Conn) chromedp.Tasks {
 				s.maxPage = p
 			}
 			for i := 0; i <= s.maxPage; i++ {
-				chromedp.Sleep(1*time.Second).Do(c, e)
+				chromedp.Sleep(2*time.Second).Do(c, e)
 				chromedp.EvaluateAsDevTools(`
 					var h2 = document.getElementsByTagName('h2');
 					var urls = [];
@@ -118,7 +118,6 @@ func (s *Seeker) searchGoogle(conn *websocket.Conn) chromedp.Tasks {
 	urls := []string{}
 	return chromedp.Tasks{
 		chromedp.Navigate(`https://www.google.com`),
-		chromedp.Sleep(2 * time.Second),
 		chromedp.SendKeys(`#lst-ib`, s.query+"\n", chromedp.ByID),
 		chromedp.WaitVisible(`#res`, chromedp.ByID),
 		chromedp.ActionFunc(func(c context.Context, e cdp.Executor) error {
@@ -138,7 +137,7 @@ func (s *Seeker) searchGoogle(conn *websocket.Conn) chromedp.Tasks {
 				s.maxPage = p
 			}
 			for i := 0; i <= s.maxPage; i++ {
-				chromedp.Sleep(2*time.Second).Do(c, e)
+				chromedp.Sleep(1*time.Second).Do(c, e)
 				chromedp.EvaluateAsDevTools(`
 					var h3 = document.getElementsByTagName('h3');
 					var c = h3.length;

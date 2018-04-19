@@ -252,14 +252,14 @@ user=$$1$$&passwd=2`,
     }
 }
 
-function seeker() {
+function seeker(q, p) {
     $("#seeker-table").html("")
     var socket = new WebSocket("ws://localhost:8000/ws/seek")
     socket.onopen = function(e) {
         var msg = {
-            query: `inurl:".php?id=1" 教育局`,
+            query: q,
             se: "bing",
-            max_page: 10,
+            max_page: p,
         }
         var a = JSON.stringify(msg);
         socket.send(a)
@@ -267,7 +267,6 @@ function seeker() {
     socket.onmessage = function (e) {
         ret = JSON.parse(e.data);
         for(var i=0;i<ret.urls.length;i++) {
-            console.log(ret.urls[i])
             h = html_seeker.format({"url":ret.urls[i]})
             $("#seeker-table").append(h)
         }

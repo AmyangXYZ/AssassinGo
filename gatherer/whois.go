@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"../logger"
-	"github.com/gorilla/websocket"
 	whois "github.com/likexian/whois-go"
 	"github.com/likexian/whois-parser-go"
 )
@@ -23,15 +22,14 @@ func NewWhois() *Whois {
 }
 
 // Set implements Gatherer interface.
-// Params should be {conn *websocket.Conn, target string}.
+// Params should be {target string}.
 func (w *Whois) Set(v ...interface{}) {
-	w.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
-	if strings.Count(v[1].(string), ".") == 2 {
+	if strings.Count(v[0].(string), ".") == 2 {
 		d := strings.Split(v[0].(string), ".")
 		w.domain = d[1] + "." + d[2]
 		return
 	}
-	w.domain = v[1].(string)
+	w.domain = v[0].(string)
 }
 
 // Report implements Gatherer interface.
@@ -49,7 +47,7 @@ func (w *Whois) Run() {
 	w.raw = whoisRaw
 	result, _ := whois_parser.Parse(w.raw)
 
-	ret := map[string]string{
+	w.info = map[string]string{
 		"domain":          w.domain,
 		"registrar_name":  result.Registrar.RegistrarName,
 		"admin_name":      result.Admin.Name,
@@ -60,6 +58,7 @@ func (w *Whois) Run() {
 		"ns":              result.Registrar.NameServers,
 		"state":           strings.Split(result.Registrar.DomainStatus, " ")[0],
 	}
-	w.info = ret
-	w.mconn.send(ret)
+	for k, v := range w.info {
+		logger.Blue.Println(k + ": " + v)
+	}
 }

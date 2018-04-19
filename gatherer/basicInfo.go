@@ -5,12 +5,11 @@ import (
 	"net/http"
 
 	"../logger"
-	"github.com/gorilla/websocket"
 )
 
 // BasicInfo gathers basic information of the target.
+// AJAX API.
 type BasicInfo struct {
-	mconn     *muxConn
 	target    string
 	IPAddr    string
 	WebServer string
@@ -24,8 +23,7 @@ func NewBasicInfo() *BasicInfo {
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target string}
 func (bi *BasicInfo) Set(v ...interface{}) {
-	bi.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
-	bi.target = v[1].(string)
+	bi.target = v[0].(string)
 }
 
 // Report implements Gatherer interface
@@ -36,17 +34,10 @@ func (bi *BasicInfo) Report() interface{} {
 // Run implements the Gatherer interface.
 func (bi *BasicInfo) Run() {
 	bi.resolveIP()
-
 	logger.Green.Println("IP Address:", bi.IPAddr)
 
 	bi.getWebServer()
 	logger.Green.Println("Web Server:", bi.WebServer)
-
-	ret := map[string]string{
-		"ip":        bi.IPAddr,
-		"webserver": bi.WebServer,
-	}
-	bi.mconn.send(ret)
 }
 
 func (bi *BasicInfo) resolveIP() {

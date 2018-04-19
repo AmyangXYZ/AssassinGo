@@ -43,30 +43,47 @@ func newAssassin(ctx *sweetygo.Context) {
 }
 
 func basicInfo(ctx *sweetygo.Context) {
-	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["basicInfo"].Set(conn, a.Target)
+	a.Gatherers["basicInfo"].Set(a.Target)
 	a.Gatherers["basicInfo"].Run()
-	conn.Close()
+	bi := a.Gatherers["basicInfo"].Report().([]string)
+	ret := map[string]string{
+		"ip":        bi[0],
+		"webserver": bi[1],
+	}
+	ctx.JSON(200, ret, "success")
+}
+
+func cmsDetect(ctx *sweetygo.Context) {
+	a.Gatherers["cms"].Set(a.Target)
+	a.Gatherers["cms"].Run()
+	cms := a.Gatherers["cms"].Report().(string)
+	ret := map[string]string{
+		"cms": cms,
+	}
+	ctx.JSON(200, ret, "success")
 }
 
 func whois(ctx *sweetygo.Context) {
-	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["whois"].Set(conn, a.Target)
+	a.Gatherers["whois"].Set(a.Target)
 	a.Gatherers["whois"].Run()
-	conn.Close()
+	ret := a.Gatherers["whois"].Report().(map[string]string)
+	ctx.JSON(200, ret, "success")
+}
+
+func honeypot(ctx *sweetygo.Context) {
+	a.Gatherers["honeypot"].Set(a.Target)
+	a.Gatherers["honeypot"].Run()
+	score := a.Gatherers["honeypot"].Report().(string)
+	ret := map[string]string{
+		"score": score,
+	}
+	ctx.JSON(200, ret, "success")
 }
 
 func tracert(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Gatherers["tracert"].Set(conn, a.Target)
 	a.Gatherers["tracert"].Run()
-	conn.Close()
-}
-
-func cmsDetect(ctx *sweetygo.Context) {
-	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["cms"].Set(conn, a.Target)
-	a.Gatherers["cms"].Run()
 	conn.Close()
 }
 
@@ -140,18 +157,6 @@ func seek(ctx *sweetygo.Context) {
 	S := seeker.NewSeeker(m.Query, m.SE, m.MaxPage)
 	S.Run(conn)
 	conn.Close()
-}
-
-func getPoCs(ctx *sweetygo.Context) {
-	var pocList []string
-	for pocNames := range poc.PoCMap {
-		pocList = append(pocList, pocNames)
-	}
-
-	ret := map[string][]string{
-		"poclist": pocList,
-	}
-	ctx.JSON(200, ret, "success")
 }
 
 // POST -d "poc=xxx"

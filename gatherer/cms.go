@@ -6,12 +6,11 @@ import (
 	"regexp"
 
 	"../logger"
-	"github.com/gorilla/websocket"
 )
 
 // CMSDetector detects CMS with whatcms.org api.
+// AJAX API.
 type CMSDetector struct {
-	mconn  *muxConn
 	target string
 	CMS    string
 }
@@ -24,8 +23,7 @@ func NewCMSDetector() *CMSDetector {
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target string}
 func (c *CMSDetector) Set(v ...interface{}) {
-	c.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
-	c.target = v[1].(string)
+	c.target = v[0].(string)
 }
 
 // Report implements Gatherer interface
@@ -49,9 +47,6 @@ func (c *CMSDetector) Run() {
 		return
 	}
 	c.CMS = cms[0][1]
-	ret := map[string]string{
-		"cms": c.CMS,
-	}
-	c.mconn.send(ret)
+
 	logger.Green.Println("CMS Detected:", c.CMS)
 }

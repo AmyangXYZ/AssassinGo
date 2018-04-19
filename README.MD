@@ -10,17 +10,17 @@ Just for learn.
 
 - [x] Retrieve Server and Powered by Headers
 - [x] Detect CMS Version
+- [x] Honeypot Detect
 - [x] Port Scan
 - [x] Trace Route and Mark on Google Map
 - [ ] Subdomain Scan
-- [x] Dir Scan
-- [ ] Site Map
+- [x] Dir Scan and Site Map
 - [x] Whois Lookup
 - [x] Crawl the Paramed URLs
 - [x] Basic SQLi Check
 - [x] Basic XSS Check
 - [x] Intruder
-- [x] Seek Targets by Google
+- [x] Seek Targets by Search Engine
 - [x] POC Interface
 - [x] Web GUI(using WebSocket)
 
@@ -31,16 +31,16 @@ Just for learn.
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
 /api/target | POST | set a target | target=xxx / target=t1,t2... | nil
-/api/poc | GET | get poc list | nil | {"pocs": ["seacmsv654", "struct056"...]}
+/api/info/basic | GET | get ip and webserver | nil | {"data":{"ip": "192.168.1.1", "webserver": "nginx"}}
+/api/info/honeypot | GET | get ip and webserver | nil | {"data":{"score": "0.3"}}
+/api/info/whois | GET | whois | nil | {"data":{"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}}
+/api/info/cms | GET | detect cms | nil | {"data":{"cms": "wordpress"}}
 /api/poc | POST | set poc | poc=xxx | nil
 
 ### WebSocket
 
 Path | Func | Params | Return
 ----- | ----- | ----- | -----
-/ws/info/basic | get ip and webserver | nil | {"ip": "192.168.1.1", "webserver": "nginx"}
-/ws/info/whois | whois | nil | {"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}
-/ws/info/cms | detect cms | nil | {"cms": "wordpress"}
 /ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
 /ws/info/dirb | brute force dir | {"gort_count":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}

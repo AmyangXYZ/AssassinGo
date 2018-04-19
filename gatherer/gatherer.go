@@ -21,6 +21,7 @@ func Init() map[string]Gatherer {
 		"basicInfo": NewBasicInfo(),
 		"whois":     NewWhois(),
 		"cms":       NewCMSDetector(),
+		"honeypot":  NewHoneypotDetecter(),
 		"port":      NewPortScanner(),
 		"tracert":   NewTracer(),
 		"dirb":      NewDirBruter(),
