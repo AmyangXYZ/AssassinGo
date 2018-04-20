@@ -44,11 +44,13 @@ func (h *Honeypot) honeypotDetect() {
 	targetIP, err := net.ResolveIPAddr("ip", h.target)
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 	u := fmt.Sprintf("https://api.shodan.io/labs/honeyscore/%s?key=uTr4S2pd8Um45oy5zFn6ncWPDGTeKNzd", targetIP)
 	resp, err := http.Get(u)
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()

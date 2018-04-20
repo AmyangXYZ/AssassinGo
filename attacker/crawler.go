@@ -122,7 +122,7 @@ func (c *Crawler) Crawl(URL string, depth int, ret chan string) {
 func (c *Crawler) fetch(URL string) map[string]string {
 	client := &http.Client{Timeout: 5 * time.Second}
 	req, _ := http.NewRequest("GET", URL, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0")
 	resp, err := client.Do(req)
 	if err != nil {
 		return map[string]string{}

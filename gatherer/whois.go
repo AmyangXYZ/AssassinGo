@@ -43,6 +43,7 @@ func (w *Whois) Run() {
 	whoisRaw, err := whois.Whois(w.domain)
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 	w.raw = whoisRaw
 	result, _ := whois_parser.Parse(w.raw)

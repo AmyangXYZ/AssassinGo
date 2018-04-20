@@ -47,6 +47,7 @@ func (bi *BasicInfo) resolveIP() {
 	remoteAddr, err := net.ResolveIPAddr("ip", bi.target)
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 	bi.IPAddr = remoteAddr.String()
 }
@@ -57,6 +58,7 @@ func (bi *BasicInfo) getWebServer() {
 		resp, err = http.Get("http://" + bi.target)
 		if err != nil {
 			logger.Red.Println(err)
+			return
 		}
 	}
 	bi.WebServer = resp.Header["Server"][0]

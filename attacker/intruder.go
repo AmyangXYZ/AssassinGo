@@ -93,6 +93,7 @@ func (i *Intruder) fetch(payload string) *http.Response {
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Red.Println(err)
+		return nil
 	}
 	return resp
 }

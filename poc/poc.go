@@ -10,12 +10,13 @@ import (
 type PoC interface {
 	Set(...interface{})
 	Run()
-	Report() interface{}
+	Report() map[string]interface{}
 }
 
 // PoCMap is a poc map.
 var PoCMap = map[string]PoC{
 	"SeaCMSv654": NewSeaCMSv654(),
+	"Drupal":     NewDrupalRCE(),
 }
 
 type muxConn struct {

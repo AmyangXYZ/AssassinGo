@@ -55,6 +55,7 @@ func (s *Seeker) Run(conn *websocket.Conn) {
 	// c, err := chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)))
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 
 	if s.se == "google" {

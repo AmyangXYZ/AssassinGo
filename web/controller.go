@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"../assassin"
+	"../logger"
 	"../poc"
 	"../seeker"
 	"github.com/AmyangXYZ/sweetygo"
@@ -153,10 +154,14 @@ func seek(ctx *sweetygo.Context) {
 // POST -d "poc=xxx"
 func setPoC(ctx *sweetygo.Context) {
 	pocName := ctx.Param("poc")
-	for _, aa := range ateam {
-		aa.PoC = poc.PoCMap[pocName]
+	if len(ateam) > 0 {
+		for _, aa := range ateam {
+			aa.PoC = poc.PoCMap[pocName]
+		}
+	} else {
+		a.PoC = poc.PoCMap[pocName]
 	}
-
+	logger.Green.Println("PoC Set:", pocName)
 	ret := map[string]string{
 		"poc": pocName,
 	}
@@ -164,27 +169,28 @@ func setPoC(ctx *sweetygo.Context) {
 }
 
 func runPoC(ctx *sweetygo.Context) {
-	// conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	// concurrency := 2
-	// blockers := make(chan struct{}, concurrency)
-	// var existedList []string
-
-	// for _, aa := range ateam {
-	// 	blockers <- struct{}{}
-	// 	go func(a *assassin.Assassin, blocker chan struct{}) {
-	// 		defer func() { <-blocker }()
-	// 		a.POC.Run(conn)
-	// 		if result := a.POC.Report().(string); result == "true" {
-	// 			existedList = append(existedList, a.Target)
-	// 		}
-	// 	}(aa, blockers)
-	// }
-	// for i := 0; i < cap(blockers); i++ {
-	// 	blockers <- struct{}{}
-	// }
-
-	// ret := map[string][]string{
-	// 	"existed": existedList,
-	// }
-	// ctx.JSON(200, ret, "success")
+	if len(ateam) > 0 {
+		conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+		concurrency := 10
+		blockers := make(chan struct{}, concurrency)
+		var exploitableList []string
+		for _, aa := range ateam {
+			blockers <- struct{}{}
+			go func(a *assassin.Assassin, blocker chan struct{}) {
+				defer func() { <-blocker }()
+				a.PoC.Set(conn, a.Target)
+				a.PoC.Run()
+				res := a.PoC.Report()
+				if res["exploitable"].(bool) {
+					exploitableList = append(exploitableList, res["target"].(string))
+				}
+			}(aa, blockers)
+		}
+		for i := 0; i < cap(blockers); i++ {
+			blockers <- struct{}{}
+		}
+	} else {
+		a.PoC.Set(a.Target)
+		a.PoC.Run()
+	}
 }

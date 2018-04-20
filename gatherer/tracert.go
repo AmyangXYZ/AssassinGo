@@ -115,12 +115,14 @@ func (n *node) geoip() {
 	db, err := geoip2.Open("./gatherer/dict/GeoLite2-City.mmdb")
 	defer db.Close()
 	if err != nil {
-		logger.Red.Fatal(err)
+		logger.Red.Println(err)
+		return
 	}
 
 	record, err := db.City(net.ParseIP(n.addr))
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 	n.country = record.Country.Names["en"]
 	n.lat = record.Location.Latitude

@@ -74,7 +74,7 @@ func (x *XSSChecker) check(URL string, blocker chan bool) {
 func (x *XSSChecker) fetch(URL string) string {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", URL, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0")
 	resp, err := client.Do(req)
 	if err != nil {
 		return ""

