@@ -30,7 +30,8 @@ Just for learn.
 
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
-/api/target | POST | set a target | target=xxx / target=t1,t2... | nil
+/api/assassin | POST | set a target | target=xxx | nil
+/api/assassin-dad | POST | set targets | targets=t1,t2... | nil
 /api/info/basic | GET | get ip and webserver | nil | {data:{"ip": "192.168.1.1", "webserver": "nginx"}}
 /api/info/cms | GET | detect cms | nil | {data:{"cms": "wordpress"}}
 /api/info/honeypot | GET | get ip and webserver | nil | {data:{"score": "0.3"}}

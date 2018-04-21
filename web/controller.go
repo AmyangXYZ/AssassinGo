@@ -19,14 +19,14 @@ func static(ctx *sweetygo.Context) {
 }
 
 func newAssassin(ctx *sweetygo.Context) {
-	a = assassin.New()
+	a = assassin.New() // reset
 	target := ctx.Param("target")
 	a.SetTarget(target)
 	ctx.JSON(201, nil, "success")
 }
 
 func newAssassinDad(ctx *sweetygo.Context) {
-	dad = assassin.NewDad()
+	dad = assassin.NewDad() // reset
 	targets := ctx.Param("targets")
 	dad.SetTargets(targets)
 	ctx.JSON(201, nil, "success")
