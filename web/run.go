@@ -6,7 +6,12 @@ import (
 )
 
 var a *assassin.Assassin
-var ateam []*assassin.Assassin
+var dad *assassin.Dad
+
+func init() {
+	a = assassin.New()
+	dad = assassin.NewDad()
+}
 
 // Run Web GUI.
 func Run() {

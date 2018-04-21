@@ -10,7 +10,8 @@ func SetRouter(app *sweetygo.SweetyGo) {
 
 	app.GET("/static/*files", static)
 
-	app.POST("/api/target", newAssassin)
+	app.POST("/api/assassin", newAssassin)
+	app.POST("/api/assassin-dad", newAssassinDad)
 
 	app.GET("/api/info/basic", basicInfo)
 	app.GET("/api/info/whois", whois)
@@ -29,6 +30,8 @@ func SetRouter(app *sweetygo.SweetyGo) {
 
 	app.GET("/ws/seek", seek)
 
-	app.POST("/api/poc", setPoC)
-	app.GET("/ws/poc/run", runPoC)
+	app.GET("/api/poc", getPoCList)
+
+	app.GET("/api/poc/:poc", runPoC)
+	app.GET("/ws/poc/run", runPoCforSA)
 }

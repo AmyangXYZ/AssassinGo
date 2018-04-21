@@ -2,12 +2,8 @@ package web
 
 import (
 	"net/http"
-	"strings"
 
 	"../assassin"
-	"../logger"
-	"../poc"
-	"../seeker"
 	"github.com/AmyangXYZ/sweetygo"
 	"github.com/gorilla/websocket"
 )
@@ -23,31 +19,23 @@ func static(ctx *sweetygo.Context) {
 }
 
 func newAssassin(ctx *sweetygo.Context) {
+	a = assassin.New()
 	target := ctx.Param("target")
-	if strings.Contains(target, ",") == false {
-		a = assassin.New(target)
-		ret := map[string]string{
-			"target": target,
-		}
-		ctx.JSON(201, ret, "success")
-		return
-	}
-	targets := strings.Split(target, ",")
-	for _, t := range targets {
-		ateam = append(ateam, assassin.New(t))
-	}
+	a.SetTarget(target)
+	ctx.JSON(201, nil, "success")
+}
 
-	ret := map[string][]string{
-		"targets": targets,
-	}
-	ctx.JSON(201, ret, "success")
+func newAssassinDad(ctx *sweetygo.Context) {
+	dad = assassin.NewDad()
+	targets := ctx.Param("targets")
+	dad.SetTargets(targets)
+	ctx.JSON(201, nil, "success")
 }
 
 func basicInfo(ctx *sweetygo.Context) {
 	a.Gatherers["basicInfo"].Set(a.Target)
 	a.Gatherers["basicInfo"].Run()
 	ret := a.Gatherers["basicInfo"].Report()
-
 	ctx.JSON(200, ret, "success")
 }
 
@@ -146,51 +134,57 @@ func seek(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := seekerMsg{}
 	conn.ReadJSON(&m)
-	S := seeker.NewSeeker(m.Query, m.SE, m.MaxPage)
-	S.Run(conn)
+	a.Seeker.Set(conn, m.Query, m.SE, m.MaxPage)
+	a.Seeker.Run()
 	conn.Close()
 }
 
-// POST -d "poc=xxx"
-func setPoC(ctx *sweetygo.Context) {
-	pocName := ctx.Param("poc")
-	if len(ateam) > 0 {
-		for _, aa := range ateam {
-			aa.PoC = poc.PoCMap[pocName]
-		}
-	} else {
-		a.PoC = poc.PoCMap[pocName]
+func getPoCList(ctx *sweetygo.Context) {
+	pocList := []string{}
+	for p := range a.PoC {
+		pocList = append(pocList, p)
 	}
-	logger.Green.Println("PoC Set:", pocName)
-	ret := map[string]string{
-		"poc": pocName,
+	ret := map[string]interface{}{
+		"poc_list": pocList,
 	}
-	ctx.JSON(201, ret, "success")
+	ctx.JSON(200, ret, "success")
 }
 
 func runPoC(ctx *sweetygo.Context) {
-	if len(ateam) > 0 {
-		conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-		concurrency := 10
-		blockers := make(chan struct{}, concurrency)
-		var exploitableList []string
-		for _, aa := range ateam {
-			blockers <- struct{}{}
-			go func(a *assassin.Assassin, blocker chan struct{}) {
-				defer func() { <-blocker }()
-				a.PoC.Set(conn, a.Target)
-				a.PoC.Run()
-				res := a.PoC.Report()
-				if res["exploitable"].(bool) {
-					exploitableList = append(exploitableList, res["target"].(string))
-				}
-			}(aa, blockers)
-		}
-		for i := 0; i < cap(blockers); i++ {
-			blockers <- struct{}{}
-		}
-	} else {
-		a.PoC.Set(a.Target)
-		a.PoC.Run()
+	pocName := ctx.Param("poc")
+	a.PoC[pocName].Set(a.Target)
+	a.PoC[pocName].Run()
+	ret := a.PoC[pocName].Report()
+	ctx.JSON(200, ret, "success")
+}
+
+type pocMsg struct {
+	PoCName   string `json:"poc"`
+	GortCount int    `json:"gort_count"`
+}
+
+func runPoCforSA(ctx *sweetygo.Context) {
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	dad.MuxConn.Conn = conn
+	m := pocMsg{}
+	conn.ReadJSON(&m)
+
+	blockers := make(chan struct{}, m.GortCount)
+	for _, son := range dad.Sons {
+		blockers <- struct{}{}
+		go func(son *assassin.Assassin, blocker chan struct{}) {
+			defer func() { <-blocker }()
+			son.PoC[m.PoCName].Set(son.Target)
+			son.PoC[m.PoCName].Run()
+			ret := son.PoC[m.PoCName].Report()
+			if ret["exploitable"].(bool) {
+				dad.MuxConn.Send(ret)
+				dad.ExploitableHosts = append(dad.ExploitableHosts, ret["host"].(string))
+			}
+		}(son, blockers)
+	}
+
+	for i := 0; i < cap(blockers); i++ {
+		blockers <- struct{}{}
 	}
 }

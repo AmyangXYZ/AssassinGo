@@ -5,13 +5,14 @@ import (
 	"net/http"
 
 	"../logger"
+	"../util"
 	"github.com/gorilla/websocket"
 )
 
 // BasicSQLi checks basic sqli vuls.
 // WebSocket API.
 type BasicSQLi struct {
-	mconn         *muxConn
+	mconn         *util.MuxConn
 	fuzzableURLs  []string
 	payload0      string
 	payload1      string
@@ -29,7 +30,7 @@ func NewBasicSQLi() *BasicSQLi {
 // Set implements Attacker interface.
 // Params should be {conn *websocket.Conn, fuzzableURLs []string}
 func (bs *BasicSQLi) Set(v ...interface{}) {
-	bs.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	bs.mconn.Conn = v[0].(*websocket.Conn)
 	bs.fuzzableURLs = v[1].([]string)
 }
 
@@ -69,7 +70,7 @@ func (bs *BasicSQLi) check(URL string, blocker chan bool) {
 		ret := map[string]string{
 			"sqli_url": URL,
 		}
-		bs.mconn.send(ret)
+		bs.mconn.Send(ret)
 		bs.InjectableURL = append(bs.InjectableURL, URL)
 	}
 }

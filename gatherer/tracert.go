@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"../logger"
+	"../util"
 	"github.com/aeden/traceroute"
 	"github.com/gorilla/websocket"
 	geoip2 "github.com/oschwald/geoip2-golang"
@@ -23,7 +24,7 @@ type node struct {
 // Tracer trace route to the target.
 // WebSocket API.
 type Tracer struct {
-	mconn *muxConn
+	mconn *util.MuxConn
 	host  string
 	route []node
 }
@@ -36,7 +37,7 @@ func NewTracer() *Tracer {
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target string}
 func (t *Tracer) Set(v ...interface{}) {
-	t.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	t.mconn.Conn = v[0].(*websocket.Conn)
 	t.host = v[1].(string)
 }
 
@@ -91,7 +92,7 @@ func (t *Tracer) printHop(hop traceroute.TracerouteHop) {
 			"lat":          n.lat,
 			"long":         n.long,
 		}
-		t.mconn.send(ret)
+		t.mconn.Send(ret)
 		return
 	}
 
@@ -108,7 +109,7 @@ func (t *Tracer) printHop(hop traceroute.TracerouteHop) {
 		"lat":          n.lat,
 		"long":         n.long,
 	}
-	t.mconn.send(ret)
+	t.mconn.Send(ret)
 }
 
 func (n *node) geoip() {

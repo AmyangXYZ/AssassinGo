@@ -8,13 +8,14 @@ import (
 	"time"
 
 	"../logger"
+	"../util"
 	"github.com/gorilla/websocket"
 )
 
 // DirBruter brute force the dir.
 // WebSocket API.
 type DirBruter struct {
-	mconn           *muxConn
+	mconn           *util.MuxConn
 	target          string
 	payloads        []string
 	goroutinesCount int
@@ -28,7 +29,7 @@ func NewDirBruter() *DirBruter {
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target, dic string, goroutinesCount int}
 func (d *DirBruter) Set(v ...interface{}) {
-	d.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	d.mconn.Conn = v[0].(*websocket.Conn)
 	d.target = v[1].(string)
 	d.goroutinesCount = v[2].(int)
 }
@@ -41,11 +42,11 @@ func (d *DirBruter) Report() map[string]interface{} {
 // Run implements Gatherer interface,
 func (d *DirBruter) Run() {
 	logger.Green.Println("Brute Force Dir")
-	var s signal
+	var s util.Signal
 	stop := make(chan struct{}, 0)
 	blockers := make(chan struct{}, d.goroutinesCount)
 	go func() {
-		d.mconn.conn.ReadJSON(&s)
+		d.mconn.Conn.ReadJSON(&s)
 		if s.Stop == 1 {
 			stop <- struct{}{}
 		}
@@ -87,7 +88,7 @@ func (d *DirBruter) fetch(path string, blocker chan struct{}) {
 		"status": strconv.Itoa(resp.StatusCode),
 		"len":    strconv.Itoa(len(string(body))),
 	}
-	d.mconn.send(ret)
+	d.mconn.Send(ret)
 }
 
 func readPayloadsFromFile(file string) []string {

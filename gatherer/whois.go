@@ -10,7 +10,6 @@ import (
 
 // Whois queries the domain information.
 type Whois struct {
-	mconn  *muxConn
 	domain string
 	raw    string
 	info   map[string]interface{}

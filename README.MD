@@ -31,11 +31,12 @@ Just for learn.
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
 /api/target | POST | set a target | target=xxx / target=t1,t2... | nil
-/api/info/basic | GET | get ip and webserver | nil | {"data":{"ip": "192.168.1.1", "webserver": "nginx"}}
-/api/info/honeypot | GET | get ip and webserver | nil | {"data":{"score": "0.3"}}
-/api/info/whois | GET | whois | nil | {"data":{"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}}
-/api/info/cms | GET | detect cms | nil | {"data":{"cms": "wordpress"}}
-/api/poc | POST | set poc | poc=xxx | nil
+/api/info/basic | GET | get ip and webserver | nil | {data:{"ip": "192.168.1.1", "webserver": "nginx"}}
+/api/info/cms | GET | detect cms | nil | {data:{"cms": "wordpress"}}
+/api/info/honeypot | GET | get ip and webserver | nil | {data:{"score": "0.3"}}
+/api/info/whois | GET | whois | nil | {data:{"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}}
+/api/poc | GET | get poc list | nil | {data:{"poc_list":["drupal-rce","seacms-v654-rce"]}}
+/api/poc/:poc | GET | run the specified poc | nil | {data:{"exploitable_host": "example.com"}}
 
 ### WebSocket
 
@@ -49,7 +50,7 @@ Path | Func | Params | Return
 /ws/vul/xss | check xss | nil | {"xss_url": "example.com/?id=1}
 /ws/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
-/ws/poc/run | run poc | nil | {"host": "example.com"}
+/ws/poc/run | run poc | {poc:"drupal-rce", gort_count:10} | {"exploitable_host": "example.com"}
 
 ## State
 

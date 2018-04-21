@@ -8,13 +8,14 @@ import (
 	"strings"
 
 	"../logger"
+	"../util"
 	"github.com/gorilla/websocket"
 )
 
 // Intruder intrudes the target.
 // WebSocket API.
 type Intruder struct {
-	mconn           *muxConn
+	mconn           *util.MuxConn
 	target          string
 	header          string
 	intrudeType     string
@@ -31,7 +32,7 @@ func NewIntruder() *Intruder {
 // Set sets params for intruder.
 // Params should be {conn *websocket.Conn, target, header, payload string, goroutinesCount int}
 func (i *Intruder) Set(v ...interface{}) {
-	i.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	i.mconn.Conn = v[0].(*websocket.Conn)
 	i.target = v[1].(string)
 	i.header = v[2].(string)
 	i.payloads = strings.Split(v[3].(string), "\n")
@@ -46,11 +47,11 @@ func (i *Intruder) Report() map[string]interface{} {
 // Run implements Attacker interface.
 func (i *Intruder) Run() {
 	logger.Green.Println("Start Intruder...")
-	var s signal
+	var s util.Signal
 	stop := make(chan struct{}, 0)
 	blockers := make(chan struct{}, i.goroutinesCount)
 	go func() {
-		i.mconn.conn.ReadJSON(&s)
+		i.mconn.Conn.ReadJSON(&s)
 		if s.Stop == 1 {
 			stop <- struct{}{}
 		}
@@ -84,7 +85,7 @@ func (i *Intruder) attack(payload string, blocker chan struct{}) {
 		"resp_status": strconv.Itoa(resp.StatusCode),
 		"resp_len":    strconv.Itoa(len(string(body))),
 	}
-	i.mconn.send(ret)
+	i.mconn.Send(ret)
 }
 
 func (i *Intruder) fetch(payload string) *http.Response {

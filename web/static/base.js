@@ -278,13 +278,29 @@ function seeker(q, p) {
 }
 
 
+function runPoCforSA() {
+    var socket = new WebSocket("ws://localhost:8000/ws/poc/run")
+    socket.onopen = function(e) {
+        var msg = {
+            poc: "drupal-rce",
+            gort_count: 2,
+        }
+        var a = JSON.stringify(msg);
+        socket.send(a)
+    }
+    socket.onmessage = function (e) {
+        ret = JSON.parse(e.data)
+        console.log(ret)
+    }
+}
+
 $(document).ready(function(){
     router();
     changeColor();
     $("#bt-set-target").click(function(){
         reset();
         $.ajax({
-            url:" /api/target",
+            url:" /api/assassin",
             type: "POST",
             data: "target="+$("#target").val(),
             dataType: "JSON",

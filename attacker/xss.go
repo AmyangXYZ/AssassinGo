@@ -6,13 +6,14 @@ import (
 	"strings"
 
 	"../logger"
+	"../util"
 	"github.com/gorilla/websocket"
 )
 
 // XSSChecker checks XSS vuls.
 // WebSocket API.
 type XSSChecker struct {
-	mconn         *muxConn
+	mconn         *util.MuxConn
 	fuzzableURLs  []string
 	payload       string
 	InjectableURL []string
@@ -26,7 +27,7 @@ func NewXSSChecker() *XSSChecker {
 // Set implements Attacker interface.
 // Params should be {conn *websocket.Conn, fuzzableURLs []string}
 func (x *XSSChecker) Set(v ...interface{}) {
-	x.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	x.mconn.Conn = v[0].(*websocket.Conn)
 	x.fuzzableURLs = v[1].([]string)
 }
 
@@ -66,7 +67,7 @@ func (x *XSSChecker) check(URL string, blocker chan bool) {
 		ret := map[string]string{
 			"xss_url": URL,
 		}
-		x.mconn.send(ret)
+		x.mconn.Send(ret)
 		x.InjectableURL = append(x.InjectableURL, URL)
 	}
 }

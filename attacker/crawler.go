@@ -10,13 +10,14 @@ import (
 	"time"
 
 	"../logger"
+	"../util"
 	"github.com/gorilla/websocket"
 )
 
 // Crawler crawls the website.
 // WebSocket API.
 type Crawler struct {
-	mconn       *muxConn
+	mconn       *util.MuxConn
 	host        string
 	visitedURLs sync.Map
 	emails      sync.Map
@@ -41,7 +42,7 @@ func NewCrawler() *Crawler {
 // Set implements Attacker interface.
 // Params should be {conn *websocket.Conn, host string, depth int}
 func (c *Crawler) Set(v ...interface{}) {
-	c.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	c.mconn.Conn = v[0].(*websocket.Conn)
 	c.host = "http://" + v[1].(string)
 	c.maxDepth = v[2].(int)
 }
@@ -66,7 +67,7 @@ func (c *Crawler) Run() {
 		ret := map[string]string{
 			"url": url,
 		}
-		c.mconn.send(ret)
+		c.mconn.Send(ret)
 		c.results = append(c.results, url)
 	}
 

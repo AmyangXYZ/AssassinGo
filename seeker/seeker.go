@@ -17,6 +17,7 @@ import (
 
 // Seeker seeks targets with search engine.
 type Seeker struct {
+	conn    *websocket.Conn
 	query   string
 	se      string
 	maxPage int
@@ -32,8 +33,17 @@ func NewSeeker(q, se string, maxPage int) *Seeker {
 	}
 }
 
+// Set params.
+// Params should be {conn *websocket.Conn, query ,se stirng, maxPage int}
+func (s *Seeker) Set(v ...interface{}) {
+	s.conn = v[0].(*websocket.Conn)
+	s.query = v[1].(string)
+	s.se = v[2].(string)
+	s.maxPage = v[3].(int)
+}
+
 // Run starts seeker.
-func (s *Seeker) Run(conn *websocket.Conn) {
+func (s *Seeker) Run() {
 	logger.Green.Println("Seeking Targets...")
 	logger.Blue.Println("Search Engine:", s.se)
 	logger.Blue.Println("Keyword:", s.query)
@@ -59,9 +69,9 @@ func (s *Seeker) Run(conn *websocket.Conn) {
 	}
 
 	if s.se == "google" {
-		err = c.Run(ctxt, s.searchGoogle(conn))
+		err = c.Run(ctxt, s.searchGoogle())
 	} else if s.se == "bing" {
-		err = c.Run(ctxt, s.searchBing(conn))
+		err = c.Run(ctxt, s.searchBing())
 	}
 
 	// shutdown chrome
@@ -71,7 +81,7 @@ func (s *Seeker) Run(conn *websocket.Conn) {
 	err = c.Wait()
 }
 
-func (s *Seeker) searchBing(conn *websocket.Conn) chromedp.Tasks {
+func (s *Seeker) searchBing() chromedp.Tasks {
 	var urls []string
 	return chromedp.Tasks{
 		chromedp.Navigate(`https://www.bing.com`),
@@ -103,7 +113,7 @@ func (s *Seeker) searchBing(conn *websocket.Conn) chromedp.Tasks {
 				ret := map[string][]string{
 					"urls": urls,
 				}
-				conn.WriteJSON(ret)
+				s.conn.WriteJSON(ret)
 
 				s.Results = append(s.Results, urls...)
 				if i != s.maxPage {
@@ -115,7 +125,7 @@ func (s *Seeker) searchBing(conn *websocket.Conn) chromedp.Tasks {
 	}
 }
 
-func (s *Seeker) searchGoogle(conn *websocket.Conn) chromedp.Tasks {
+func (s *Seeker) searchGoogle() chromedp.Tasks {
 	urls := []string{}
 	return chromedp.Tasks{
 		chromedp.Navigate(`https://www.google.com`),
@@ -157,7 +167,7 @@ func (s *Seeker) searchGoogle(conn *websocket.Conn) chromedp.Tasks {
 				ret := map[string][]string{
 					"urls": urls,
 				}
-				conn.WriteJSON(ret)
+				s.conn.WriteJSON(ret)
 
 				s.Results = append(s.Results, urls...)
 				if i != s.maxPage {

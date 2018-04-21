@@ -1,10 +1,13 @@
 package gatherer
 
-import "github.com/gorilla/websocket"
+import (
+	"../util"
+	"github.com/gorilla/websocket"
+)
 
 // SubDomainScan brute force the dir.
 type SubDomainScan struct {
-	mconn  *muxConn
+	mconn  *util.MuxConn
 	target string
 }
 
@@ -16,7 +19,7 @@ func NewSubDomainScan() *SubDomainScan {
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target, goroutinesCount int}
 func (s *SubDomainScan) Set(v ...interface{}) {
-	s.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	s.mconn.Conn = v[0].(*websocket.Conn)
 	s.target = v[1].(string)
 }
 

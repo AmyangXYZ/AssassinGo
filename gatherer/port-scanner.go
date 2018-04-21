@@ -9,13 +9,14 @@ import (
 	"time"
 
 	"../logger"
+	"../util"
 	"github.com/gorilla/websocket"
 )
 
 // PortScanner scans common used ports.
 // WebSocket API.
 type PortScanner struct {
-	mconn  *muxConn
+	mconn  *util.MuxConn
 	target string
 	// tcp, syn ...
 	method          string
@@ -37,7 +38,7 @@ func NewPortScanner() *PortScanner {
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target, method string}
 func (ps *PortScanner) Set(v ...interface{}) {
-	ps.mconn = &muxConn{conn: v[0].(*websocket.Conn)}
+	ps.mconn.Conn = v[0].(*websocket.Conn)
 	ps.target = v[1].(string)
 	ps.method = v[2].(string)
 }
@@ -76,7 +77,7 @@ func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
 			"port":    port,
 			"service": ps.ports[port],
 		}
-		ps.mconn.send(ret)
+		ps.mconn.Send(ret)
 		ps.OpenPorts = append(ps.OpenPorts, port)
 	}
 }
