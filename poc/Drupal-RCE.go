@@ -21,6 +21,11 @@ func NewDrupalRCE() *DrupalRCE {
 	return &DrupalRCE{}
 }
 
+// Info implements PoC interface.
+func (d *DrupalRCE) Info() string {
+	return `CVE-2018-7600`
+}
+
 // Set implements PoC interface.
 // Params should be {target string}
 func (d *DrupalRCE) Set(v ...interface{}) {

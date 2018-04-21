@@ -23,6 +23,11 @@ func NewSeaCMSv654() *SeaCMSv654 {
 	return &SeaCMSv654{}
 }
 
+// Info implements PoC interface.
+func (s *SeaCMSv654) Info() string {
+	return ""
+}
+
 // Set implements PoC interface.
 // Params should be {target string}
 func (s *SeaCMSv654) Set(v ...interface{}) {

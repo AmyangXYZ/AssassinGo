@@ -1,7 +1,12 @@
 package poc
 
-// PoC just need to implements Run().
+// PoC needs to implements:
+// Info() -> return brief introduction
+// Set() -> set params
+// Run -> run the poc
+// Report -> return result
 type PoC interface {
+	Info() string
 	Set(...interface{})
 	Run()
 	Report() map[string]interface{}
