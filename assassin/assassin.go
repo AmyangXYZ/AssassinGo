@@ -50,9 +50,10 @@ func NewDad() *Dad {
 
 // SetTargets .
 func (d *Dad) SetTargets(targets string) {
-	logger.Green.Println("Set Dad's Targets")
-	for _, t := range strings.Split(targets, ",") {
-		son := New()
+	ts := strings.Split(targets, ",")
+	logger.Green.Println("Set Dad's Targets", len(ts))
+	for _, t := range ts {
+		son := &Assassin{PoC: poc.Init()}
 		son.Target = t
 		d.Sons = append(d.Sons, son)
 	}

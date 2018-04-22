@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"../assassin"
+	"../logger"
 	"github.com/AmyangXYZ/sweetygo"
 	"github.com/gorilla/websocket"
 )
@@ -118,7 +119,12 @@ type intruderMsg struct {
 func intrude(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := intruderMsg{}
-	conn.ReadJSON(&m)
+	err := conn.ReadJSON(&m)
+	if err != nil {
+		logger.Red.Println(err)
+		conn.Close()
+		return
+	}
 	a.Attackers["intruder"].Set(conn, a.Target, m.Header, m.Payload, m.GortCount)
 	a.Attackers["intruder"].Run()
 	conn.Close()
@@ -133,7 +139,12 @@ type seekerMsg struct {
 func seek(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := seekerMsg{}
-	conn.ReadJSON(&m)
+	err := conn.ReadJSON(&m)
+	if err != nil {
+		logger.Red.Println(err)
+		conn.Close()
+		return
+	}
 	a.Seeker.Set(conn, m.Query, m.SE, m.MaxPage)
 	a.Seeker.Run()
 	conn.Close()
@@ -152,6 +163,11 @@ func getPoCList(ctx *sweetygo.Context) {
 
 func runPoC(ctx *sweetygo.Context) {
 	pocName := ctx.Param("poc")
+	if a.PoC[pocName] == nil {
+		logger.Red.Println("No Such PoC")
+		ctx.JSON(200, "no such poc", "error")
+		return
+	}
 	a.PoC[pocName].Set(a.Target)
 	a.PoC[pocName].Run()
 	ret := a.PoC[pocName].Report()
@@ -165,6 +181,12 @@ type pocMsg struct {
 func runDadPoC(ctx *sweetygo.Context) {
 	pocName := ctx.Param("poc")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	if a.PoC[pocName] == nil {
+		conn.WriteJSON(map[string]string{"message": "no such poc"})
+		logger.Red.Println("No Such PoC")
+		conn.Close()
+		return
+	}
 	dad.MuxConn.Conn = conn
 	m := pocMsg{}
 	conn.ReadJSON(&m)
@@ -187,4 +209,5 @@ func runDadPoC(ctx *sweetygo.Context) {
 	for i := 0; i < cap(blockers); i++ {
 		blockers <- struct{}{}
 	}
+	conn.Close()
 }
