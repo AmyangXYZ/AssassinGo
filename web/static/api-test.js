@@ -4,7 +4,7 @@ function TestNewAssassinHandler() {
     $.ajax({
         url: "/api/assassin",
         type: "POST",
-        data: "target=www.sut56.com",
+        data: "target=xxx",
         dataType: "JSON",
     }).done(function (result) {
         console.log(result.data)
@@ -15,7 +15,7 @@ function TestNewAssassinDadHandler() {
     $.ajax({
         url: "/api/assassin-dad",
         type: "POST",
-        data: "targets=47.94.136.141,www.sut56.com",
+        data: "targets=xxx,xxx",
         dataType: "JSON",
     }).done(function (result) {
         console.log(result.data)
