@@ -15,7 +15,7 @@ func init() {
 
 // Run Web GUI.
 func Run() {
-	app := sweetygo.New("/home/amyang/Projects/AssassinGo/web", nil)
+	app := sweetygo.New("./web", nil)
 	SetRouter(app)
 	app.RunServer(":8000")
 }

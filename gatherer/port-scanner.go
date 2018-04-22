@@ -30,7 +30,7 @@ type PortScanner struct {
 func NewPortScanner() *PortScanner {
 	return &PortScanner{
 		mconn:           &util.MuxConn{},
-		ports:           makePortsMap("/home/amyang/Projects/AssassinGo/gatherer/dict/Top100ports.txt"),
+		ports:           makePortsMap("./gatherer/dict/Top100ports.txt"),
 		goroutinesCount: 100,
 		timeout:         3,
 	}
