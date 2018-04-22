@@ -53,6 +53,10 @@ Path | Func | Params | Return
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
 /ws/poc/:poc | run poc | {gort_count:10} | {"exploitable_host": "example.com"}
 
+[Example Testing JS file](./web/static/api-test.js)
+
+Remember set the target(s) first.
+
 ## State
 
 developing...
