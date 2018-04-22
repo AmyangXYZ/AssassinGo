@@ -159,11 +159,11 @@ func runPoC(ctx *sweetygo.Context) {
 }
 
 type pocMsg struct {
-	PoCName   string `json:"poc"`
-	GortCount int    `json:"gort_count"`
+	GortCount int `json:"gort_count"`
 }
 
-func runPoCforSA(ctx *sweetygo.Context) {
+func runDadPoC(ctx *sweetygo.Context) {
+	pocName := ctx.Param("poc")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	dad.MuxConn.Conn = conn
 	m := pocMsg{}
@@ -174,9 +174,9 @@ func runPoCforSA(ctx *sweetygo.Context) {
 		blockers <- struct{}{}
 		go func(son *assassin.Assassin, blocker chan struct{}) {
 			defer func() { <-blocker }()
-			son.PoC[m.PoCName].Set(son.Target)
-			son.PoC[m.PoCName].Run()
-			ret := son.PoC[m.PoCName].Report()
+			son.PoC[pocName].Set(son.Target)
+			son.PoC[pocName].Run()
+			ret := son.PoC[pocName].Report()
 			if ret["exploitable"].(bool) {
 				dad.MuxConn.Send(ret)
 				dad.ExploitableHosts = append(dad.ExploitableHosts, ret["host"].(string))

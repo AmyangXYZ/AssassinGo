@@ -46,12 +46,12 @@ Path | Func | Params | Return
 /ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
 /ws/info/dirb | brute force dir | {"gort_count":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}
-/ws/info/crawl | crawl paramed urls | {"max_depth": 4} | {"url": "example.com/?id=1"}
-/ws/vul/sqli | check sqli | nil | {"sqli_url": "example.com/?id=1}
-/ws/vul/xss | check xss | nil | {"xss_url": "example.com/?id=1}
-/ws/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
+/ws/attack/crawl | crawl paramed urls | {"max_depth": 4} | {"url": "example.com/?id=1"}
+/ws/attack/sqli | check sqli | nil | {"sqli_url": "example.com/?id=1}
+/ws/attack/xss | check xss | nil | {"xss_url": "example.com/?id=1}
+/ws/attaclintrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
-/ws/poc/run | run poc | {poc:"drupal-rce", gort_count:10} | {"exploitable_host": "example.com"}
+/ws/poc/:poc | run poc | {gort_count:10} | {"exploitable_host": "example.com"}
 
 ## State
 
