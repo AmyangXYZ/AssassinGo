@@ -11,7 +11,7 @@ import (
 
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
-	"github.com/chromedp/chromedp/runner"
+	"github.com/chromedp/chromedp/client"
 	"github.com/gorilla/websocket"
 )
 
@@ -55,14 +55,14 @@ func (s *Seeker) Run() {
 	ctxt, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	options := chromedp.WithRunnerOptions(
-		// runner.Flag("headless", true),
-		runner.Flag("no-sandbox", true),
-		runner.Flag("disable-gpu", true),
-	)
+	// options := chromedp.WithRunnerOptions(
+	// 	// runner.Flag("headless", true),
+	// 	runner.Flag("no-sandbox", true),
+	// 	runner.Flag("disable-gpu", true),
+	// )
 	// create chrome instance
-	c, err := chromedp.New(ctxt, options)
-	// c, err := chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)))
+	// c, err := chromedp.New(ctxt, options)
+	c, err := chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)))
 	if err != nil {
 		logger.Red.Println(err)
 		return
