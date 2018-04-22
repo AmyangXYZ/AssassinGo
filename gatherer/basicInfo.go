@@ -3,6 +3,7 @@ package gatherer
 import (
 	"net"
 	"net/http"
+	"strings"
 
 	"../logger"
 )
@@ -44,7 +45,11 @@ func (bi *BasicInfo) Run() {
 }
 
 func (bi *BasicInfo) resolveIP() {
-	remoteAddr, err := net.ResolveIPAddr("ip", bi.target)
+	t := bi.target
+	if strings.Contains(bi.target, ":") {
+		t = strings.Split(bi.target, ":")[0]
+	}
+	remoteAddr, err := net.ResolveIPAddr("ip", t)
 	if err != nil {
 		logger.Red.Println(err)
 		return
