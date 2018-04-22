@@ -86,7 +86,7 @@ function TestRunPoCHandler() {
 
 
 function TestPortHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/info/port");
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/info/port");
     socket.onopen = function(e) {
         var msg = {
             method: "tcp",
@@ -102,7 +102,7 @@ function TestPortHandler() {
 }
 
 function TestTracertHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/info/tracert")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/info/tracert")
     socket.onmessage = function (e) {
         console.log(JSON.parse(e.data))
     }
@@ -112,7 +112,7 @@ function TestTracertHandler() {
 }
 
 function TestDirbHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/info/dirb")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/info/dirb")
     socket.onopen = function(e) {
         var msg = {
             gort_count: 20,
@@ -129,7 +129,7 @@ function TestDirbHandler() {
 }
 
 function TestCrawlHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/attack/crawl")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/attack/crawl")
     socket.onmessage = function (e) {
         console.log(JSON.parse(e.data))
     }
@@ -139,7 +139,7 @@ function TestCrawlHandler() {
 }
 
 function TestSQLiHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/attack/sqli")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/attack/sqli")
     socket.onmessage = function (e) {
         console.log(JSON.parse(e.data))
     }
@@ -149,7 +149,7 @@ function TestSQLiHandler() {
 }
 
 function TestXSSHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/attack/xss")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/attack/xss")
     socket.onmessage = function (e) {
         console.log(JSON.parse(e.data))
     }
@@ -159,7 +159,7 @@ function TestXSSHandler() {
 }
 
 function TestIntruderHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/attack/intrude")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/attack/intrude")
     socket.onopen = function(e) {
         var msg = {
             header: `GET /$$1$$ HTTP/1.1
@@ -178,7 +178,7 @@ Host: 47.94.136.141`,
 }
 
 function TestSeekHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/seek")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/seek")
     socket.onopen = function(e) {
         var msg = {
             query: "information security",
@@ -196,7 +196,7 @@ function TestSeekHandler() {
 }
 
 function TestRunDadPoCHandler() {
-    var socket = new WebSocket("ws://207.246.110.245:8000/ws/poc/drupal-rce")
+    var socket = new WebSocket("ws://207.246.110.215:8000/ws/poc/drupal-rce")
     socket.onopen = function(e) {
         var msg = {
             gort_count: 10,
