@@ -26,7 +26,10 @@ type Intruder struct {
 
 // NewIntruder returns a new intruder.
 func NewIntruder() *Intruder {
-	return &Intruder{re: regexp.MustCompile(`\$\$(.*?)\$\$`)}
+	return &Intruder{
+		mconn: &util.MuxConn{},
+		re:    regexp.MustCompile(`\$\$(.*?)\$\$`),
+	}
 }
 
 // Set sets params for intruder.

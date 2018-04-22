@@ -31,7 +31,10 @@ type Tracer struct {
 
 // NewTracer returns a new route tracer.
 func NewTracer() *Tracer {
-	return &Tracer{route: make([]node, 0)}
+	return &Tracer{
+		mconn: &util.MuxConn{},
+		route: make([]node, 0),
+	}
 }
 
 // Set implements Gatherer interface.

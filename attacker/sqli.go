@@ -22,6 +22,7 @@ type BasicSQLi struct {
 // NewBasicSQLi returns a new basicSQli Attacker.
 func NewBasicSQLi() *BasicSQLi {
 	return &BasicSQLi{
+		mconn:    &util.MuxConn{},
 		payload0: "/**/%26%261%3d2%23",
 		payload1: "/**/%26%261%3d1%23",
 	}

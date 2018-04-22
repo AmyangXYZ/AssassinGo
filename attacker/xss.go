@@ -21,7 +21,10 @@ type XSSChecker struct {
 
 // NewXSSChecker returns a XSS Checker.
 func NewXSSChecker() *XSSChecker {
-	return &XSSChecker{payload: `<svg/onload=alert(1)>`}
+	return &XSSChecker{
+		mconn:   &util.MuxConn{},
+		payload: `<svg/onload=alert(1)>`,
+	}
 }
 
 // Set implements Attacker interface.

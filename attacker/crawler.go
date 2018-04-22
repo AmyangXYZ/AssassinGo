@@ -34,6 +34,7 @@ type Crawler struct {
 // NewCrawler returns a new crawler.
 func NewCrawler() *Crawler {
 	return &Crawler{
+		mconn:              &util.MuxConn{},
 		extractURLsRe:      regexp.MustCompile(`(?s)<a[ t]+.*?href="(.*?)".*?>`),
 		replaceGETValuesRe: regexp.MustCompile(`(\?|\&)([^=]+)\=([^&]+)`),
 	}

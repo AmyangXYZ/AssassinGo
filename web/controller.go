@@ -91,9 +91,10 @@ func dirBrute(ctx *sweetygo.Context) {
 
 func crawl(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Attackers["crawl"].Set(conn, a.Target, 4)
-	a.Attackers["crawl"].Run()
-	a.FuzzableURLs = a.Attackers["crawl"].Report()["fuzzableURLs"].([]string)
+	a.Attackers["crawler"].Set(conn, a.Target, 4)
+	a.Attackers["crawler"].Run()
+	a.FuzzableURLs = a.Attackers["crawler"].Report()["fuzzableURLs"].([]string)
+	conn.Close()
 }
 
 func checkSQLi(ctx *sweetygo.Context) {

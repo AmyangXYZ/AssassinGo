@@ -23,7 +23,10 @@ type DirBruter struct {
 
 // NewDirBruter returns a new dirbruter.
 func NewDirBruter() *DirBruter {
-	return &DirBruter{payloads: readPayloadsFromFile("./gatherer/dict/dir-php.txt")}
+	return &DirBruter{
+		mconn:    &util.MuxConn{},
+		payloads: readPayloadsFromFile("./gatherer/dict/dir-php.txt"),
+	}
 }
 
 // Set implements Gatherer interface.

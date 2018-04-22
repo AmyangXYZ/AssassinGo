@@ -46,7 +46,7 @@ func (h *Honeypot) honeypotDetect() {
 		logger.Red.Println(err)
 		return
 	}
-	u := fmt.Sprintf("https://api.shodan.io/labs/honeyscore/%s?key=uTr4S2pd8Um45oy5zFn6ncWPDGTeKNzd", targetIP)
+	u := fmt.Sprintf("https://api.shodan.io/labs/honeyscore/%s?key=V0Kb0m8o6gMnnjxDpOEczCAtDXVh14jB", targetIP)
 	resp, err := http.Get(u)
 	if err != nil {
 		logger.Red.Println(err)
