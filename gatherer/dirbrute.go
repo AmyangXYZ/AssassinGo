@@ -25,7 +25,7 @@ type DirBruter struct {
 func NewDirBruter() *DirBruter {
 	return &DirBruter{
 		mconn:    &util.MuxConn{},
-		payloads: readPayloadsFromFile("./gatherer/dict/dir-php.txt"),
+		payloads: readPayloadsFromFile("/dict/dir-php.txt"),
 	}
 }
 

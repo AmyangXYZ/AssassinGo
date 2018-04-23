@@ -116,7 +116,7 @@ func (t *Tracer) printHop(hop traceroute.TracerouteHop) {
 }
 
 func (n *node) geoip() {
-	db, err := geoip2.Open("./gatherer/dict/GeoLite2-City.mmdb")
+	db, err := geoip2.Open("/dict/GeoLite2-City.mmdb")
 	defer db.Close()
 	if err != nil {
 		logger.Red.Println(err)

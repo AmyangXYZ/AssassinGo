@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  assassin:
+    build: .
+    ports:
+      - 8000:8000
+    links:
+      - chromedp
+    volumes:
+      - ./web/:/web/
+      - ./dict/:/dict/
+  
+  chromedp:
+    image: knqz/chrome-headless
+    ports:
+      - 9222:9222
