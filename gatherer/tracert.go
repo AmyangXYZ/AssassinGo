@@ -68,6 +68,7 @@ func (t *Tracer) Run() {
 	_, err := traceroute.Traceroute(t.host, &traceroute.TracerouteOptions{}, ch)
 	if err != nil {
 		logger.Red.Println(err)
+		return
 	}
 
 	// Wait the final output.
