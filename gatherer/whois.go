@@ -6,11 +6,12 @@ import (
 	"../logger"
 	whois "github.com/likexian/whois-go"
 	"github.com/likexian/whois-parser-go"
+	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
 
 // Whois queries the domain information.
 type Whois struct {
-	domain string
+	target string
 	raw    string
 	info   map[string]interface{}
 }
@@ -23,12 +24,7 @@ func NewWhois() *Whois {
 // Set implements Gatherer interface.
 // Params should be {target string}.
 func (w *Whois) Set(v ...interface{}) {
-	if strings.Count(v[0].(string), ".") == 2 {
-		d := strings.Split(v[0].(string), ".")
-		w.domain = d[1] + "." + d[2]
-		return
-	}
-	w.domain = v[0].(string)
+	w.target = v[0].(string)
 }
 
 // Report implements Gatherer interface.
@@ -39,7 +35,12 @@ func (w *Whois) Report() map[string]interface{} {
 // Run implements Gatherer interface.
 func (w *Whois) Run() {
 	logger.Green.Println("Whois Information")
-	whoisRaw, err := whois.Whois(w.domain)
+	domain, err := publicsuffix.Domain(w.target)
+	if err != nil {
+		logger.Red.Println(err)
+		return
+	}
+	whoisRaw, err := whois.Whois(domain)
 	if err != nil {
 		logger.Red.Println(err)
 		return
@@ -48,7 +49,7 @@ func (w *Whois) Run() {
 	result, _ := whois_parser.Parse(w.raw)
 
 	w.info = map[string]interface{}{
-		"domain":          w.domain,
+		"domain":          w.target,
 		"registrar_name":  result.Registrar.RegistrarName,
 		"admin_name":      result.Admin.Name,
 		"admin_email":     result.Admin.Email,
