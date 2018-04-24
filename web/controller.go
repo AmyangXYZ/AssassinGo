@@ -1,6 +1,7 @@
 package web
 
 import (
+	"net"
 	"net/http"
 
 	"../assassin"
@@ -10,6 +11,7 @@ import (
 )
 
 func index(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	ctx.Render(200, "index")
 }
 
@@ -20,48 +22,59 @@ func static(ctx *sweetygo.Context) {
 }
 
 func newAssassin(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	a = assassin.New() // reset
 	target := ctx.Param("target")
 	a.SetTarget(target)
-	ctx.JSON(201, nil, "success")
+	ctx.JSON(200, 1, "success", nil)
 }
 
 func newAssassinDad(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	dad = assassin.NewDad() // reset
 	targets := ctx.Param("targets")
 	dad.SetTargets(targets)
-	ctx.JSON(201, nil, "success")
+	ctx.JSON(200, 1, "success", nil)
 }
 
 func basicInfo(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	a.Gatherers["basicInfo"].Set(a.Target)
 	a.Gatherers["basicInfo"].Run()
 	ret := a.Gatherers["basicInfo"].Report()
-	ctx.JSON(200, ret, "success")
+	ctx.JSON(200, 1, "success", ret)
 }
 
 func cmsDetect(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	a.Gatherers["cms"].Set(a.Target)
 	a.Gatherers["cms"].Run()
 	ret := a.Gatherers["cms"].Report()
-	ctx.JSON(200, ret, "success")
+	ctx.JSON(200, 1, "success", ret)
 }
 
 func whois(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	if net.ParseIP(a.Target).String() == a.Target {
+		ctx.JSON(200, 0, "ip do not need whois", nil)
+		return
+	}
 	a.Gatherers["whois"].Set(a.Target)
 	a.Gatherers["whois"].Run()
 	ret := a.Gatherers["whois"].Report()
-	ctx.JSON(200, ret, "success")
+	ctx.JSON(200, 1, "success", ret)
 }
 
 func honeypot(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	a.Gatherers["honeypot"].Set(a.Target)
 	a.Gatherers["honeypot"].Run()
 	ret := a.Gatherers["honeypot"].Report()
-	ctx.JSON(200, ret, "success")
+	ctx.JSON(200, 1, "success", ret)
 }
 
 func tracert(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Gatherers["tracert"].Set(conn, a.Target)
 	a.Gatherers["tracert"].Run()
@@ -69,6 +82,7 @@ func tracert(ctx *sweetygo.Context) {
 }
 
 func portScan(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Gatherers["port"].Set(conn, a.Target, "tcp")
 	a.Gatherers["port"].Run()
@@ -81,6 +95,7 @@ type dirbMsg struct {
 }
 
 func dirBrute(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := dirbMsg{}
 	conn.ReadJSON(&m)
@@ -90,6 +105,7 @@ func dirBrute(ctx *sweetygo.Context) {
 }
 
 func crawl(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Attackers["crawler"].Set(conn, a.Target, 4)
 	a.Attackers["crawler"].Run()
@@ -98,6 +114,7 @@ func crawl(ctx *sweetygo.Context) {
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Attackers["sqli"].Set(conn, a.FuzzableURLs)
 	a.Attackers["sqli"].Run()
@@ -105,6 +122,7 @@ func checkSQLi(ctx *sweetygo.Context) {
 }
 
 func checkXSS(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	a.Attackers["xss"].Set(conn, a.FuzzableURLs)
 	a.Attackers["xss"].Run()
@@ -118,6 +136,7 @@ type intruderMsg struct {
 }
 
 func intrude(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := intruderMsg{}
 	err := conn.ReadJSON(&m)
@@ -138,6 +157,7 @@ type seekerMsg struct {
 }
 
 func seek(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := seekerMsg{}
 	err := conn.ReadJSON(&m)
@@ -152,6 +172,7 @@ func seek(ctx *sweetygo.Context) {
 }
 
 func getPoCList(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	pocList := []string{}
 	for p := range a.PoC {
 		pocList = append(pocList, p)
@@ -159,20 +180,21 @@ func getPoCList(ctx *sweetygo.Context) {
 	ret := map[string]interface{}{
 		"poc_list": pocList,
 	}
-	ctx.JSON(200, ret, "success")
+	ctx.JSON(200, 1, "success", ret)
 }
 
 func runPoC(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	pocName := ctx.Param("poc")
 	if a.PoC[pocName] == nil {
 		logger.Red.Println("No Such PoC")
-		ctx.JSON(200, "no such poc", "error")
+		ctx.JSON(200, 0, "no such poc", nil)
 		return
 	}
 	a.PoC[pocName].Set(a.Target)
 	a.PoC[pocName].Run()
 	ret := a.PoC[pocName].Report()
-	ctx.JSON(200, ret, "success")
+	ctx.JSON(200, 1, "success", ret)
 }
 
 type pocMsg struct {
@@ -180,6 +202,7 @@ type pocMsg struct {
 }
 
 func runDadPoC(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	pocName := ctx.Param("poc")
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	if a.PoC[pocName] == nil {
