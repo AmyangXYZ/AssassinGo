@@ -7,6 +7,7 @@ services:
       - 8000:8000
     links:
       - chromedp
+      - mariadb
     volumes:
       - ./web/:/web/
       - ./dict/:/dict/
@@ -15,3 +16,13 @@ services:
     image: knqz/chrome-headless
     ports:
       - 9222:9222
+  
+  mariadb:
+    image: mariadb
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=assassingo
+      - MYSQL_USER=ag
+      - MYSQL_PASSWORD=agpasswd
+      - MYSQL_DATABASE=ag

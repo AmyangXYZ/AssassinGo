@@ -11,6 +11,20 @@ import (
 	"../util"
 )
 
+// Daddy is used for multiple users.
+type Daddy struct {
+	Son     map[string]*Assassin
+	Sibling map[string]*Sibling
+}
+
+// NewDaddy returns a new daddy.
+func NewDaddy() *Daddy {
+	return &Daddy{
+		Son:     make(map[string]*Assassin),
+		Sibling: make(map[string]*Sibling),
+	}
+}
+
 // Assassin shadow and assassinate the target.
 type Assassin struct {
 	Target       string
@@ -36,25 +50,27 @@ func (a *Assassin) SetTarget(target string) {
 	a.Target = target
 }
 
-// Dad is a batch vul scanner.
-type Dad struct {
+// Sibling is a batch vul scanner.
+type Sibling struct {
 	MuxConn          util.MuxConn
-	Sons             []*Assassin
+	Siblings         []*Assassin
 	ExploitableHosts []string
 }
 
-// NewDad returns Assassins' Dad.
-func NewDad() *Dad {
-	return &Dad{Sons: make([]*Assassin, 0)}
+// NewSiblings returns a group of Assassins for batch scan.
+func NewSiblings() *Sibling {
+	return &Sibling{
+		Siblings: make([]*Assassin, 0),
+		MuxConn:  util.MuxConn{}}
 }
 
 // SetTargets .
-func (d *Dad) SetTargets(targets string) {
+func (s *Sibling) SetTargets(targets string) {
 	ts := strings.Split(targets, ",")
-	logger.Green.Println("Set Dad's Targets", len(ts))
+	logger.Green.Println("Set Siblings' Targets", len(ts))
 	for _, t := range ts {
-		son := &Assassin{PoC: poc.Init()}
-		son.Target = t
-		d.Sons = append(d.Sons, son)
+		a := &Assassin{PoC: poc.Init()}
+		a.Target = t
+		s.Siblings = append(s.Siblings, a)
 	}
 }

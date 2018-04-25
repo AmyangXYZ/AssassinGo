@@ -2,16 +2,29 @@ package web
 
 import (
 	"github.com/AmyangXYZ/sweetygo"
+	"github.com/AmyangXYZ/sweetygo/middlewares"
 )
+
+var (
+	requireJWTMap = map[string]string{
+		"/api/*": "ALL",
+		"/ws/*":  "ALL",
+	}
+)
+
+// SetMiddlewares sets middlewares.
+func SetMiddlewares(app *sweetygo.SweetyGo) {
+	app.USE(middlewares.JWT("Header", "secret-key", requireJWTMap))
+}
 
 // SetRouter sets router.
 func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/", index)
+	app.POST("/token", signin)
 
 	app.GET("/static/*files", static)
 
-	app.POST("/api/assassin", newAssassin)
-	app.POST("/api/assassin-dad", newAssassinDad)
+	app.POST("/api/target", setTarget)
 
 	app.GET("/api/info/basic", basicInfo)
 	app.GET("/api/info/whois", whois)
@@ -33,5 +46,5 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/api/poc", getPoCList)
 
 	app.GET("/api/poc/:poc", runPoC)
-	app.GET("/ws/poc/:poc", runDadPoC)
+	app.GET("/ws/poc/:poc", runSiblingPoC)
 }

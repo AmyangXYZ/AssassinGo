@@ -5,17 +5,18 @@ import (
 	"github.com/AmyangXYZ/sweetygo"
 )
 
-var a *assassin.Assassin
-var dad *assassin.Dad
+var (
+	daddy *assassin.Daddy
+)
 
 func init() {
-	a = assassin.New()
-	dad = assassin.NewDad()
+	daddy = assassin.NewDaddy()
 }
 
 // Run Web GUI.
 func Run() {
 	app := sweetygo.New("./web", nil)
+	SetMiddlewares(app)
 	SetRouter(app)
 	app.RunServer(":8000")
 }
