@@ -9,13 +9,13 @@ import (
 var (
 	requireJWTMap = map[string]string{
 		"/api/*": "ALL",
-		// "/ws/*":  "ALL",
+		"/ws/*":  "ALL",
 	}
 )
 
 // SetMiddlewares sets middlewares.
 func SetMiddlewares(app *sweetygo.SweetyGo) {
-	app.USE(middlewares.JWT("Header", config.SecretKey, requireJWTMap))
+	app.USE(middlewares.JWT("Cookie", config.SecretKey, requireJWTMap))
 }
 
 // SetRouter sets router.

@@ -35,7 +35,7 @@ func signin(ctx *sweetygo.Context) {
 			claims["username"] = username
 			claims["exp"] = time.Now().Add(time.Hour * 36).Unix()
 			t, _ := token.SignedString([]byte(config.SecretKey))
-
+			ctx.SetCookie("SG_Token", t)
 			ctx.JSON(200, 1, "success", map[string]string{"SG_Token": t})
 
 			a := assassin.New()
