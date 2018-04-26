@@ -9,7 +9,7 @@ import (
 var (
 	requireJWTMap = map[string]string{
 		"/api/*": "ALL",
-		"/ws/*":  "ALL",
+		// "/ws/*":  "ALL",
 	}
 )
 
