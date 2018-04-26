@@ -1,6 +1,7 @@
 package web
 
 import (
+	"../config"
 	"github.com/AmyangXYZ/sweetygo"
 	"github.com/AmyangXYZ/sweetygo/middlewares"
 )
@@ -14,7 +15,7 @@ var (
 
 // SetMiddlewares sets middlewares.
 func SetMiddlewares(app *sweetygo.SweetyGo) {
-	app.USE(middlewares.JWT("Header", "secret-key", requireJWTMap))
+	app.USE(middlewares.JWT("Header", config.SecretKey, requireJWTMap))
 }
 
 // SetRouter sets router.

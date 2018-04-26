@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"../config"
 	//
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -12,13 +13,12 @@ import (
 var db *sql.DB
 
 func init() {
-	db, _ = sql.Open("mysql", "ag:agpasswd@tcp(mariadb:3306)/ag?charset=utf8")
+	db, _ = sql.Open("mysql", config.DB)
 
 	// mysql image starts need time.
 	for {
 		err := db.Ping()
 		if err == nil {
-			fmt.Println("db ok!")
 			break
 		}
 		fmt.Println(err)
@@ -36,6 +36,7 @@ func init() {
 			email VARCHAR(64) NULL DEFAULT NULL,
 			PRIMARY KEY (id)
 		);`)
+	db.Exec(`INSERT INTO users(username, password, email) values("admin","adminn","a@a.com");`)
 }
 
 func getPassword(username string) string {

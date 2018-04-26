@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"../assassin"
+	"../config"
 	"../logger"
 	"github.com/AmyangXYZ/sweetygo"
 	jwt "github.com/dgrijalva/jwt-go"
@@ -33,7 +34,7 @@ func signin(ctx *sweetygo.Context) {
 			claims := token.Claims.(jwt.MapClaims)
 			claims["username"] = username
 			claims["exp"] = time.Now().Add(time.Hour * 36).Unix()
-			t, _ := token.SignedString([]byte("secret-key"))
+			t, _ := token.SignedString([]byte(config.SecretKey))
 
 			ctx.JSON(200, 1, "success", map[string]string{"SG_Token": t})
 
