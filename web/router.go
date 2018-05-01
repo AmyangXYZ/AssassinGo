@@ -43,6 +43,8 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.GET("/ws/attack/xss", checkXSS)
 	app.GET("/ws/attack/intrude", intrude)
 
+	app.GET("/ws/attack/ssh", sshBrute)
+
 	app.GET("/ws/seek", seek)
 
 	app.GET("/api/poc", getPoCList)

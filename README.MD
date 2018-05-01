@@ -20,6 +20,7 @@ Just for learn.
 - [x] Basic SQLi Check
 - [x] Basic XSS Check
 - [x] Intruder
+- [ ] SSH, FTP, RDP, MYSQL Bruter
 - [x] Seek Targets by Search Engine
 - [x] POC Interface
 - [x] Web GUI(using WebSocket)
@@ -49,7 +50,8 @@ Path | Func | Params | Return
 /ws/attack/crawl | crawl paramed urls | {"max_depth": 4} | {"url": "example.com/?id=1"}
 /ws/attack/sqli | check sqli | nil | {"sqli_url": "example.com/?id=1}
 /ws/attack/xss | check xss | nil | {"xss_url": "example.com/?id=1}
-/ws/attaclintrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
+/ws/attack/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
+/ws/attack/ssh | brute force ssh | {"port":22,"user_list":"/dict/ssh-user-common.txt", "passwd_list":"/dict/password.txt", "gort_count":40} | {"user":"root","passwd":"biubiubiu"}
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
 /ws/poc/:poc | run poc | {gort_count:10} | {"exploitable_host": "example.com"}
 

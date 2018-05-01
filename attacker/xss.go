@@ -46,15 +46,15 @@ func (x *XSSChecker) Run() {
 	logger.Green.Println("Basic XSS Checking...")
 	x.InjectableURL = []string{}
 
-	blockers := make(chan bool, len(x.fuzzableURLs))
+	blockers := make(chan struct{}, len(x.fuzzableURLs))
 	for _, URL := range x.fuzzableURLs {
-		blockers <- true
+		blockers <- struct{}{}
 		go x.check(URL, blockers)
 	}
 
 	// Wait for all goroutines to finish.
 	for i := 0; i < cap(blockers); i++ {
-		blockers <- true
+		blockers <- struct{}{}
 	}
 
 	if len(x.InjectableURL) == 0 {
@@ -62,7 +62,7 @@ func (x *XSSChecker) Run() {
 	}
 }
 
-func (x *XSSChecker) check(URL string, blocker chan bool) {
+func (x *XSSChecker) check(URL string, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	body := x.fetch(URL + x.payload)
 	if strings.Contains(body, x.payload) {

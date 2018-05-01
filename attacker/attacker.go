@@ -15,5 +15,6 @@ func Init() map[string]Attacker {
 		"sqli":     NewBasicSQLi(),
 		"xss":      NewXSSChecker(),
 		"intruder": NewIntruder(),
+		"ssh":      NewSSHBruter(),
 	}
 }

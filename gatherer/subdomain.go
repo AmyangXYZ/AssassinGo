@@ -12,7 +12,7 @@ import (
 
 	"../logger"
 	"../utils"
-	"github.com/bobesa/go-domain-utils/domainutils"
+	"github.com/bobesa/go-domain-util/domainutil"
 	"github.com/evilsocket/brutemachine"
 	"github.com/gorilla/websocket"
 )
@@ -51,7 +51,7 @@ func NewSubDomainScan() *SubDomainScan {
 // Params should be {conn *websocket.Conn, target, goroutinesCount int}
 func (s *SubDomainScan) Set(v ...interface{}) {
 	s.mconn.Conn = v[0].(*websocket.Conn)
-	s.target = domainutils.Domain(v[1].(string))
+	s.target = domainutil.Domain(v[1].(string))
 }
 
 // Report implements Gatherer interface.

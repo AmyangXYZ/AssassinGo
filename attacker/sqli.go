@@ -47,22 +47,22 @@ func (bs *BasicSQLi) Run() {
 	logger.Green.Println("Basic SQLi Checking...")
 	bs.InjectableURL = []string{}
 
-	blockers := make(chan bool, len(bs.fuzzableURLs))
+	blockers := make(chan struct{}, len(bs.fuzzableURLs))
 	for _, URL := range bs.fuzzableURLs {
-		blockers <- true
+		blockers <- struct{}{}
 		go bs.check(URL, blockers)
 	}
 
 	// Wait for all goroutines to finish.
 	for i := 0; i < cap(blockers); i++ {
-		blockers <- true
+		blockers <- struct{}{}
 	}
 	if len(bs.InjectableURL) == 0 {
 		logger.Blue.Println("no sqli vuls found")
 	}
 }
 
-func (bs *BasicSQLi) check(URL string, blocker chan bool) {
+func (bs *BasicSQLi) check(URL string, blocker chan struct{}) {
 	defer func() { <-blocker }()
 	body0 := bs.fetch(URL + bs.payload0)
 	body1 := bs.fetch(URL + bs.payload1)

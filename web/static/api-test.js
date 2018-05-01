@@ -11,11 +11,11 @@ function TestSignInHandler() {
     })
 }
 
-function TestSetTargetHandler() {
+function TestSetTargetHandler(target) {
     $.ajax({
         url: "/api/target",
         type: "POST",
-        data: "target=www.sut56.com",
+        data: "target="+target,
         dataType: "JSON",
     }).done(function (result) {
         console.log(result.data)
@@ -177,6 +177,25 @@ function TestIntruderHandler() {
 Host: 47.94.136.141`,
             payload: "1,2,3",
             gort_count: 5,
+        }
+        socket.send(JSON.stringify(msg))
+    }
+    socket.onmessage = function (e) {
+        console.log(JSON.parse(e.data))
+    }
+    socket.onclose = function () {
+        console.log("finished")
+    }
+}
+
+function TestSSHBruterHandler() {
+    var socket = new WebSocket("ws://127.0.0.1:8000/ws/attack/ssh")
+    socket.onopen = function(e) {
+        var msg = {
+            port:"22",
+            user_list:"/dict/ssh-user.txt",
+            passwd_list:"/dict/password.txt",
+            gort_count:5,
         }
         socket.send(JSON.stringify(msg))
     }

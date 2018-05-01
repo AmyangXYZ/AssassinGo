@@ -223,6 +223,31 @@ func intrude(ctx *sweetygo.Context) {
 	conn.Close()
 }
 
+type sshMsg struct {
+	Port       string `json:"port"`
+	UserList   string `json:"user_list"`
+	PasswdList string `json:"passwd_list"`
+	GortCount  int    `json:"gort_count"`
+}
+
+func sshBrute(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
+	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
+	a := daddy.Son[usr]
+	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
+	m := sshMsg{}
+	err := conn.ReadJSON(&m)
+	if err != nil {
+		logger.Red.Println(err)
+		conn.Close()
+		return
+	}
+	a.Attackers["ssh"].Set(conn, a.Target, m.Port, m.UserList, m.PasswdList, m.GortCount)
+	a.Attackers["ssh"].Run()
+	conn.Close()
+}
+
 type seekerMsg struct {
 	Query   string `json:"query"`
 	SE      string `json:"se"`
