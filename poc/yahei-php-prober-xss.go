@@ -22,15 +22,15 @@ type YaHeiPHPXSS struct {
 func NewYaHeiPHPXSS() *YaHeiPHPXSS {
 	return &YaHeiPHPXSS{
 		payload: url.Values{
-			"pInt":     {"No+Test"},
-			"pFloat":   {"No+Test"},
-			"pIo":      {"No+Test"},
+			"pInt":     {"未测试"},
+			"pFloat":   {"未测试"},
+			"pIo":      {"未测试"},
 			"host":     {"localhost"},
 			"port":     {"3306"},
 			"login":    {},
 			"password": {},
 			"funName":  {`')</script><script>alert("AssassinGooo");</script>`},
-			"act":      {"Function+Test"},
+			"act":      {"函数检测"},
 			"mailAdd":  {},
 		},
 	}

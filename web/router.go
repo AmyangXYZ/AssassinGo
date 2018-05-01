@@ -34,6 +34,7 @@ func SetRouter(app *sweetygo.SweetyGo) {
 
 	app.GET("/ws/info/tracert", tracert)
 	app.GET("/ws/info/port", portScan)
+	app.GET("/ws/info/subdomain", subDomainScan)
 	app.GET("/ws/info/dirb", dirBrute)
 
 	app.GET("/ws/attack/crawl", crawl)

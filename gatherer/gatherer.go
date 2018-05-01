@@ -16,6 +16,7 @@ func Init() map[string]Gatherer {
 		"honeypot":  NewHoneypotDetecter(),
 		"port":      NewPortScanner(),
 		"tracert":   NewTracer(),
+		"subdomain": NewSubDomainScan(),
 		"dirb":      NewDirBruter(),
 	}
 }
