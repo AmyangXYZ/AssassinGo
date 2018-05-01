@@ -3,20 +3,19 @@
 package gatherer
 
 import (
-	"io/ioutil"
 	"net"
 	"strings"
 	"time"
 
 	"../logger"
-	"../util"
+	"../utils"
 	"github.com/gorilla/websocket"
 )
 
 // PortScanner scans common used ports.
 // WebSocket API.
 type PortScanner struct {
-	mconn  *util.MuxConn
+	mconn  *utils.MuxConn
 	target string
 	// tcp, syn ...
 	method          string
@@ -29,7 +28,7 @@ type PortScanner struct {
 // NewPortScanner returns a PortScanner.
 func NewPortScanner() *PortScanner {
 	return &PortScanner{
-		mconn:           &util.MuxConn{},
+		mconn:           &utils.MuxConn{},
 		ports:           makePortsMap("./dict/Top100ports.txt"),
 		goroutinesCount: 100,
 		timeout:         3,
@@ -84,10 +83,14 @@ func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
 }
 
 func makePortsMap(file string) map[string]string {
+	data, err := utils.ReadFile(file)
+	if err != nil {
+		logger.Red.Println(err)
+		return map[string]string{}
+	}
+
 	portsMap := map[string]string{}
-	buf, _ := ioutil.ReadFile(file)
-	rows := strings.Split(string(buf), "\n")
-	for _, row := range rows {
+	for _, row := range data {
 		x := strings.Split(row, " ")
 		portsMap[x[0]] = x[1]
 	}

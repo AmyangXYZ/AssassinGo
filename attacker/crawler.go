@@ -10,14 +10,14 @@ import (
 	"time"
 
 	"../logger"
-	"../util"
+	"../utils"
 	"github.com/gorilla/websocket"
 )
 
 // Crawler crawls the website.
 // WebSocket API.
 type Crawler struct {
-	mconn       *util.MuxConn
+	mconn       *utils.MuxConn
 	host        string
 	visitedURLs sync.Map
 	emails      sync.Map
@@ -34,7 +34,7 @@ type Crawler struct {
 // NewCrawler returns a new crawler.
 func NewCrawler() *Crawler {
 	return &Crawler{
-		mconn:              &util.MuxConn{},
+		mconn:              &utils.MuxConn{},
 		extractURLsRe:      regexp.MustCompile(`(?s)<a[ t]+.*?href="(.*?)".*?>`),
 		replaceGETValuesRe: regexp.MustCompile(`(\?|\&)([^=]+)\=([^&]+)`),
 	}

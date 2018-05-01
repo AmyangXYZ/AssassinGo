@@ -8,14 +8,14 @@ import (
 	"strings"
 
 	"../logger"
-	"../util"
+	"../utils"
 	"github.com/gorilla/websocket"
 )
 
 // Intruder intrudes the target.
 // WebSocket API.
 type Intruder struct {
-	mconn           *util.MuxConn
+	mconn           *utils.MuxConn
 	target          string
 	header          string
 	intrudeType     string
@@ -27,7 +27,7 @@ type Intruder struct {
 // NewIntruder returns a new intruder.
 func NewIntruder() *Intruder {
 	return &Intruder{
-		mconn: &util.MuxConn{},
+		mconn: &utils.MuxConn{},
 		re:    regexp.MustCompile(`\$\$(.*?)\$\$`),
 	}
 }
@@ -50,7 +50,7 @@ func (i *Intruder) Report() map[string]interface{} {
 // Run implements Attacker interface.
 func (i *Intruder) Run() {
 	logger.Green.Println("Start Intruder...")
-	var s util.Signal
+	var s utils.Signal
 	stop := make(chan struct{}, 0)
 	blockers := make(chan struct{}, i.goroutinesCount)
 	go func() {

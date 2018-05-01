@@ -1,6 +1,8 @@
-package util
+package utils
 
 import (
+	"bufio"
+	"os"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -22,4 +24,18 @@ func (m *MuxConn) Send(v interface{}) error {
 // Signal pass signal from client to server.
 type Signal struct {
 	Stop int
+}
+
+// ReadFile reads file in lines.
+func ReadFile(f string) (data []string, err error) {
+	b, err := os.Open(f)
+	if err != nil {
+		return
+	}
+	defer b.Close()
+	scanner := bufio.NewScanner(b)
+	for scanner.Scan() {
+		data = append(data, scanner.Text())
+	}
+	return
 }

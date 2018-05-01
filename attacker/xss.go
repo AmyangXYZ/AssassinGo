@@ -6,14 +6,14 @@ import (
 	"strings"
 
 	"../logger"
-	"../util"
+	"../utils"
 	"github.com/gorilla/websocket"
 )
 
 // XSSChecker checks XSS vuls.
 // WebSocket API.
 type XSSChecker struct {
-	mconn         *util.MuxConn
+	mconn         *utils.MuxConn
 	fuzzableURLs  []string
 	payload       string
 	InjectableURL []string
@@ -22,7 +22,7 @@ type XSSChecker struct {
 // NewXSSChecker returns a XSS Checker.
 func NewXSSChecker() *XSSChecker {
 	return &XSSChecker{
-		mconn:   &util.MuxConn{},
+		mconn:   &utils.MuxConn{},
 		payload: `<svg/onload=alert(1)>`,
 	}
 }

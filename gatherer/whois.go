@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"../logger"
-	"github.com/bobesa/go-domain-util/domainutil"
+	"github.com/bobesa/go-domain-utils/domainutils"
 	whois "github.com/likexian/whois-go"
 	"github.com/likexian/whois-parser-go"
 )
@@ -24,7 +24,7 @@ func NewWhois() *Whois {
 // Set implements Gatherer interface.
 // Params should be {target string}.
 func (w *Whois) Set(v ...interface{}) {
-	w.target = domainutil.Domain(v[0].(string))
+	w.target = domainutils.Domain(v[0].(string))
 }
 
 // Report implements Gatherer interface.

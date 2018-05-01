@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"../logger"
-	"../util"
+	"../utils"
 	"github.com/aeden/traceroute"
 	"github.com/gorilla/websocket"
 	geoip2 "github.com/oschwald/geoip2-golang"
@@ -24,7 +24,7 @@ type node struct {
 // Tracer trace route to the target.
 // WebSocket API.
 type Tracer struct {
-	mconn *util.MuxConn
+	mconn *utils.MuxConn
 	host  string
 	route []node
 }
@@ -32,7 +32,7 @@ type Tracer struct {
 // NewTracer returns a new route tracer.
 func NewTracer() *Tracer {
 	return &Tracer{
-		mconn: &util.MuxConn{},
+		mconn: &utils.MuxConn{},
 		route: make([]node, 0),
 	}
 }

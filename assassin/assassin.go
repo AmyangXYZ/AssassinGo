@@ -8,7 +8,7 @@ import (
 	"../logger"
 	"../poc"
 	"../seeker"
-	"../util"
+	"../utils"
 )
 
 // Daddy is used for multiple users.
@@ -52,7 +52,7 @@ func (a *Assassin) SetTarget(target string) {
 
 // Sibling is a batch vul scanner.
 type Sibling struct {
-	MuxConn          util.MuxConn
+	MuxConn          utils.MuxConn
 	Siblings         []*Assassin
 	ExploitableHosts []string
 }
@@ -61,7 +61,7 @@ type Sibling struct {
 func NewSiblings() *Sibling {
 	return &Sibling{
 		Siblings: make([]*Assassin, 0),
-		MuxConn:  util.MuxConn{}}
+		MuxConn:  utils.MuxConn{}}
 }
 
 // SetTargets .

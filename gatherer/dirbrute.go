@@ -4,18 +4,17 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"../logger"
-	"../util"
+	"../utils"
 	"github.com/gorilla/websocket"
 )
 
 // DirBruter brute force the dir.
 // WebSocket API.
 type DirBruter struct {
-	mconn           *util.MuxConn
+	mconn           *utils.MuxConn
 	target          string
 	payloads        []string
 	goroutinesCount int
@@ -23,9 +22,14 @@ type DirBruter struct {
 
 // NewDirBruter returns a new dirbruter.
 func NewDirBruter() *DirBruter {
+	p, err := utils.ReadFile("/dict/dir-php.txt")
+	if err != nil {
+		logger.Red.Println(err)
+		return nil
+	}
 	return &DirBruter{
-		mconn:    &util.MuxConn{},
-		payloads: readPayloadsFromFile("/dict/dir-php.txt"),
+		mconn:    &utils.MuxConn{},
+		payloads: p,
 	}
 }
 
@@ -45,7 +49,7 @@ func (d *DirBruter) Report() map[string]interface{} {
 // Run implements Gatherer interface,
 func (d *DirBruter) Run() {
 	logger.Green.Println("Brute Force Dir")
-	var s util.Signal
+	var s utils.Signal
 	stop := make(chan struct{}, 0)
 	blockers := make(chan struct{}, d.goroutinesCount)
 	go func() {
@@ -92,10 +96,4 @@ func (d *DirBruter) fetch(path string, blocker chan struct{}) {
 		"len":    strconv.Itoa(len(string(body))),
 	}
 	d.mconn.Send(ret)
-}
-
-func readPayloadsFromFile(file string) []string {
-	buf, _ := ioutil.ReadFile(file)
-	p := strings.Split(string(buf), "\n")
-	return p
 }
