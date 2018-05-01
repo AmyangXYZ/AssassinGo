@@ -15,7 +15,7 @@ function TestSetTargetHandler() {
     $.ajax({
         url: "/api/target",
         type: "POST",
-        data: "target=google.com",
+        data: "target=www.sut56.com",
         dataType: "JSON",
     }).done(function (result) {
         console.log(result.data)
@@ -119,6 +119,7 @@ function TestSubDomainHandler() {
     socket.onclose = function () {
         console.log("finished")
     }
+    return socket
 }
 
 function TestDirbHandler() {
