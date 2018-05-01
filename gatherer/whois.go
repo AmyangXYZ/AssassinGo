@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"../logger"
+	"github.com/bobesa/go-domain-util/domainutil"
 	whois "github.com/likexian/whois-go"
 	"github.com/likexian/whois-parser-go"
-	"github.com/weppos/publicsuffix-go/publicsuffix"
 )
 
 // Whois queries the domain information.
@@ -24,7 +24,7 @@ func NewWhois() *Whois {
 // Set implements Gatherer interface.
 // Params should be {target string}.
 func (w *Whois) Set(v ...interface{}) {
-	w.target = v[0].(string)
+	w.target = domainutil.Domain(v[0].(string))
 }
 
 // Report implements Gatherer interface.
@@ -35,12 +35,8 @@ func (w *Whois) Report() map[string]interface{} {
 // Run implements Gatherer interface.
 func (w *Whois) Run() {
 	logger.Green.Println("Whois Information")
-	domain, err := publicsuffix.Domain(w.target)
-	if err != nil {
-		logger.Red.Println(err)
-		return
-	}
-	whoisRaw, err := whois.Whois(domain)
+
+	whoisRaw, err := whois.Whois(w.target)
 	if err != nil {
 		logger.Red.Println(err)
 		return

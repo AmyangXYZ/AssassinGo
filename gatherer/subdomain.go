@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net"
 	"reflect"
+	"time"
 
 	"../logger"
 	"../util"
@@ -20,6 +21,11 @@ import (
 type SubDomainScan struct {
 	mconn      *util.MuxConn
 	target     string
+	m          *brutemachine.Machine
+	wordlist   string // Wordlist file to use for enumeration.
+	consumers  int    // Number of concurrent consumers.
+	forceTld   bool   // Extract top level from provided domain
+	wildcard   []string
 	subdomains []string
 }
 
@@ -34,32 +40,18 @@ type Result struct {
 // NewSubDomainScan returns a new SubDomainScan.
 func NewSubDomainScan() *SubDomainScan {
 	return &SubDomainScan{
-		mconn: &util.MuxConn{},
+		wordlist:  "/dict/names.txt",
+		consumers: 20,
+		forceTld:  true,
+		mconn:     &util.MuxConn{},
 	}
 }
-
-var (
-	m *brutemachine.Machine
-
-	wordlist  = "/dict/names.txt" // Wordlist file to use for enumeration.
-	consumers = 8                 // Number of concurrent consumers.
-	forceTld  = true              // Extract top level from provided domain
-
-	wildcard []string
-)
 
 // Set implements Gatherer interface.
 // Params should be {conn *websocket.Conn, target, goroutinesCount int}
 func (s *SubDomainScan) Set(v ...interface{}) {
 	s.mconn.Conn = v[0].(*websocket.Conn)
 	s.target = domainutil.Domain(v[1].(string))
-	hasWildcard := false
-
-	hasWildcard, wildcard, _ = s.detectWildcard()
-
-	if hasWildcard {
-		logger.Blue.Printf("Detected Wildcard : %v\n\n", wildcard)
-	}
 }
 
 // Report implements Gatherer interface.
@@ -72,14 +64,34 @@ func (s *SubDomainScan) Report() map[string]interface{} {
 // Run implements Gatherer interface,
 func (s *SubDomainScan) Run() {
 	logger.Green.Println("Enumerating Subdomain with DNS Search...")
-
-	m = brutemachine.New(consumers, wordlist, s.DoRequest, s.OnResult)
-	if err := m.Start(); err != nil {
-		logger.Red.Println(err)
-		return
+	done := make(chan struct{})
+	hasWildcard := false
+	hasWildcard, s.wildcard, _ = s.detectWildcard()
+	if hasWildcard {
+		logger.Blue.Printf("Detected Wildcard : %v\n", s.wildcard)
 	}
+	logger.Blue.Println("biu1")
 
-	m.Wait()
+	s.m = brutemachine.New(s.consumers, s.wordlist, s.DoRequest, s.OnResult)
+	go func() {
+		if err := s.m.Start(); err != nil {
+			logger.Red.Println(err)
+			return
+		}
+		s.m.Wait()
+		done <- struct{}{}
+	}()
+
+	for {
+		select {
+		case <-done:
+			logger.Blue.Println("All done")
+			return
+		case <-time.After(10 * time.Second):
+			logger.Blue.Println("Timeout.")
+			return
+		}
+	}
 }
 
 // Lookup a random host to determine if a wildcard A record exists
@@ -110,7 +122,7 @@ func (s *SubDomainScan) DoRequest(sub string) interface{} {
 	thisresult := Result{}
 
 	if addrs, err := net.LookupHost(hostname); err == nil {
-		if reflect.DeepEqual(addrs, wildcard) {
+		if reflect.DeepEqual(addrs, s.wildcard) {
 			// This is likely a wildcard entry, skip it
 			return nil
 		}
