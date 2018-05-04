@@ -149,7 +149,7 @@ func subDomainScan(ctx *sweetygo.Context) {
 
 type dirbMsg struct {
 	// Payload   string `json:"payload"`
-	GortCount int `json:"gort_count"`
+	Concurrency int `json:"concurrency"`
 }
 
 func dirBrute(ctx *sweetygo.Context) {
@@ -160,7 +160,7 @@ func dirBrute(ctx *sweetygo.Context) {
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
 	m := dirbMsg{}
 	conn.ReadJSON(&m)
-	a.Gatherers["dirb"].Set(conn, a.Target, m.GortCount)
+	a.Gatherers["dirb"].Set(conn, a.Target, m.Concurrency)
 	a.Gatherers["dirb"].Run()
 	conn.Close()
 }
@@ -200,9 +200,9 @@ func checkXSS(ctx *sweetygo.Context) {
 }
 
 type intruderMsg struct {
-	Header    string `json:"header"`
-	Payload   string `json:"payload"`
-	GortCount int    `json:"gort_count"`
+	Header      string `json:"header"`
+	Payload     string `json:"payload"`
+	Concurrency int    `json:"concurrency"`
 }
 
 func intrude(ctx *sweetygo.Context) {
@@ -218,16 +218,16 @@ func intrude(ctx *sweetygo.Context) {
 		conn.Close()
 		return
 	}
-	a.Attackers["intruder"].Set(conn, a.Target, m.Header, m.Payload, m.GortCount)
+	a.Attackers["intruder"].Set(conn, a.Target, m.Header, m.Payload, m.Concurrency)
 	a.Attackers["intruder"].Run()
 	conn.Close()
 }
 
 type sshMsg struct {
-	Port       string `json:"port"`
-	UserList   string `json:"user_list"`
-	PasswdList string `json:"passwd_list"`
-	GortCount  int    `json:"gort_count"`
+	Port        string `json:"port"`
+	UserList    string `json:"user_list"`
+	PasswdList  string `json:"passwd_list"`
+	Concurrency int    `json:"concurrency"`
 }
 
 func sshBrute(ctx *sweetygo.Context) {
@@ -243,7 +243,7 @@ func sshBrute(ctx *sweetygo.Context) {
 		conn.Close()
 		return
 	}
-	a.Attackers["ssh"].Set(conn, a.Target, m.Port, m.UserList, m.PasswdList, m.GortCount)
+	a.Attackers["ssh"].Set(conn, a.Target, m.Port, m.UserList, m.PasswdList, m.Concurrency)
 	a.Attackers["ssh"].Run()
 	conn.Close()
 }
@@ -305,7 +305,7 @@ func runPoC(ctx *sweetygo.Context) {
 }
 
 type pocMsg struct {
-	GortCount int `json:"gort_count"`
+	Concurrency int `json:"concurrency"`
 }
 
 func runSiblingPoC(ctx *sweetygo.Context) {
@@ -325,7 +325,7 @@ func runSiblingPoC(ctx *sweetygo.Context) {
 	m := pocMsg{}
 	conn.ReadJSON(&m)
 
-	blockers := make(chan struct{}, m.GortCount)
+	blockers := make(chan struct{}, m.Concurrency)
 	for _, a := range sibling.Siblings {
 		blockers <- struct{}{}
 		go func(a *assassin.Assassin, blocker chan struct{}) {

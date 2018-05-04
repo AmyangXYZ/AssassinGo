@@ -126,7 +126,7 @@ function TestDirbHandler() {
     var socket = new WebSocket("ws://127.0.0.1:8000/ws/info/dirb")
     socket.onopen = function(e) {
         var msg = {
-            gort_count: 80,
+            concurrency: 80,
             dict: "php",
         }
         socket.send(JSON.stringify(msg))
@@ -176,7 +176,7 @@ function TestIntruderHandler() {
             header: `GET /$$1$$ HTTP/1.1
 Host: 47.94.136.141`,
             payload: "1,2,3",
-            gort_count: 5,
+            concurrency: 5,
         }
         socket.send(JSON.stringify(msg))
     }
@@ -195,7 +195,7 @@ function TestSSHBruterHandler() {
             port:"22",
             user_list:"/dict/ssh-user.txt",
             passwd_list:"/dict/password.txt",
-            gort_count:5,
+            concurrency:5,
         }
         socket.send(JSON.stringify(msg))
     }
@@ -229,7 +229,7 @@ function TestRunDadPoCHandler() {
     var socket = new WebSocket("ws://127.0.0.1:8000/ws/poc/drupal-rce")
     socket.onopen = function(e) {
         var msg = {
-            gort_count: 10,
+            concurrency: 10,
         }
         socket.send(JSON.stringify(msg))
     }

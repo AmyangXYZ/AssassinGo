@@ -46,14 +46,14 @@ Path | Func | Params | Return
 /ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
 /ws/info/subdomain | enmu subdomain | nil | {"subdomain":"earth.google.com"}
-/ws/info/dirb | brute force dir | {"gort_count":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}
+/ws/info/dirb | brute force dir | {"concurrency":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}
 /ws/attack/crawl | crawl paramed urls | {"max_depth": 4} | {"url": "example.com/?id=1"}
 /ws/attack/sqli | check sqli | nil | {"sqli_url": "example.com/?id=1}
 /ws/attack/xss | check xss | nil | {"xss_url": "example.com/?id=1}
-/ws/attack/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "gort_count": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
-/ws/attack/ssh | brute force ssh | {"port":22,"user_list":"/dict/ssh-user-common.txt", "passwd_list":"/dict/password.txt", "gort_count":40} | {"user":"root","passwd":"biubiubiu"}
+/ws/attack/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "concurrency": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
+/ws/attack/ssh | brute force ssh | {"port":22,"user_list":"/dict/ssh-user-common.txt", "passwd_list":"/dict/password.txt", "concurrency":40} | {"user":"root","passwd":"biubiubiu"}
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
-/ws/poc/:poc | run poc | {gort_count:10} | {"exploitable_host": "example.com"}
+/ws/poc/:poc | run poc | {concurrency:10} | {"exploitable_host": "example.com"}
 
 [Example Testing JS file](./web/static/api-test.js)
 
