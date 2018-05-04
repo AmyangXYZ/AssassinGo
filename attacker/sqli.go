@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/AmyangXYZ/barbarian"
+
 	"../logger"
 	"../utils"
 	"github.com/gorilla/websocket"
@@ -45,35 +47,30 @@ func (bs *BasicSQLi) Report() map[string]interface{} {
 // Run implements Attacker interface.
 func (bs *BasicSQLi) Run() {
 	logger.Green.Println("Basic SQLi Checking...")
-	bs.InjectableURL = []string{}
-
-	blockers := make(chan struct{}, len(bs.fuzzableURLs))
-	for _, URL := range bs.fuzzableURLs {
-		blockers <- struct{}{}
-		go bs.check(URL, blockers)
-	}
-
-	// Wait for all goroutines to finish.
-	for i := 0; i < cap(blockers); i++ {
-		blockers <- struct{}{}
-	}
+	bb := barbarian.New(bs.check, bs.onResult, bs.fuzzableURLs, 20)
+	bb.Run()
 	if len(bs.InjectableURL) == 0 {
 		logger.Blue.Println("no sqli vuls found")
 	}
 }
 
-func (bs *BasicSQLi) check(URL string, blocker chan struct{}) {
-	defer func() { <-blocker }()
+func (bs *BasicSQLi) onResult(res interface{}) {
+	logger.Blue.Println(res)
+	ret := map[string]string{
+		"sqli_url": res.(string),
+	}
+	bs.mconn.Send(ret)
+	bs.InjectableURL = append(bs.InjectableURL, res.(string))
+}
+
+func (bs *BasicSQLi) check(URL string) interface{} {
 	body0 := bs.fetch(URL + bs.payload0)
 	body1 := bs.fetch(URL + bs.payload1)
 	if len(body0) != len(body1) {
-		logger.Blue.Println(URL)
-		ret := map[string]string{
-			"sqli_url": URL,
-		}
-		bs.mconn.Send(ret)
-		bs.InjectableURL = append(bs.InjectableURL, URL)
+		return URL
+
 	}
+	return nil
 }
 
 func (bs *BasicSQLi) fetch(URL string) string {

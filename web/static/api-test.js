@@ -126,7 +126,7 @@ function TestDirbHandler() {
     var socket = new WebSocket("ws://127.0.0.1:8000/ws/info/dirb")
     socket.onopen = function(e) {
         var msg = {
-            gort_count: 20,
+            gort_count: 80,
             dict: "php",
         }
         socket.send(JSON.stringify(msg))

@@ -13,14 +13,14 @@ import (
 // SSHBruter brute force the ssh service.
 // AJAX API.
 type SSHBruter struct {
-	mconn           *utils.MuxConn
-	target          string
-	userList        []string
-	passwdList      []string
-	port            string
-	goroutinesCount int
-	Users           []string
-	Passwds         []string
+	mconn       *utils.MuxConn
+	target      string
+	userList    []string
+	passwdList  []string
+	port        string
+	concurrency int
+	Users       []string
+	Passwds     []string
 }
 
 // NewSSHBruter returns a new ssh bruter.
@@ -30,26 +30,14 @@ func NewSSHBruter() *SSHBruter {
 
 // Set implements Attacker interface.
 // Params should be {target, port string,
-//     userlist, passwdlist string, goroutinesCount int}
+//     userlist, passwdlist string, concurrency int}
 func (s *SSHBruter) Set(v ...interface{}) {
 	s.mconn.Conn = v[0].(*websocket.Conn)
 	s.target = v[1].(string)
 	s.port = v[2].(string)
-
-	ul, err := utils.ReadFile(v[3].(string))
-	if err != nil {
-		logger.Red.Println(err)
-		return
-	}
-	s.userList = ul
-
-	pl, err := utils.ReadFile(v[4].(string))
-	if err != nil {
-		logger.Red.Println(err)
-		return
-	}
-	s.passwdList = pl
-	s.goroutinesCount = v[5].(int)
+	s.userList = utils.ReadFile(v[3].(string))
+	s.passwdList = utils.ReadFile(v[4].(string))
+	s.concurrency = v[5].(int)
 }
 
 // Report implements Attacker interface
@@ -64,7 +52,7 @@ func (s *SSHBruter) Report() map[string]interface{} {
 func (s *SSHBruter) Run() {
 	logger.Green.Println("Brute Forcing SSH")
 
-	blockers := make(chan struct{}, s.goroutinesCount)
+	blockers := make(chan struct{}, s.concurrency)
 	done := make(chan struct{})
 Loop:
 	for _, u := range s.userList {

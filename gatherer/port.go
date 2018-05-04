@@ -9,6 +9,7 @@ import (
 
 	"../logger"
 	"../utils"
+	"github.com/AmyangXYZ/barbarian"
 	"github.com/gorilla/websocket"
 )
 
@@ -18,20 +19,20 @@ type PortScanner struct {
 	mconn  *utils.MuxConn
 	target string
 	// tcp, syn ...
-	method          string
-	ports           map[string]string
-	goroutinesCount int
-	timeout         int
-	OpenPorts       []string
+	method      string
+	ports       map[string]string
+	concurrency int
+	timeout     int
+	OpenPorts   []string
 }
 
 // NewPortScanner returns a PortScanner.
 func NewPortScanner() *PortScanner {
 	return &PortScanner{
-		mconn:           &utils.MuxConn{},
-		ports:           makePortsMap("./dict/Top100ports.txt"),
-		goroutinesCount: 100,
-		timeout:         3,
+		mconn:       &utils.MuxConn{},
+		ports:       makePortsMap("./dict/Top100ports.txt"),
+		concurrency: 100,
+		timeout:     3,
 	}
 }
 
@@ -53,44 +54,37 @@ func (ps *PortScanner) Report() map[string]interface{} {
 // Run implements the Gatherer interface.
 func (ps *PortScanner) Run() {
 	logger.Green.Println("Ports Scanning...")
-	ps.OpenPorts = []string{}
-
-	blockers := make(chan struct{}, ps.goroutinesCount)
-	for port := range ps.ports {
-		blockers <- struct{}{}
-		go ps.checkPort(port, blockers)
+	portNumbers := []string{}
+	for p := range ps.ports {
+		portNumbers = append(portNumbers, p)
 	}
-
-	// Wait for all goroutines to finish.
-	for i := 0; i < cap(blockers); i++ {
-		blockers <- struct{}{}
-	}
+	bb := barbarian.New(ps.checkPort, ps.onResult, portNumbers, ps.concurrency)
+	bb.Run()
 }
 
-func (ps *PortScanner) checkPort(port string, blocker chan struct{}) {
-	defer func() { <-blocker }()
+func (ps *PortScanner) onResult(res interface{}) {
+	port := res.(string)
+	logger.Blue.Printf("%-5s -  %s \n", port, ps.ports[port])
+	ret := map[string]interface{}{
+		"port":    port,
+		"service": ps.ports[port],
+	}
+	ps.mconn.Send(ret)
+	ps.OpenPorts = append(ps.OpenPorts, port)
+}
+
+func (ps *PortScanner) checkPort(port string) interface{} {
 	connection, err := net.DialTimeout("tcp", ps.target+":"+port, time.Duration(ps.timeout)*time.Second)
 	if err == nil {
-		logger.Blue.Printf("%-5s -  %s \n", port, ps.ports[port])
 		connection.Close()
-		ret := map[string]interface{}{
-			"port":    port,
-			"service": ps.ports[port],
-		}
-		ps.mconn.Send(ret)
-		ps.OpenPorts = append(ps.OpenPorts, port)
+		return port
 	}
+	return nil
 }
 
 func makePortsMap(file string) map[string]string {
-	data, err := utils.ReadFile(file)
-	if err != nil {
-		logger.Red.Println(err)
-		return map[string]string{}
-	}
-
 	portsMap := map[string]string{}
-	for _, row := range data {
+	for _, row := range utils.ReadFile(file) {
 		x := strings.Split(row, " ")
 		portsMap[x[0]] = x[1]
 	}

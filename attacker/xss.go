@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/AmyangXYZ/barbarian"
+
 	"../logger"
 	"../utils"
 	"github.com/gorilla/websocket"
@@ -44,35 +46,28 @@ func (x *XSSChecker) Report() map[string]interface{} {
 // Run implements Attacker interface.
 func (x *XSSChecker) Run() {
 	logger.Green.Println("Basic XSS Checking...")
-	x.InjectableURL = []string{}
-
-	blockers := make(chan struct{}, len(x.fuzzableURLs))
-	for _, URL := range x.fuzzableURLs {
-		blockers <- struct{}{}
-		go x.check(URL, blockers)
-	}
-
-	// Wait for all goroutines to finish.
-	for i := 0; i < cap(blockers); i++ {
-		blockers <- struct{}{}
-	}
-
+	bb := barbarian.New(x.check, x.onResult, x.fuzzableURLs, 20)
+	bb.Run()
 	if len(x.InjectableURL) == 0 {
 		logger.Blue.Println("no xss vuls found")
 	}
 }
 
-func (x *XSSChecker) check(URL string, blocker chan struct{}) {
-	defer func() { <-blocker }()
+func (x *XSSChecker) onResult(res interface{}) {
+	logger.Blue.Println(res.(string) + x.payload)
+	ret := map[string]string{
+		"xss_url": res.(string),
+	}
+	x.mconn.Send(ret)
+	x.InjectableURL = append(x.InjectableURL, res.(string))
+}
+
+func (x *XSSChecker) check(URL string) interface{} {
 	body := x.fetch(URL + x.payload)
 	if strings.Contains(body, x.payload) {
-		logger.Blue.Println(URL + x.payload)
-		ret := map[string]string{
-			"xss_url": URL,
-		}
-		x.mconn.Send(ret)
-		x.InjectableURL = append(x.InjectableURL, URL)
+		return URL
 	}
+	return nil
 }
 
 func (x *XSSChecker) fetch(URL string) string {

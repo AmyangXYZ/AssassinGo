@@ -1,5 +1,3 @@
-// Adapted from https://github.com/evilsocket/dnssearch
-
 package gatherer
 
 import (
@@ -10,6 +8,8 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/AmyangXYZ/barbarian"
+
 	"../logger"
 	"../utils"
 	"github.com/bobesa/go-domain-util/domainutil"
@@ -18,15 +18,15 @@ import (
 )
 
 // SubDomainScan brute force the dir.
+// WebSocker API.
 type SubDomainScan struct {
-	mconn      *utils.MuxConn
-	target     string
-	m          *brutemachine.Machine
-	wordlist   string // Wordlist file to use for enumeration.
-	consumers  int    // Number of concurrent consumers.
-	forceTld   bool   // Extract top level from provided domain
-	wildcard   []string
-	subdomains []string
+	mconn       *utils.MuxConn
+	target      string
+	m           *brutemachine.Machine
+	wordlist    []string
+	concurrency int
+	wildcard    []string
+	Subdomains  []string
 }
 
 // Result to show what we've found
@@ -40,15 +40,14 @@ type Result struct {
 // NewSubDomainScan returns a new SubDomainScan.
 func NewSubDomainScan() *SubDomainScan {
 	return &SubDomainScan{
-		wordlist:  "/dict/names.txt",
-		consumers: 20,
-		forceTld:  true,
-		mconn:     &utils.MuxConn{},
+		mconn:       &utils.MuxConn{},
+		wordlist:    utils.ReadFile("/dict/names.txt"),
+		concurrency: 20,
 	}
 }
 
 // Set implements Gatherer interface.
-// Params should be {conn *websocket.Conn, target, goroutinesCount int}
+// Params should be {conn *websocket.Conn, target, concurrency int}
 func (s *SubDomainScan) Set(v ...interface{}) {
 	s.mconn.Conn = v[0].(*websocket.Conn)
 	s.target = domainutil.Domain(v[1].(string))
@@ -57,41 +56,28 @@ func (s *SubDomainScan) Set(v ...interface{}) {
 // Report implements Gatherer interface.
 func (s *SubDomainScan) Report() map[string]interface{} {
 	return map[string]interface{}{
-		"subdomains": s.subdomains,
+		"subdomains": s.Subdomains,
 	}
 }
 
 // Run implements Gatherer interface,
 func (s *SubDomainScan) Run() {
 	logger.Green.Println("Enumerating Subdomain with DNS Search...")
-	done := make(chan struct{})
 	hasWildcard := false
 	hasWildcard, s.wildcard, _ = s.detectWildcard()
 	if hasWildcard {
 		logger.Blue.Printf("Detected Wildcard : %v\n", s.wildcard)
 	}
-	logger.Blue.Println("biu1")
 
-	s.m = brutemachine.New(s.consumers, s.wordlist, s.DoRequest, s.OnResult)
+	bb := barbarian.New(s.DoRequest, s.OnResult, s.wordlist, s.concurrency)
+
+	// dns lookup is easy to go out of time.
 	go func() {
-		if err := s.m.Start(); err != nil {
-			logger.Red.Println(err)
-			return
-		}
-		s.m.Wait()
-		done <- struct{}{}
+		time.Sleep(15 * time.Second)
+		bb.Stop()
 	}()
 
-	for {
-		select {
-		case <-done:
-			logger.Blue.Println("All done")
-			return
-		case <-time.After(10 * time.Second):
-			logger.Blue.Println("Timeout.")
-			return
-		}
-	}
+	bb.Run()
 }
 
 // Lookup a random host to determine if a wildcard A record exists
@@ -146,7 +132,7 @@ func (s *SubDomainScan) OnResult(res interface{}) {
 	}
 
 	logger.Blue.Println(result.hostname)
-	s.subdomains = append(s.subdomains, result.hostname)
+	s.Subdomains = append(s.Subdomains, result.hostname)
 	ret := map[string]interface{}{
 		"subdomain": result.hostname,
 	}

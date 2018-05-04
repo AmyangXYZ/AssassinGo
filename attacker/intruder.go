@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/AmyangXYZ/barbarian"
+
 	"../logger"
 	"../utils"
 	"github.com/gorilla/websocket"
@@ -15,13 +17,13 @@ import (
 // Intruder intrudes the target.
 // WebSocket API.
 type Intruder struct {
-	mconn           *utils.MuxConn
-	target          string
-	header          string
-	intrudeType     string
-	re              *regexp.Regexp
-	payloads        []string
-	goroutinesCount int
+	mconn       *utils.MuxConn
+	target      string
+	header      string
+	intrudeType string
+	re          *regexp.Regexp
+	payloads    []string
+	concurrency int
 }
 
 // NewIntruder returns a new intruder.
@@ -33,13 +35,13 @@ func NewIntruder() *Intruder {
 }
 
 // Set sets params for intruder.
-// Params should be {conn *websocket.Conn, target, header, payload string, goroutinesCount int}
+// Params should be {conn *websocket.Conn, target, header, payload string, concurrency int}
 func (i *Intruder) Set(v ...interface{}) {
 	i.mconn.Conn = v[0].(*websocket.Conn)
 	i.target = v[1].(string)
 	i.header = v[2].(string)
 	i.payloads = strings.Split(v[3].(string), "\n")
-	i.goroutinesCount = v[4].(int)
+	i.concurrency = v[4].(int)
 }
 
 // Report implements Attacker interface.
@@ -50,45 +52,35 @@ func (i *Intruder) Report() map[string]interface{} {
 // Run implements Attacker interface.
 func (i *Intruder) Run() {
 	logger.Green.Println("Start Intruder...")
+	bb := barbarian.New(i.attack, i.onResult, i.payloads, i.concurrency)
 	var s utils.Signal
-	stop := make(chan struct{}, 0)
-	blockers := make(chan struct{}, i.goroutinesCount)
 	go func() {
 		i.mconn.Conn.ReadJSON(&s)
 		if s.Stop == 1 {
-			stop <- struct{}{}
+			bb.Stop()
 		}
 	}()
-
-loop:
-	for _, p := range i.payloads {
-		select {
-		default:
-			blockers <- struct{}{}
-			go i.attack(p, blockers)
-		case <-stop:
-			break loop
-		}
-	}
-
-	for i := 0; i < cap(blockers); i++ {
-		blockers <- struct{}{}
-	}
+	bb.Run()
 }
 
-func (i *Intruder) attack(payload string, blocker chan struct{}) {
-	defer func() { <-blocker }()
+func (i *Intruder) onResult(res interface{}) {
+	ret := res.(map[string]string)
+	logger.Blue.Println("Payload:", ret["payload"], "Status:",
+		ret["status"], "len:", ret["len"])
+	i.mconn.Send(res)
+}
+
+func (i *Intruder) attack(payload string) interface{} {
 	resp := i.fetch(payload)
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	logger.Blue.Println("Payload:", payload, "Status:", resp.StatusCode, "len:", len(string(body)))
-	ret := map[string]string{
+	res := map[string]string{
 		"payload":     payload,
 		"resp_status": strconv.Itoa(resp.StatusCode),
 		"resp_len":    strconv.Itoa(len(string(body))),
 	}
-	i.mconn.Send(ret)
+	return res
 }
 
 func (i *Intruder) fetch(payload string) *http.Response {

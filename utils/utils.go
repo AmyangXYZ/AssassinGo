@@ -5,6 +5,7 @@ import (
 	"os"
 	"sync"
 
+	"../logger"
 	"github.com/gorilla/websocket"
 )
 
@@ -27,9 +28,10 @@ type Signal struct {
 }
 
 // ReadFile reads file in lines.
-func ReadFile(f string) (data []string, err error) {
+func ReadFile(f string) (data []string) {
 	b, err := os.Open(f)
 	if err != nil {
+		logger.Red.Println(err)
 		return
 	}
 	defer b.Close()

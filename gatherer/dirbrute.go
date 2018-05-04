@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/AmyangXYZ/barbarian"
+
 	"../logger"
 	"../utils"
 	"github.com/gorilla/websocket"
@@ -14,31 +16,26 @@ import (
 // DirBruter brute force the dir.
 // WebSocket API.
 type DirBruter struct {
-	mconn           *utils.MuxConn
-	target          string
-	payloads        []string
-	goroutinesCount int
+	mconn       *utils.MuxConn
+	target      string
+	payloads    []string
+	concurrency int
 }
 
 // NewDirBruter returns a new dirbruter.
 func NewDirBruter() *DirBruter {
-	p, err := utils.ReadFile("/dict/dir-php.txt")
-	if err != nil {
-		logger.Red.Println(err)
-		return nil
-	}
 	return &DirBruter{
 		mconn:    &utils.MuxConn{},
-		payloads: p,
+		payloads: utils.ReadFile("/dict/dir-php.txt"),
 	}
 }
 
 // Set implements Gatherer interface.
-// Params should be {conn *websocket.Conn, target, dic string, goroutinesCount int}
+// Params should be {conn *websocket.Conn, target, dic string, concurrency int}
 func (d *DirBruter) Set(v ...interface{}) {
 	d.mconn.Conn = v[0].(*websocket.Conn)
 	d.target = v[1].(string)
-	d.goroutinesCount = v[2].(int)
+	d.concurrency = v[2].(int)
 }
 
 // Report implements Gatherer interface.
@@ -50,50 +47,38 @@ func (d *DirBruter) Report() map[string]interface{} {
 func (d *DirBruter) Run() {
 	logger.Green.Println("Brute Force Dir")
 	var s utils.Signal
-	stop := make(chan struct{}, 0)
-	blockers := make(chan struct{}, d.goroutinesCount)
+	bb := barbarian.New(d.fetch, d.onResult, d.payloads, d.concurrency)
 	go func() {
 		d.mconn.Conn.ReadJSON(&s)
 		if s.Stop == 1 {
-			stop <- struct{}{}
+			bb.Stop()
 		}
 	}()
-
-loop:
-	for _, p := range d.payloads {
-		select {
-		default:
-			blockers <- struct{}{}
-			go d.fetch(p, blockers)
-		case <-stop:
-			break loop
-		}
-	}
-
-	for i := 0; i < cap(blockers); i++ {
-		blockers <- struct{}{}
-	}
+	bb.Run()
 }
 
-func (d *DirBruter) fetch(path string, blocker chan struct{}) {
-	defer func() { <-blocker }()
+func (d *DirBruter) onResult(res interface{}) {
+	ret := res.(map[string]string)
+	logger.Blue.Println("Path:", ret["path"],
+		"Status:", ret["status"], "len:", ret["len"])
+	d.mconn.Send(ret)
+}
+
+func (d *DirBruter) fetch(path string) interface{} {
 	client := &http.Client{Timeout: 5 * time.Second}
 	req, _ := http.NewRequest("GET", "http://"+d.target+path, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0")
 	resp, err := client.Do(req)
-	if err != nil {
-		return
+	if err != nil || resp.StatusCode == 404 {
+		return nil
 	}
-	if resp.StatusCode == 404 {
-		return
-	}
+
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	logger.Blue.Println("Path:", path, "Status:", resp.StatusCode, "len:", len(string(body)))
 	ret := map[string]string{
 		"path":   path,
 		"status": strconv.Itoa(resp.StatusCode),
 		"len":    strconv.Itoa(len(string(body))),
 	}
-	d.mconn.Send(ret)
+	return ret
 }
