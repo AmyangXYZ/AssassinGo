@@ -45,6 +45,7 @@ func signin(ctx *sweetygo.Context) {
 			s := assassin.NewSiblings()
 			daddy.Son[username] = a
 			daddy.Sibling[username] = s
+			logger.Green.Println(username, "Has Signed In")
 			return
 		}
 		ctx.JSON(200, 0, "Username or Password Error.", nil)
@@ -74,6 +75,17 @@ func basicInfo(ctx *sweetygo.Context) {
 	a.Gatherers["basicInfo"].Set(a.Target)
 	a.Gatherers["basicInfo"].Run()
 	ret := a.Gatherers["basicInfo"].Report()
+	ctx.JSON(200, 1, "success", ret)
+}
+
+func bypassCF(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
+	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
+	a := daddy.Son[usr]
+	a.Gatherers["bypassCF"].Set(a.Target)
+	a.Gatherers["bypassCF"].Run()
+	ret := a.Gatherers["bypassCF"].Report()
 	ctx.JSON(200, 1, "success", ret)
 }
 

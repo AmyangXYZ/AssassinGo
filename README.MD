@@ -32,7 +32,8 @@ Just for learn.
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
 /api/target | POST | set a target | target=xxx OR targets=t1,t2... | nil
-/api/info/basic | GET | get ip and webserver | nil | {data:{"ip": "192.168.1.1", "webserver": "nginx"}}
+/api/info/basic | GET | get ip and retrieve security headers | nil | {data:{"ip": "192.168.1.1", "webserver": "nginx","click_jacking_protection":true,"content_security_policy":false,"strict_transport_security":false,"x_content_type_options":true}
+/api/info/bypasscf | GET | find real ip behind cloudflare | nil | {"real_ip":"123.123.123.123"}
 /api/info/cms | GET | detect cms | nil | {data:{"cms": "wordpress"}}
 /api/info/honeypot | GET | get ip and webserver | nil | {data:{"score": "0.3"}}
 /api/info/whois | GET | whois | nil | {data:{"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}}

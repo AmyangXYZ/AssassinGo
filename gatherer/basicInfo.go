@@ -27,7 +27,7 @@ func NewBasicInfo() *BasicInfo {
 }
 
 // Set implements Gatherer interface.
-// Params should be {conn *websocket.Conn, target string}
+// Params should be {target string}
 func (bi *BasicInfo) Set(v ...interface{}) {
 	bi.target = v[0].(string)
 }

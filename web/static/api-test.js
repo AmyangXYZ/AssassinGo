@@ -32,6 +32,16 @@ function TestBasicInfoHandler() {
     })
 }
 
+function TestBypassCFHandler() {
+    $.ajax({
+        url: "/api/info/bypasscf",
+        type: "GET",
+        dataType: "JSON",
+    }).done(function (result) {
+        console.log(result.data)
+    })
+}
+
 function TestCMSDetectHandler() {
     $.ajax({
         url: "/api/info/cms",

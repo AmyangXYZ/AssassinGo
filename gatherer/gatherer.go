@@ -11,6 +11,7 @@ type Gatherer interface {
 func Init() map[string]Gatherer {
 	return map[string]Gatherer{
 		"basicInfo": NewBasicInfo(),
+		"bypassCF":  NewCFBypass(),
 		"whois":     NewWhois(),
 		"cms":       NewCMSDetector(),
 		"honeypot":  NewHoneypotDetecter(),

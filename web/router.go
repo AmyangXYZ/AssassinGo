@@ -28,6 +28,7 @@ func SetRouter(app *sweetygo.SweetyGo) {
 	app.POST("/api/target", setTarget)
 
 	app.GET("/api/info/basic", basicInfo)
+	app.GET("/api/info/bypasscf", bypassCF)
 	app.GET("/api/info/whois", whois)
 	app.GET("/api/info/cms", cmsDetect)
 	app.GET("/api/info/honeypot", honeypot)
