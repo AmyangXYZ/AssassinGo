@@ -2,7 +2,7 @@
 
 # AssassinGo
 
-AssassinGo is an extensible and concurrency information gathering and vulnerability scanning framework, with WebSocket based [Web GUI]("https://github.com/U1in/AssassinGo-Front-End").
+AssassinGo is an extensible and concurrency information gathering and vulnerability scanning framework, with WebSocket based [Web GUI](https://github.com/U1in/AssassinGo-Front-End).
 
 Just for learn.
 
@@ -23,8 +23,15 @@ Just for learn.
 - [x] Intruder
 - [ ] SSH, FTP, RDP, MYSQL Bruter
 - [x] Seek Targets by Search Engine
-- [x] POC Interface
+- [x] Friendly PoC Interface
 - [x] Web GUI(using WebSocket)
+
+## Installation
+
+```bash
+git clone https://github.com/AmyangXYZ/AssassinGo`
+docker-compose up --build
+```
 
 ## API
 
@@ -61,10 +68,6 @@ Path | Func | Params | Return
 [Example Testing JS file](./web/static/api-test.js)
 
 Remember set the target(s) first.
-
-## Demo
-
-![](./demo.png)
 
 ## License
 
