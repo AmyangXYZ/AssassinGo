@@ -32,6 +32,7 @@ Just for learn.
 
 Path | Method | Func | Params | Return
 ----- | ----- | ----- | ----- | -----
+/token | POST | sign in | username=admin&password=adminn | {SG_Token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1M…W4ifQ.qY-k5f54CrQ6_dNdjgQgqjh5xS8iFZOjTLcfMfirY0w" (stored in cookie)}
 /api/target | POST | set a target | target=xxx OR targets=t1,t2... | nil
 /api/info/basic | GET | get ip and retrieve security headers | nil | {data:{"ip": "192.168.1.1", "webserver": "nginx","click_jacking_protection":true,"content_security_policy":false,"strict_transport_security":false,"x_content_type_options":true}
 /api/info/bypasscf | GET | find real ip behind cloudflare | nil | {"real_ip":"123.123.123.123"}
@@ -45,7 +46,7 @@ Path | Method | Func | Params | Return
 
 Path | Func | Params | Return
 ----- | ----- | ----- | -----
-/ws/info/port | ports scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
+/ws/info/port | port scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
 /ws/info/subdomain | enmu subdomain | nil | {"subdomain":"earth.google.com"}
 /ws/info/dirb | brute force dir | {"concurrency":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}
@@ -60,10 +61,6 @@ Path | Func | Params | Return
 [Example Testing JS file](./web/static/api-test.js)
 
 Remember set the target(s) first.
-
-## State
-
-developing...
 
 ## Demo
 
