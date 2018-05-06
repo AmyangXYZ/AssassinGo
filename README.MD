@@ -8,7 +8,8 @@ Just for learn.
 
 ## Features
 
-- [x] Retrieve Server and Powered by Headers
+- [x] Retrieve Security Headers
+- [x] Bypass CloudFlare
 - [x] Detect CMS Version
 - [x] Honeypot Detect
 - [x] Port Scan
