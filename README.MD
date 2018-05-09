@@ -28,7 +28,7 @@ Just for learn.
 
 ## Design Pattern
 
-I choose **Composite Pattern** to extend function and poc easily.
+I choose **Composite Pattern** to increase expansibility.
 
 ![](./design-pattern.png)
 
