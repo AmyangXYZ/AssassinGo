@@ -35,7 +35,7 @@ I choose **Composite Pattern** to extend function and poc easily.
 ## Installation
 
 ```bash
-git clone https://github.com/AmyangXYZ/AssassinGo`
+git clone https://github.com/AmyangXYZ/AssassinGo
 docker-compose up --build
 ```
 
