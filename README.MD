@@ -26,24 +26,11 @@ Just for learn.
 - [x] Friendly PoC Interface
 - [x] Web GUI(using WebSocket)
 
-## Extension
+## Design Pattern
 
-You only need to implement these interfaces when extending function or poc.
+I choose **Composite Pattern** to extend function and poc easily.
 
-```go
-type Gatherer interface {
-    // Set params.
-    Set(...interface{})
-    // Run your function.
-    Run()
-    // Report your result.
-    Report() map[string]interface{}
-}
-```
-
-It's almost same for Attacker and PoC.
-
-But I think PoC should also implement `Info() string` interface to return a short brief of the vulnerability.
+![](./design-pattern.png)
 
 ## Installation
 
