@@ -12,7 +12,7 @@ Just for learn.
 - [x] Bypass CloudFlare
 - [x] Detect CMS Version
 - [x] Honeypot Detect
-- [x] SYN Port Scan
+- [x] Port Scan
 - [x] Trace Route and Mark on Google Map
 - [x] Subdomain Scan
 - [x] Dir Scan and Site Map
