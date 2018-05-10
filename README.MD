@@ -12,7 +12,7 @@ Just for learn.
 - [x] Bypass CloudFlare
 - [x] Detect CMS Version
 - [x] Honeypot Detect
-- [x] Port Scan
+- [x] SYN Port Scan
 - [x] Trace Route and Mark on Google Map
 - [x] Subdomain Scan
 - [x] Dir Scan and Site Map
@@ -59,7 +59,7 @@ Path | Method | Func | Params | Return
 
 Path | Func | Params | Return
 ----- | ----- | ----- | -----
-/ws/info/port | port scan | {method:"tcp"/"syn"} | {"port": "80", "service": "http"}
+/ws/info/port | port scan | nil | {"port": "80", "service": "http"}
 /ws/info/tracert | trace route and mark on google map | nil | {"ttl": 1, "addr": 192.168.1.1, "elapsed_time": 22720440, "country": China, "lat": 34.2583,"long": 116.1614}
 /ws/info/subdomain | enmu subdomain | nil | {"subdomain":"earth.google.com"}
 /ws/info/dirb | brute force dir | {"concurrency":20, "dict":"php"}; {"stop":1} | {"path": "admin.php", "resp_status": 200, "resp_len": 110}

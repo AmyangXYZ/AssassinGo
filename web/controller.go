@@ -143,7 +143,7 @@ func portScan(ctx *sweetygo.Context) {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
-	a.Gatherers["port"].Set(conn, a.Target, "tcp")
+	a.Gatherers["port"].Set(conn, a.Target)
 	a.Gatherers["port"].Run()
 	conn.Close()
 }
