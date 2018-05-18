@@ -26,7 +26,7 @@ Just for learn.
 - [x] Friendly PoC Interface
 - [x] Web GUI(using WebSocket)
 
-## Design Pattern
+## Outline Design
 
 I choose **Composite Pattern** to increase expansibility.
 
