@@ -96,8 +96,17 @@ func (i *Intruder) fetch(payload string) *http.Response {
 
 func (i *Intruder) parse(payload string) *http.Request {
 	header := i.re.ReplaceAllString(i.header, payload)
-	x := strings.Split(header, "\n\n")
-	data := x[1]
+	var x []string
+	var data string
+	// has body
+	if strings.Contains(header, "\n\n") {
+		x = strings.Split(header, "\n\n")
+		x = append(x, header)
+		data = x[1]
+	} else {
+		x = append(x, header)
+	}
+
 	hr := strings.Split(x[0], "\n")
 
 	method := strings.Split(hr[0], " ")[0]
