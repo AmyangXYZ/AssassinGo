@@ -13,7 +13,6 @@ import (
 	"../logger"
 	"../utils"
 	"github.com/bobesa/go-domain-util/domainutil"
-	"github.com/evilsocket/brutemachine"
 	"github.com/gorilla/websocket"
 )
 
@@ -22,7 +21,6 @@ import (
 type SubDomainScan struct {
 	mconn       *utils.MuxConn
 	target      string
-	m           *brutemachine.Machine
 	wordlist    []string
 	concurrency int
 	wildcard    []string
