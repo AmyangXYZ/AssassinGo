@@ -8,6 +8,7 @@ import (
 	"../assassin"
 	"../config"
 	"../logger"
+	"../poc"
 	"github.com/AmyangXYZ/sweetygo"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/websocket"
@@ -289,9 +290,9 @@ func getPoCList(ctx *sweetygo.Context) {
 	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
-	pocList := []string{}
-	for p := range a.PoC {
-		pocList = append(pocList, p)
+	pocList := map[string]poc.Intro{}
+	for k, v := range a.PoC {
+		pocList[k] = v.Info()
 	}
 	ret := map[string]interface{}{
 		"poc_list": pocList,

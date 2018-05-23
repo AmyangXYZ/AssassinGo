@@ -32,8 +32,15 @@ func NewDrupalRCE() *DrupalRCE {
 }
 
 // Info implements PoC interface.
-func (d *DrupalRCE) Info() string {
-	return `CVE-2018-7600`
+func (d *DrupalRCE) Info() Intro {
+	return Intro{
+		ID:          "CVE-2018-7602",
+		Type:        "Remote Code Execution",
+		Text:        "biubiubiu",
+		Platform:    "PHP",
+		Date:        "2018-04-25",
+		Refererence: "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-7602",
+	}
 }
 
 // Set implements PoC interface.

@@ -40,7 +40,7 @@ func NewSubDomainScan() *SubDomainScan {
 	return &SubDomainScan{
 		mconn:       &utils.MuxConn{},
 		wordlist:    utils.ReadFile("/dict/names.txt"),
-		concurrency: 20,
+		concurrency: 100,
 	}
 }
 
