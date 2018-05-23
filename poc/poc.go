@@ -13,7 +13,7 @@ type Intro struct {
 	// 2016-3-11
 	Date string
 	// http://....
-	Refererence string
+	Reference string
 }
 
 // PoC needs to implements:
