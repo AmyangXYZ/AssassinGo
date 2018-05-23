@@ -52,7 +52,7 @@ Path | Method | Func | Params | Return
 /api/info/cms | GET | detect cms | nil | {data:{"cms": "wordpress"}}
 /api/info/honeypot | GET | get ip and webserver | nil | {data:{"score": "0.3"}}
 /api/info/whois | GET | whois | nil | {data:{"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}}
-/api/poc | GET | get poc list | nil | {data:{"poc_list":["drupal-rce","seacms-v654-rce"]}}
+/api/poc | GET | get poc list | nil | {data:{"poc_list":["drupal-rce":{"id":"CVE-2017-7602","type":"remote code execution","text":"biubiubiu","platform":"php","data":"2018-04-25","reference":"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-7602"},"seacms-v654-rce"]}}
 /api/poc/:poc | GET | run the specified poc | nil | {data:{"exploitable_host": "example.com"}}
 
 ### WebSocket

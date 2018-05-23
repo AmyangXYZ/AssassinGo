@@ -3,17 +3,17 @@ package poc
 // Intro is a brief intro of the PoC.
 type Intro struct {
 	// CVE ID
-	ID string
+	ID string `json:"id"`
 	// RCE or SQLi or ...
-	Type string
+	Type string `json:"type"`
 	// Breif Intro
-	Text string
+	Text string `json:"text"`
 	// php or python or ...
-	Platform string
+	Platform string `json:"platform"`
 	// 2016-3-11
-	Date string
+	Date string `json:"date"`
 	// http://....
-	Reference string
+	Reference string `json:"reference"`
 }
 
 // PoC needs to implements:
