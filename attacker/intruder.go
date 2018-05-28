@@ -115,8 +115,13 @@ func (i *Intruder) parse(payload string) (*http.Request, error) {
 	if len(hr) < 2 {
 		return nil, errors.New("invalid header")
 	}
-	method := strings.Split(hr[0], " ")[0]
-	path := strings.Split(hr[0], " ")[1]
+	y := strings.Split(hr[0], "")
+	if len(y) < 2 {
+		return nil, errors.New("invalid header")
+	}
+	method := y[0]
+	path := y[1]
+
 	req, _ := http.NewRequest(method, "http://"+i.target+path, strings.NewReader(data))
 
 	for _, row := range hr[1:] {
