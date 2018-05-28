@@ -73,6 +73,9 @@ func (i *Intruder) onResult(res interface{}) {
 
 func (i *Intruder) attack(payload string) interface{} {
 	resp := i.fetch(payload)
+	if resp != nil {
+		return nil
+	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
@@ -89,12 +92,12 @@ func (i *Intruder) fetch(payload string) *http.Response {
 	req, err := i.parse(payload)
 	if err != nil {
 		logger.Red.Println(err)
-		return &http.Response{}
+		return nil
 	}
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Red.Println(err)
-		return &http.Response{}
+		return nil
 	}
 	return resp
 }
