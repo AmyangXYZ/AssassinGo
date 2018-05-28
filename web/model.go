@@ -36,7 +36,7 @@ func init() {
 			email VARCHAR(64) NULL DEFAULT NULL,
 			PRIMARY KEY (id)
 		);`)
-	db.Exec(`INSERT INTO users(username, password, email) values("admin","adminn","a@a.com");`)
+	// db.Exec(`INSERT INTO users(username, password, email) values("admin","adminn","a@a.com");`)
 }
 
 func getPassword(username string) string {
