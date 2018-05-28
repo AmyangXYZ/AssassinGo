@@ -2,7 +2,7 @@
 
 # AssassinGo
 
-site: http://assassin-go.ink
+site: https://assassin-go.ink
 
 AssassinGo is an extensible and concurrency information gathering and vulnerability scanning framework, with WebSocket based [Web GUI](https://github.com/U1in/AssassinGo-Front-End).
 
