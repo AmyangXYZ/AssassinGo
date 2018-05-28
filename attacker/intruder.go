@@ -1,6 +1,7 @@
 package attacker
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -85,7 +86,11 @@ func (i *Intruder) attack(payload string) interface{} {
 
 func (i *Intruder) fetch(payload string) *http.Response {
 	client := &http.Client{}
-	req := i.parse(payload)
+	req, err := i.parse(payload)
+	if err != nil {
+		logger.Red.Println(err)
+		return &http.Response{}
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Red.Println(err)
@@ -94,7 +99,7 @@ func (i *Intruder) fetch(payload string) *http.Response {
 	return resp
 }
 
-func (i *Intruder) parse(payload string) *http.Request {
+func (i *Intruder) parse(payload string) (*http.Request, error) {
 	header := i.re.ReplaceAllString(i.header, payload)
 	var x []string
 	var data string
@@ -108,8 +113,8 @@ func (i *Intruder) parse(payload string) *http.Request {
 	}
 
 	hr := strings.Split(x[0], "\n")
-	if len(hr) < 2 {
-		logger.Red.Println("invalid header")
+	if len(hr) > 1 {
+		return nil, errors.New("invalid header")
 	}
 	method := strings.Split(hr[0], " ")[0]
 	path := strings.Split(hr[0], " ")[1]
@@ -123,5 +128,5 @@ func (i *Intruder) parse(payload string) *http.Request {
 			req.Header.Add(k, v)
 		}
 	}
-	return req
+	return req, nil
 }
