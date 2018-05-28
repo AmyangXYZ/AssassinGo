@@ -2,6 +2,7 @@ package attacker
 
 import (
 	"bytes"
+	"fmt"
 	"time"
 
 	"../logger"
@@ -25,19 +26,20 @@ type SSHBruter struct {
 
 // NewSSHBruter returns a new ssh bruter.
 func NewSSHBruter() *SSHBruter {
-	return &SSHBruter{mconn: &utils.MuxConn{}}
+	return &SSHBruter{
+		mconn:      &utils.MuxConn{},
+		userList:   utils.ReadFile("/dict/ssh-users.txt"),
+		passwdList: utils.ReadFile("/dict/ssh-passwd.txt"),
+	}
 }
 
 // Set implements Attacker interface.
-// Params should be {target, port string,
-//     userlist, passwdlist string, concurrency int}
+// Params should be {target, port string, concurrency int}
 func (s *SSHBruter) Set(v ...interface{}) {
 	s.mconn.Conn = v[0].(*websocket.Conn)
 	s.target = v[1].(string)
 	s.port = v[2].(string)
-	s.userList = utils.ReadFile(v[3].(string))
-	s.passwdList = utils.ReadFile(v[4].(string))
-	s.concurrency = v[5].(int)
+	s.concurrency = v[3].(int)
 }
 
 // Report implements Attacker interface
@@ -54,6 +56,7 @@ func (s *SSHBruter) Run() {
 
 	blockers := make(chan struct{}, s.concurrency)
 	done := make(chan struct{})
+	time4Report := make(chan struct{})
 Loop:
 	for _, u := range s.userList {
 		for _, p := range s.passwdList {
@@ -63,6 +66,8 @@ Loop:
 				go s.connect(done, blockers, u, p)
 			case <-done:
 				continue Loop
+			case <-time4Report:
+				fmt.Println("biu")
 			}
 		}
 	}

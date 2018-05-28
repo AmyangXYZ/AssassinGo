@@ -10,7 +10,7 @@ type Intro struct {
 	Text string `json:"text"`
 	// php or python or ...
 	Platform string `json:"platform"`
-	// 2016-3-11
+	// 2016-03-11
 	Date string `json:"date"`
 	// http://....
 	Reference string `json:"reference"`
@@ -31,7 +31,8 @@ type PoC interface {
 // Init PoC
 func Init() map[string]PoC {
 	return map[string]PoC{
-		"seacms-v654-rce": NewSeaCMSv654(),
-		"drupal-rce":      NewDrupalRCE(),
+		"seacms-v654-rce":      NewSeaCMSv654(),
+		"drupal-rce":           NewDrupalRCE(),
+		"yahei-php-prober-xss": NewYaHeiPHPXSS(),
 	}
 }

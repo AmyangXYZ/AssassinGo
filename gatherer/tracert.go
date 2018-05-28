@@ -53,7 +53,10 @@ func (t *Tracer) Report() map[string]interface{} {
 func (t *Tracer) Run() {
 	logger.Green.Println("Trace Route and GeoIP")
 	t.route = []node{}
-
+	go func() {
+		time.Sleep(20 * time.Second)
+		return
+	}()
 	ch := make(chan traceroute.TracerouteHop, 0)
 	go func() {
 		for {

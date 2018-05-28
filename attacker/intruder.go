@@ -66,7 +66,7 @@ func (i *Intruder) Run() {
 func (i *Intruder) onResult(res interface{}) {
 	ret := res.(map[string]string)
 	logger.Blue.Println("Payload:", ret["payload"], "Status:",
-		ret["status"], "len:", ret["len"])
+		ret["resp_status"], "resp_len:", ret["len"])
 	i.mconn.Send(res)
 }
 

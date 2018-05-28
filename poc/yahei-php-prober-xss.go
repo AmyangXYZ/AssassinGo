@@ -37,8 +37,10 @@ func NewYaHeiPHPXSS() *YaHeiPHPXSS {
 }
 
 // Info implements PoC interface.
-func (y *YaHeiPHPXSS) Info() string {
-	return "CVE-2018-9238"
+func (y *YaHeiPHPXSS) Info() Intro {
+	return Intro{
+		ID: "CVE-2018-9238",
+	}
 }
 
 // Set implements PoC interface.

@@ -238,8 +238,6 @@ func intrude(ctx *sweetygo.Context) {
 
 type sshMsg struct {
 	Port        string `json:"port"`
-	UserList    string `json:"user_list"`
-	PasswdList  string `json:"passwd_list"`
 	Concurrency int    `json:"concurrency"`
 }
 
@@ -256,7 +254,7 @@ func sshBrute(ctx *sweetygo.Context) {
 		conn.Close()
 		return
 	}
-	a.Attackers["ssh"].Set(conn, a.Target, m.Port, m.UserList, m.PasswdList, m.Concurrency)
+	a.Attackers["ssh"].Set(conn, a.Target, m.Port, m.Concurrency)
 	a.Attackers["ssh"].Run()
 	conn.Close()
 }

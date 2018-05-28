@@ -54,7 +54,7 @@ func (bi *BasicInfo) Run() {
 	logger.Green.Println("Click Jacking Protection:", bi.ClickJackingProtection)
 	logger.Green.Println("Content Security Policy:", bi.ContentSecurityPolicy)
 	logger.Green.Println("X Content Type Options:", bi.XContentTypeOptions)
-	logger.Green.Println("Strict Transport Security", bi.StrictTransportSecurity)
+	logger.Green.Println("Strict Transport Security:", bi.StrictTransportSecurity)
 }
 
 func (bi *BasicInfo) resolveIP() {
