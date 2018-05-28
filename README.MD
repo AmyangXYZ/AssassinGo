@@ -23,10 +23,11 @@ Just for learn.
 - [x] Basic SQLi Check
 - [x] Basic XSS Check
 - [x] Intruder
-- [ ] SSH, FTP, RDP, MYSQL Bruter
+- [x] SSH Bruter
 - [x] Seek Targets by Search Engine
 - [x] Friendly PoC Interface
 - [x] Web GUI(using WebSocket)
+- [ ] Generate Report
 
 ## Outline Design
 

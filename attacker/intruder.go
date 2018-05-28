@@ -106,14 +106,13 @@ func (i *Intruder) parse(payload string) (*http.Request, error) {
 	// has body
 	if strings.Contains(header, "\n\n") {
 		x = strings.Split(header, "\n\n")
-		x = append(x, header)
 		data = x[1]
 	} else {
 		x = append(x, header)
 	}
 
 	hr := strings.Split(x[0], "\n")
-	if len(hr) > 1 {
+	if len(hr) < 2 {
 		return nil, errors.New("invalid header")
 	}
 	method := strings.Split(hr[0], " ")[0]
