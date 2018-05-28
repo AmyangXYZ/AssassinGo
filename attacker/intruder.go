@@ -73,7 +73,7 @@ func (i *Intruder) onResult(res interface{}) {
 
 func (i *Intruder) attack(payload string) interface{} {
 	resp := i.fetch(payload)
-	if resp != nil {
+	if resp == nil {
 		return nil
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
