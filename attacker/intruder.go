@@ -118,7 +118,7 @@ func (i *Intruder) parse(payload string) (*http.Request, error) {
 	if len(hr) < 2 {
 		return nil, errors.New("invalid header")
 	}
-	y := strings.Split(hr[0], "")
+	y := strings.Split(hr[0], " ")
 	if len(y) < 2 {
 		return nil, errors.New("invalid header")
 	}
