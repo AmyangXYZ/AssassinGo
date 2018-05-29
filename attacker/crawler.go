@@ -130,8 +130,11 @@ func (c *Crawler) fetch(URL string) map[string]string {
 		return map[string]string{}
 	}
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return map[string]string{}
+	}
 
 	nextURLsMap := c.extractURLs(URL, string(body))
 	return nextURLsMap

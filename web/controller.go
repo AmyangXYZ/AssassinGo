@@ -15,6 +15,8 @@ import (
 )
 
 func index(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	ctx.Render(200, "index")
 }
 
@@ -25,6 +27,8 @@ func static(ctx *sweetygo.Context) {
 }
 
 func signin(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	if ctx.Param("username") != "" && ctx.Param("password") != "" {
 		username := ctx.Param("username")
 		password := getPassword(username)
@@ -50,6 +54,8 @@ func signin(ctx *sweetygo.Context) {
 }
 
 func setTarget(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	if target := ctx.Param("target"); target != "" {
 		daddy.Son[usr].SetTarget(target)
@@ -63,6 +69,8 @@ func setTarget(ctx *sweetygo.Context) {
 }
 
 func basicInfo(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["basicInfo"].Set(a.Target)
@@ -72,6 +80,8 @@ func basicInfo(ctx *sweetygo.Context) {
 }
 
 func bypassCF(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["bypassCF"].Set(a.Target)
@@ -81,6 +91,8 @@ func bypassCF(ctx *sweetygo.Context) {
 }
 
 func cmsDetect(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["cms"].Set(a.Target)
@@ -90,6 +102,8 @@ func cmsDetect(ctx *sweetygo.Context) {
 }
 
 func whois(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	if net.ParseIP(a.Target).String() == a.Target {
@@ -103,6 +117,8 @@ func whois(ctx *sweetygo.Context) {
 }
 
 func honeypot(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["honeypot"].Set(a.Target)
@@ -112,6 +128,8 @@ func honeypot(ctx *sweetygo.Context) {
 }
 
 func tracert(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -121,6 +139,8 @@ func tracert(ctx *sweetygo.Context) {
 }
 
 func portScan(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -130,6 +150,8 @@ func portScan(ctx *sweetygo.Context) {
 }
 
 func subDomainScan(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -144,6 +166,8 @@ type dirbMsg struct {
 }
 
 func dirBrute(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -155,6 +179,8 @@ func dirBrute(ctx *sweetygo.Context) {
 }
 
 func crawl(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -165,6 +191,8 @@ func crawl(ctx *sweetygo.Context) {
 }
 
 func checkSQLi(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -174,6 +202,8 @@ func checkSQLi(ctx *sweetygo.Context) {
 }
 
 func checkXSS(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -189,6 +219,8 @@ type intruderMsg struct {
 }
 
 func intrude(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -210,6 +242,8 @@ type sshMsg struct {
 }
 
 func sshBrute(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -232,6 +266,8 @@ type seekerMsg struct {
 }
 
 func seek(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -248,6 +284,8 @@ func seek(ctx *sweetygo.Context) {
 }
 
 func getPoCList(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	pocList := map[string]poc.Intro{}
@@ -261,6 +299,8 @@ func getPoCList(ctx *sweetygo.Context) {
 }
 
 func runPoC(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	pocName := ctx.Param("poc")
@@ -280,6 +320,8 @@ type pocMsg struct {
 }
 
 func runSiblingPoC(ctx *sweetygo.Context) {
+	ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	sibling := daddy.Sibling[usr]
 	pocName := ctx.Param("poc")
