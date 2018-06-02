@@ -29,6 +29,17 @@ Just for learn, welcome PR.
 - [x] Web GUI(using WebSocket)
 - [ ] Generate Report
 
+## Installation
+
+```bash
+git clone https://github.com/AmyangXYZ/AssassinGo
+cd AssassinGo
+docker-compose up --build -d
+cat backup.sql | docker exec -i assassingo_mariadb_1 /usr/bin/mysql -uag --password=password ag
+```
+
+Then visit http://127.0.0.1:8000 and login as admin:admin
+
 ## Demo
 
 ![base](demo/demo1.png)
@@ -40,17 +51,6 @@ Just for learn, welcome PR.
 ![seek](demo/demo4.png)
 
 ![poc](demo/demo3.png)
-
-## Installation
-
-```bash
-git clone https://github.com/AmyangXYZ/AssassinGo
-cd AssassinGo
-docker-compose up --build -d
-cat backup.sql | docker exec -i assassingo_mariadb_1 /usr/bin/mysql -uag --password=password ag
-```
-
-Then visit http://127.0.0.1:8000 and login as admin:admin
 
 ## Outline Design
 
