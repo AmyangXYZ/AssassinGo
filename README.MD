@@ -24,7 +24,7 @@ Just for learn, welcome PR.
 - [x] Basic XSS Check
 - [x] Intruder
 - [x] SSH Bruter
-- [x] Seek Targets by Search Engine
+- [x] Google-Hacking with Headless-Chrome
 - [x] Friendly PoC Interface
 - [x] Web GUI(using WebSocket)
 - [ ] Generate Report
@@ -41,26 +41,21 @@ Just for learn, welcome PR.
 
 ![poc](demo/demo3.png)
 
+## Installation
+
+```bash
+git clone https://github.com/AmyangXYZ/AssassinGo
+cd AssassinGo
+docker-compose up --build
+```
+
+Then visit http://127.0.0.1:8000
+
 ## Outline Design
 
 I choose **Composite Pattern** to increase expansibility.
 
 ![design-pattern](./design-pattern.png)
-
-## Installation
-
-Front-End
-
-see https://github.com/U1in/AssassinGo-Front-End
-
-Back-End
-
-```bash
-git clone https://github.com/AmyangXYZ/AssassinGo
-docker-compose up --build
-```
-
-Look to the shell script I wrote.
 
 ## API
 
@@ -76,7 +71,7 @@ Path | Method | Func | Params | Return
 /api/info/honeypot | GET | get ip and webserver | nil | {data:{"score": "0.3"}}
 /api/info/whois | GET | whois | nil | {data:{"domain":"example.com","registrar_name":"alibaba", "admin_name":"xiaoming", "admin_email":"a@qq.com", "admin_phone":"+86.12312345678", "created_date":"2016-07-28T12:57:53.0Z","expiration_date":"2018-07-28T12:57:53.0Z", "ns":"dns9.hichina.com", "state":"clienttransferprohibited"}}
 /api/poc | GET | get poc list | nil | {data:{"poc_list":["drupal-rce":{"id":"CVE-2017-7602","ty## pe":"remote code execution","text":"biubiubiu","platform## ":"php","data":"2018-04-25",## "reference":"https://cve.mitre.org/cgi-## bin/cvename.cgi?name=CVE-2018-7602"},"seacms-v654-rce"]## }}
-/api/poc/:poc | GET | run the specified poc | nil | {data:{"exploitable_host": "example.com"}}
+/api/poc/:poc | GET | run the specified poc | nil | {data:{"host": "example.com", "exploitable":"true"}}
 
 ### WebSocket
 
@@ -90,13 +85,9 @@ Path | Func | Params | Return
 /ws/attack/sqli | check sqli | nil | {"sqli_url": "example.com/?id=1}
 /ws/attack/xss | check xss | nil | {"xss_url": "example.com/?id=1}
 /ws/attack/intrude | brute force | {"header": "GET / HTTP/1.1 ...", "payload": "p1,p2...", "concurrency": "10"}; {"stop":1}| {"payload": 1, "resp_status": 200, "resp_len": 110}
-/ws/attack/ssh | brute force ssh | {"port":22,"user_list":"/dict/ssh-user-common.txt", "passwd_list":"/dict/password.txt", "concurrency":40} | {"user":"root","passwd":"biubiubiu"}
+/ws/attack/ssh | brute force ssh | {"port":"22",, "concurrency":40} | {"user":"root","passwd":"biubiubiu"}
 /ws/seek | seek targets | {"query": "biu", "se": "bing/google", "max_page": 10} | {"urls": urls}
 /ws/poc/:poc | run poc | {concurrency:10} | {"exploitable_host": "example.com"}
-
-[Example Testing JS file](./web/static/api-test.js)
-
-Remember set the target(s) first.
 
 ## License
 
