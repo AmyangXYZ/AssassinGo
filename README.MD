@@ -46,10 +46,11 @@ Just for learn, welcome PR.
 ```bash
 git clone https://github.com/AmyangXYZ/AssassinGo
 cd AssassinGo
-docker-compose up --build
+docker-compose up --build -d
+cat backup.sql | docker exec -i assassingo_mariadb_1 /usr/bin/mysql -uag --password=password ag
 ```
 
-Then visit http://127.0.0.1:8000
+Then visit http://127.0.0.1:8000 and login as admin:admin
 
 ## Outline Design
 
