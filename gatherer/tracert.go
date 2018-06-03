@@ -61,12 +61,15 @@ func (t *Tracer) Run() {
 
 	ch := make(chan traceroute.TracerouteHop, 0)
 	go func() {
-		for {
+		select {
+		default:
 			hop, ok := <-ch
 			if !ok {
 				return
 			}
 			t.printHop(hop)
+		case <-timeout:
+			return
 		}
 	}()
 
@@ -75,14 +78,8 @@ func (t *Tracer) Run() {
 		logger.Red.Println(err)
 		return
 	}
-	select {
-	default:
-		// Wait the final output.
-		time.Sleep(1 * time.Second)
-	case <-timeout:
-		return
-	}
 
+	time.Sleep(1 * time.Second)
 }
 
 func (t *Tracer) printHop(hop traceroute.TracerouteHop) {
