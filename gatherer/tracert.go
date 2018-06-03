@@ -53,10 +53,12 @@ func (t *Tracer) Report() map[string]interface{} {
 func (t *Tracer) Run() {
 	logger.Green.Println("Trace Route and GeoIP")
 	t.route = []node{}
+	timeout := make(chan bool)
 	go func() {
 		time.Sleep(20 * time.Second)
-		return
+		timeout <- true
 	}()
+
 	ch := make(chan traceroute.TracerouteHop, 0)
 	go func() {
 		for {
@@ -73,9 +75,14 @@ func (t *Tracer) Run() {
 		logger.Red.Println(err)
 		return
 	}
+	select {
+	default:
+		// Wait the final output.
+		time.Sleep(1 * time.Second)
+	case <-timeout:
+		return
+	}
 
-	// Wait the final output.
-	time.Sleep(1 * time.Second)
 }
 
 func (t *Tracer) printHop(hop traceroute.TracerouteHop) {

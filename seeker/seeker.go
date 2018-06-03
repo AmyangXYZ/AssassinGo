@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"../logger"
+	"../utils"
 
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
@@ -18,7 +19,7 @@ import (
 
 // Seeker seeks targets with search engine.
 type Seeker struct {
-	conn    *websocket.Conn
+	mconn   *utils.MuxConn
 	query   string
 	se      string
 	maxPage int
@@ -28,6 +29,7 @@ type Seeker struct {
 // NewSeeker returns a new Seeker.
 func NewSeeker(q, se string, maxPage int) *Seeker {
 	return &Seeker{
+		mconn:   &utils.MuxConn{},
 		query:   q,
 		se:      se,
 		maxPage: maxPage,
@@ -37,7 +39,7 @@ func NewSeeker(q, se string, maxPage int) *Seeker {
 // Set params.
 // Params should be {conn *websocket.Conn, query ,se stirng, maxPage int}
 func (s *Seeker) Set(v ...interface{}) {
-	s.conn = v[0].(*websocket.Conn)
+	s.mconn.Conn = v[0].(*websocket.Conn)
 	s.query = v[1].(string)
 	s.se = v[2].(string)
 	s.maxPage = v[3].(int)
@@ -115,7 +117,7 @@ func (s *Seeker) searchBing() chromedp.Tasks {
 				ret := map[string][]string{
 					"urls": urls,
 				}
-				s.conn.WriteJSON(ret)
+				s.mconn.Send(ret)
 
 				s.Results = append(s.Results, urls...)
 				if i != s.maxPage {
@@ -169,7 +171,7 @@ func (s *Seeker) searchGoogle() chromedp.Tasks {
 				ret := map[string][]string{
 					"urls": urls,
 				}
-				s.conn.WriteJSON(ret)
+				s.mconn.Send(ret)
 
 				s.Results = append(s.Results, urls...)
 				if i != s.maxPage {
