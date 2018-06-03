@@ -48,9 +48,9 @@ Then visit http://127.0.0.1:8000 and login as admin:admin
 
 ![subdomain](demo/demo6.png)
 
-![intruder](demo/demo5.png)
+![intruder](demo/demo9.png)
 
-![seek](demo/demo4.png)
+![seek](demo/demo8.png)
 
 ![poc](demo/demo3.png)
 
