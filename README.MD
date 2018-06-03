@@ -46,6 +46,8 @@ Then visit http://127.0.0.1:8000 and login as admin:admin
 
 ![traceroute](demo/demo2.png)
 
+![subdomain](demo/demo6.png)
+
 ![intruder](demo/demo5.png)
 
 ![seek](demo/demo4.png)
