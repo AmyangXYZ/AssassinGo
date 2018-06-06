@@ -31,6 +31,8 @@ Just for learn, welcome PR.
 
 ## Installation
 
+### localhost
+
 ```bash
 git clone https://github.com/AmyangXYZ/AssassinGo
 cd AssassinGo
@@ -39,6 +41,8 @@ cat backup.sql | docker exec -i assassingo_mariadb_1 /usr/bin/mysql -uag --passw
 ```
 
 Then visit http://127.0.0.1:8000 and login as admin:admin
+
+### VPS
 
 If you want to deploy on your VPS, please clone the [Frontend](https://github.com/U1in/AssassinGo-Front-End) and modify the `base_url` of AJAX and WebSocket, then run `npm run build` and copy the output to `web/` dirctionary as [deploy.sh](./deploy.sh) says.
 
