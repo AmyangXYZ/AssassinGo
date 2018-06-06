@@ -38,7 +38,7 @@ docker-compose up --build -d
 cat backup.sql | docker exec -i assassingo_mariadb_1 /usr/bin/mysql -uag --password=password ag
 ```
 
-Then visit http://127.0.0.1:8000 and login as admin:admin
+Then visit http://127.0.0.1:8000 and login as admin:adminn
 
 ## Demo
 
