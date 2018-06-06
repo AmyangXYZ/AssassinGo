@@ -44,7 +44,7 @@ Then visit http://127.0.0.1:8000 and login as admin:admin
 
 ### VPS
 
-If you want to deploy on your VPS, please clone the [Frontend](https://github.com/U1in/AssassinGo-Front-End) and modify the `base_url` of AJAX and WebSocket, then run `npm run build` and copy the output to `web/` dirctionary as [deploy.sh](./deploy.sh) says.
+If you want to deploy on your VPS, please clone the [Frontend](https://github.com/U1in/AssassinGo-Front-End) and modify the `base_url` of AJAX and WebSocket, then run `npm run build` and copy the output to `web/` directory as [deploy.sh](./deploy.sh) says.
 
 Remember to add your google-map key in `index.html`.
 
