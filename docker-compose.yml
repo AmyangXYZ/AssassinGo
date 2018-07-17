@@ -28,7 +28,7 @@ services:
       - MYSQL_PASSWORD=password
       
   chromedp:
-    image: knqz/chrome-headless
+    image: chromedp/headless-shell
     ports:
       - 9222:9222
   
