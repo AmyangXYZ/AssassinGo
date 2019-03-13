@@ -37,6 +37,7 @@ func signin(ctx *sweetygo.Context) error {
 			claims["exp"] = time.Now().Add(time.Hour * 36).Unix()
 			t, _ := token.SignedString([]byte(config.SecretKey))
 			ctx.SetCookie("SG_Token", t)
+			ctx.JSON(200, 1, "success", map[string]string{"SG_Token": t})
 
 			a := assassin.New()
 			s := assassin.NewSiblings()
@@ -44,7 +45,7 @@ func signin(ctx *sweetygo.Context) error {
 			daddy.Sibling[username] = s
 			logger.Green.Println(username, "Has Signed In")
 
-			return ctx.JSON(200, 1, "success", map[string]string{"SG_Token": t})
+			return nil
 		}
 		return ctx.JSON(200, 0, "Username or Password Error.", nil)
 	}

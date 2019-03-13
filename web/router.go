@@ -10,7 +10,7 @@ import (
 func SetMiddlewares(app *sweetygo.SweetyGo) {
 	// cors
 	app.USE(func(ctx *sweetygo.Context) error {
-		ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+		ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000")
 		ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
 		ctx.Next()
 		return nil
