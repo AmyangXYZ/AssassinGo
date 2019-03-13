@@ -6,16 +6,25 @@ import (
 	"github.com/AmyangXYZ/sweetygo/middlewares"
 )
 
-var (
-	requireJWTMap = map[string]string{
-		"/api/*": "ALL",
-		"/ws/*":  "ALL",
-	}
-)
-
 // SetMiddlewares sets middlewares.
 func SetMiddlewares(app *sweetygo.SweetyGo) {
-	app.USE(middlewares.JWT("Cookie", config.SecretKey, requireJWTMap))
+	// cors
+	app.USE(func(ctx *sweetygo.Context) error {
+		ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+		ctx.Resp.Header().Set("Access-Control-Allow-Credentials", "true")
+		ctx.Next()
+		return nil
+	})
+
+	jwtSkipper := func(ctx *sweetygo.Context) bool {
+		if (len(ctx.Path()) > 5 && ctx.Path()[0:5] == "/api/") ||
+			(len(ctx.Path()) > 4 && ctx.Path()[0:4] == "/ws/") {
+			return false
+		}
+		return true
+	}
+	app.USE(middlewares.JWT("Cookie", config.SecretKey, jwtSkipper))
+
 }
 
 // SetRouter sets router.

@@ -2,7 +2,6 @@ package web
 
 import (
 	"../assassin"
-	"../config"
 	"github.com/AmyangXYZ/sweetygo"
 )
 
@@ -16,8 +15,8 @@ func init() {
 
 // Run Web GUI.
 func Run() {
-	app := sweetygo.New(config.RootDir, nil)
+	app := sweetygo.New()
 	SetMiddlewares(app)
 	SetRouter(app)
-	app.RunServer(":8000")
+	app.Run(":8000")
 }
