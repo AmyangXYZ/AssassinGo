@@ -1,8 +1,9 @@
 ![](./logo.jpg)
 
-# AssassinGo
+[![Rawsec's CyberSecurity Inventory](https://inventory.rawsec.ml/img/badges/Rawsec-inventoried-FF5050_flat.svg)](https://inventory.rawsec.ml/tools.html#AssassinGo)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
 
-site: https://assassin-go.ink
+# AssassinGo
 
 AssassinGo is an extensible and concurrency information gathering and vulnerability scanning framework, with WebSocket based [Web GUI](https://github.com/U1in/AssassinGo-Front-End).
 
