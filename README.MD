@@ -38,7 +38,7 @@ Just for learn, welcome PR.
 git clone https://github.com/AmyangXYZ/AssassinGo
 cd AssassinGo
 docker-compose up --build -d
-cat backup.sql | docker exec -i assassingo-mariadb_1 /usr/bin/mysql -uag --password=password ag
+cat backup.sql | docker exec -i assassingo-master_mariadb_1 /usr/bin/mysql -uag --password=password ag
 ```
 
 Then visit http://127.0.0.1:8000 and login as admin:admin
