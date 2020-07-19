@@ -26,9 +26,13 @@ services:
       - MYSQL_DATABASE=ag
       - MYSQL_USER=ag
       - MYSQL_PASSWORD=password
-      
+    volumes:
+      - assassingodb:/var/lib/mysql
+
   chromedp:
     image: chromedp/headless-shell
     ports:
       - 9222:9222
-  
+
+volumes:
+  assassingodb:
