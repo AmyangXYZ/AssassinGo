@@ -5,7 +5,7 @@ services:
     build: .
     ports:
       - 8000:8000
-    links:
+    depends_on:
       - mariadb
       - chromedp
     volumes:
