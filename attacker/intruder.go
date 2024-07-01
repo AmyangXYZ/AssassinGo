@@ -10,8 +10,8 @@ import (
 
 	"github.com/AmyangXYZ/barbarian"
 
-	"../logger"
-	"../utils"
+	"logger"
+	"utils"
 	"github.com/gorilla/websocket"
 )
 

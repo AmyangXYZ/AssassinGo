@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"../logger"
+	"logger"
 )
 
 // CFBypass finds the real IP behind cloudflare.

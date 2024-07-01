@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"../logger"
+	"logger"
 )
 
 // BasicInfo gathers basic information of the target.

@@ -5,8 +5,8 @@ import (
 	"net"
 	"time"
 
-	"../logger"
-	"../utils"
+	"logger"
+	"utils"
 	"github.com/aeden/traceroute"
 	"github.com/gorilla/websocket"
 	geoip2 "github.com/oschwald/geoip2-golang"

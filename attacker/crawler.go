@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"../logger"
-	"../utils"
+	"logger"
+	"utils"
 	"github.com/gorilla/websocket"
 )
 

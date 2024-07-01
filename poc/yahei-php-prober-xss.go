@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"../logger"
+	"logger"
 )
 
 // YaHeiPHPXSS is yahei php prober v0.4.7 xss,

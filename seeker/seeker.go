@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"../logger"
-	"../utils"
+	"logger"
+	"utils"
 
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"

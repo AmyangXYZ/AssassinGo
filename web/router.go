@@ -1,7 +1,7 @@
 package web
 
 import (
-	"../config"
+	"config"
 	"github.com/AmyangXYZ/sweetygo"
 	"github.com/AmyangXYZ/sweetygo/middlewares"
 )

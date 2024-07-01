@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"../logger"
+	"logger"
 	"github.com/gorilla/websocket"
 )
 

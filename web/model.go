@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"../config"
+	"config"
 	//
 	_ "github.com/go-sql-driver/mysql"
 )
