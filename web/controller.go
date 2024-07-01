@@ -9,23 +9,23 @@ import (
 	"../config"
 	"../logger"
 	"../poc"
-	"github.com/AmyangXYZ/sweetygo"
+	"github.com/AmyangXYZ/sgo"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/websocket"
 )
 
-func index(ctx *sweetygo.Context) error {
+func index(ctx *sgo.Context) error {
 	return ctx.Render(200, "index")
 }
 
-func static(ctx *sweetygo.Context) error {
+func static(ctx *sgo.Context) error {
 	staticHandle := http.StripPrefix("/static",
 		http.FileServer(http.Dir("./web/static")))
 	staticHandle.ServeHTTP(ctx.Resp, ctx.Req)
 	return nil
 }
 
-func signin(ctx *sweetygo.Context) error {
+func signin(ctx *sgo.Context) error {
 	if ctx.Param("username") != "" && ctx.Param("password") != "" {
 		username := ctx.Param("username")
 		password := getPassword(username)
@@ -52,7 +52,7 @@ func signin(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func setTarget(ctx *sweetygo.Context) error {
+func setTarget(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	if target := ctx.Param("target"); target != "" {
 		daddy.Son[usr].SetTarget(target)
@@ -65,7 +65,7 @@ func setTarget(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func basicInfo(ctx *sweetygo.Context) error {
+func basicInfo(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["basicInfo"].Set(a.Target)
@@ -74,7 +74,7 @@ func basicInfo(ctx *sweetygo.Context) error {
 	return ctx.JSON(200, 1, "success", ret)
 }
 
-func bypassCF(ctx *sweetygo.Context) error {
+func bypassCF(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["bypassCF"].Set(a.Target)
@@ -83,7 +83,7 @@ func bypassCF(ctx *sweetygo.Context) error {
 	return ctx.JSON(200, 1, "success", ret)
 }
 
-func cmsDetect(ctx *sweetygo.Context) error {
+func cmsDetect(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["cms"].Set(a.Target)
@@ -92,7 +92,7 @@ func cmsDetect(ctx *sweetygo.Context) error {
 	return ctx.JSON(200, 1, "success", ret)
 }
 
-func whois(ctx *sweetygo.Context) error {
+func whois(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	if net.ParseIP(a.Target).String() == a.Target {
@@ -104,7 +104,7 @@ func whois(ctx *sweetygo.Context) error {
 	return ctx.JSON(200, 1, "success", ret)
 }
 
-func honeypot(ctx *sweetygo.Context) error {
+func honeypot(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	a.Gatherers["honeypot"].Set(a.Target)
@@ -113,7 +113,7 @@ func honeypot(ctx *sweetygo.Context) error {
 	return ctx.JSON(200, 1, "success", ret)
 }
 
-func tracert(ctx *sweetygo.Context) error {
+func tracert(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -123,7 +123,7 @@ func tracert(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func portScan(ctx *sweetygo.Context) error {
+func portScan(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -133,7 +133,7 @@ func portScan(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func subDomainScan(ctx *sweetygo.Context) error {
+func subDomainScan(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -148,7 +148,7 @@ type dirbMsg struct {
 	Concurrency int `json:"concurrency"`
 }
 
-func dirBrute(ctx *sweetygo.Context) error {
+func dirBrute(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -160,7 +160,7 @@ func dirBrute(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func crawl(ctx *sweetygo.Context) error {
+func crawl(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -171,7 +171,7 @@ func crawl(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func checkSQLi(ctx *sweetygo.Context) error {
+func checkSQLi(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -181,7 +181,7 @@ func checkSQLi(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func checkXSS(ctx *sweetygo.Context) error {
+func checkXSS(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -197,7 +197,7 @@ type intruderMsg struct {
 	Concurrency int    `json:"concurrency"`
 }
 
-func intrude(ctx *sweetygo.Context) error {
+func intrude(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -219,7 +219,7 @@ type sshMsg struct {
 	Concurrency int    `json:"concurrency"`
 }
 
-func sshBrute(ctx *sweetygo.Context) error {
+func sshBrute(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -242,7 +242,7 @@ type seekerMsg struct {
 	MaxPage int    `json:"max_page"`
 }
 
-func seek(ctx *sweetygo.Context) error {
+func seek(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	conn, _ := websocket.Upgrade(ctx.Resp, ctx.Req, ctx.Resp.Header(), 1024, 1024)
@@ -259,7 +259,7 @@ func seek(ctx *sweetygo.Context) error {
 	return nil
 }
 
-func getPoCList(ctx *sweetygo.Context) error {
+func getPoCList(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	pocList := map[string]poc.Intro{}
@@ -272,7 +272,7 @@ func getPoCList(ctx *sweetygo.Context) error {
 	return ctx.JSON(200, 1, "success", ret)
 }
 
-func runPoC(ctx *sweetygo.Context) error {
+func runPoC(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	a := daddy.Son[usr]
 	pocName := ctx.Param("poc")
@@ -290,7 +290,7 @@ type pocMsg struct {
 	Concurrency int `json:"concurrency"`
 }
 
-func runSiblingPoC(ctx *sweetygo.Context) error {
+func runSiblingPoC(ctx *sgo.Context) error {
 	usr := ctx.Get("userInfo").(*jwt.Token).Claims.(jwt.MapClaims)["username"].(string)
 	sibling := daddy.Sibling[usr]
 	pocName := ctx.Param("poc")
