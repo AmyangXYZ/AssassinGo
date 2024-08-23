@@ -2,7 +2,7 @@ package web
 
 import (
 	"../assassin"
-	"github.com/AmyangXYZ/sweetygo"
+	"github.com/AmyangXYZ/sgo"
 )
 
 var (
@@ -15,7 +15,7 @@ func init() {
 
 // Run Web GUI.
 func Run() {
-	app := sweetygo.New()
+	app := sgo.New()
 	app.SetTemplates("/web/templates", nil)
 	SetMiddlewares(app)
 	SetRouter(app)
