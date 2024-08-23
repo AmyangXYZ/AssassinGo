@@ -9,8 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"../logger"
-	"../utils"
+	"assassingo/logger"
+	"assassingo/utils"
+
 	"github.com/gorilla/websocket"
 )
 

@@ -1,7 +1,8 @@
 package web
 
 import (
-	"../config"
+	"assassingo/config"
+
 	"github.com/AmyangXYZ/sgo"
 	"github.com/AmyangXYZ/sgo/middlewares"
 )

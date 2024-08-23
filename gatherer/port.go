@@ -5,8 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"../logger"
-	"../utils"
+	"assassingo/logger"
+	"assassingo/utils"
+
 	"github.com/AmyangXYZ/barbarian"
 	"github.com/gorilla/websocket"
 )

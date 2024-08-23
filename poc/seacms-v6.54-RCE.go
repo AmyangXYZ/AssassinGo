@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"../logger"
+	"assassingo/logger"
 )
 
 // SeaCMSv654 search.php code injection.

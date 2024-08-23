@@ -3,12 +3,12 @@ package assassin
 import (
 	"strings"
 
-	"../attacker"
-	"../gatherer"
-	"../logger"
-	"../poc"
-	"../seeker"
-	"../utils"
+	"assassingo/attacker"
+	"assassingo/gatherer"
+	"assassingo/logger"
+	"assassingo/poc"
+	"assassingo/seeker"
+	"assassingo/utils"
 )
 
 // Daddy is used for multiple users.

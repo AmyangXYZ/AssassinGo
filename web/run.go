@@ -1,7 +1,8 @@
 package web
 
 import (
-	"../assassin"
+	"assassingo/assassin"
+
 	"github.com/AmyangXYZ/sgo"
 )
 

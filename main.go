@@ -1,6 +1,6 @@
 package main
 
-import "./web"
+import "assassingo/web"
 
 func main() {
 	web.Run()

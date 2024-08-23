@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"../logger"
+	"assassingo/logger"
 )
 
 // CMSDetector detects CMS with whatcms.org api.

@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"../logger"
+	"assassingo/logger"
 )
 
 // Honeypot detects honeypot score of the target.
