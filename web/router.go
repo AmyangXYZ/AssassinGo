@@ -1,14 +1,11 @@
 package web
 
 import (
-	"assassingo/config"
-
 	"github.com/AmyangXYZ/sgo"
-	"github.com/AmyangXYZ/sgo/middlewares"
 )
 
 // SetMiddlewares sets middlewares.
-func SetMiddlewares(app *sgo.sgo) {
+func SetMiddlewares(app *sgo.SGo) {
 	// cors
 	app.USE(func(ctx *sgo.Context) error {
 		ctx.Resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000")
@@ -16,20 +13,10 @@ func SetMiddlewares(app *sgo.sgo) {
 		ctx.Next()
 		return nil
 	})
-
-	jwtSkipper := func(ctx *sgo.Context) bool {
-		if (len(ctx.Path()) > 5 && ctx.Path()[0:5] == "/api/") ||
-			(len(ctx.Path()) > 4 && ctx.Path()[0:4] == "/ws/") {
-			return false
-		}
-		return true
-	}
-	app.USE(middlewares.JWT("Cookie", config.SecretKey, jwtSkipper))
-
 }
 
 // SetRouter sets router.
-func SetRouter(app *sgo.sgo) {
+func SetRouter(app *sgo.SGo) {
 	app.GET("/", index)
 	app.POST("/token", signin)
 
