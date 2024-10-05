@@ -27,30 +27,30 @@ func static(ctx *sgo.Context) error {
 }
 
 func signin(ctx *sgo.Context) error {
-	if ctx.Param("username") != "" && ctx.Param("password") != "" {
-		username := ctx.Param("username")
-		password := getPassword(username)
-
-		// jwt is broken, skip password check
-		if password == ctx.Param("password") || true {
-			token := jwt.New(jwt.SigningMethodHS256)
-			claims := token.Claims.(jwt.MapClaims)
-			claims["username"] = username
-			claims["exp"] = time.Now().Add(time.Hour * 36).Unix()
-			t, _ := token.SignedString([]byte(config.SecretKey))
-			ctx.SetCookie("SG_Token", t)
-			ctx.JSON(200, 1, "success", map[string]string{"SG_Token": t})
-
-			a := assassin.New()
-			s := assassin.NewSiblings()
-			daddy.Son[username] = a
-			daddy.Sibling[username] = s
-			logger.Green.Println(username, "Has Signed In")
-
-			return nil
-		}
-		return ctx.JSON(200, 0, "Username or Password Error.", nil)
+	username := ctx.Param("username")
+	password := ctx.Param("password")
+	if username == "" || password == "" {
+		return ctx.JSON(200, 0, "Missing username or password.", nil)
 	}
+	actualPassword := getPassword(username)
+	if actualPassword != password {
+		return ctx.JSON(200, 0, "Username or password error.", nil)
+	}
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["username"] = username
+	claims["exp"] = time.Now().Add(time.Hour * 36).Unix()
+	t, err := token.SignedString([]byte(config.SecretKey))
+	if err != nil {
+		return ctx.JSON(200, 0, "Error generating token.", nil)
+	}
+	ctx.SetCookie("SG_Token", t, 3600, "/", "", false, true)
+	ctx.JSON(200, 1, "success", map[string]string{"SG_Token": t})
+	a := assassin.New()
+	s := assassin.NewSiblings()
+	daddy.Son[username] = a
+	daddy.Sibling[username] = s
+	logger.Green.Println(username, "Has Signed In")
 	return nil
 }
 
